@@ -20,6 +20,8 @@ export interface SvgOptions {
   lineThickness?: number;
   cardsPerRow?: number;
   shadowDepth?: number;
+  pieShowHoverLabels?: boolean;
+  pieLabelPosition?: 'inside' | 'floating';
 }
 
 const THEMES: Record<string, any> = {
@@ -52,21 +54,25 @@ export function generateLanguageSvg(languages: any[], options: SvgOptions) {
   const data = languages.slice(0, limit);
   const width = 450;
   
-  let height = 120;
-  if (layout === 'compact') {
-    height = 100 + Math.ceil(data.length / 3) * 25;
-  } else if (layout === 'list') {
-    height = 80 + data.length * 35;
-  } else if (layout === 'pie') {
-    height = 300;
-  } else if (layout === 'modern-bar') {
-    height = 100 + data.length * 40;
-  } else if (layout === 'soft-cards') {
-    const rows = Math.ceil(data.length / (options.cardsPerRow || 2));
-    height = 80 + rows * 65;
-  } else if (layout === 'minimalist-line') {
-    height = 70;
-  }
+  let height = 250;
+  if (layout === 'list') height = 75 + data.length * 35;
+  else if (layout === 'pie') height = Math.max(300, 100 + data.length * 35);
+  else if (layout === 'modern-bar') height = 85 + data.length * 40;
+  else if (layout === 'soft-cards') height = 65 + Math.ceil(data.length / (options.cardsPerRow || 2)) * 65;
+  else if (layout === 'compact') height = 110 + Math.ceil(data.length / 3) * 25;
+  else if (layout === 'minimalist-line') height = 70;
+
+  const hoverStyle = options.pieShowHoverLabels ? `
+    .segment-group { cursor: pointer; }
+    .segment-group .segment { transition: all 0.3s ease; }
+    .segment-group:hover .segment { opacity: 1; transform: scale(1.03); transform-origin: center; filter: brightness(1.2) ${options.showGlow ? 'drop-shadow(0 0 8px currentColor)' : ''}; }
+    .hover-label { opacity: 0; visibility: hidden; transition: opacity 0.3s ease; pointer-events: none; }
+    .segment-group:hover .hover-label { opacity: 1; visibility: visible; }
+    ${options.pieLabelPosition === 'inside' ? `
+      .default-hole-text { transition: opacity 0.3s ease; pointer-events: none; }
+      .segment-group:hover ~ .default-hole-text { opacity: 0; }
+    ` : ''}
+  ` : '';
 
   let content = "";
   if (layout === 'compact') content = generateCompactLayout(data, elementRadius, speed, options);
@@ -74,7 +80,7 @@ export function generateLanguageSvg(languages: any[], options: SvgOptions) {
   else if (layout === 'list') content = generateListLayout(data, elementRadius, speed, options);
   else if (layout === 'modern-bar') content = generateModernBarLayout(data, elementRadius, speed, options);
   else if (layout === 'soft-cards') content = generateSoftCardsLayout(data, elementRadius, speed, options);
-  else if (layout === 'minimalist-line') content = generateMinimalistLineLayout(data, speed, elementRadius);
+  else if (layout === 'minimalist-line') content = generateMinimalistLineLayout(data, speed, elementRadius, options);
 
   const glowFilter = options.showGlow ? `
       <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
@@ -110,6 +116,7 @@ export function generateLanguageSvg(languages: any[], options: SvgOptions) {
         @keyframes growPie { from { stroke-dashoffset: var(--dash-offset); } to { stroke-dashoffset: 0; } }
         .animate { animation: fadeIn ${0.5 / speed}s ease forwards; }
         .bar-animate { transform-origin: left; animation: scaleIn ${0.8 / speed}s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        ${hoverStyle}
       </style>
       <rect x="0.5" y="0.5" width="${width - 1}" height="${height - 1}" rx="${blockRadius}" fill="${bgFill}" stroke="#${borderColor}" stroke-opacity="${options.hide_border ? 0 : 1}"/>
       ${layout !== 'minimalist-line' ? `<text x="25" y="35" class="header animate">Most Used Languages</text>` : ""}
@@ -185,21 +192,52 @@ function generatePieLayout(data: any[], radius: number, speed: number, options: 
     const rotation = (currentOffset / circumference) * 360 - 90 + startAngle;
     const glowAttr = options.showGlow ? 'filter="url(#glow)"' : '';
     
-    chart += `<circle cx="${centerX}" cy="${centerY}" r="${actualRadius}" fill="transparent" stroke="${lang.color}" 
-      stroke-width="${strokeWidth}" stroke-dasharray="${sliceLength} ${circumference}" 
-      transform="rotate(${rotation} ${centerX} ${centerY})" ${glowAttr} 
-      stroke-linecap="${radius > 0 ? 'round' : 'butt'}"
-      style="--dash-offset: ${sliceLength}; animation: growPie ${1 / speed}s ease forwards; animation-delay: ${i * 0.1 / speed}s" stroke-dashoffset="${sliceLength}"/>`;
+    // Label positioning
+    let lx = centerX;
+    let ly = centerY;
+    let anchor = "middle";
 
-    const ly = 90 + i * 35;
+    if (options.pieLabelPosition === 'floating') {
+      const midAngle = (rotation + (sliceLength / circumference) * 180) * (Math.PI / 180);
+      const labelRadius = actualRadius + strokeWidth / 2 + 20;
+      lx = centerX + Math.cos(midAngle) * labelRadius;
+      ly = centerY + Math.sin(midAngle) * labelRadius;
+      anchor = lx > centerX ? "start" : "end";
+    }
+
+    chart += `
+      <g class="segment-group" color="${lang.color}">
+        <circle class="segment" cx="${centerX}" cy="${centerY}" r="${actualRadius}" fill="transparent" stroke="${lang.color}" 
+          stroke-width="${strokeWidth}" stroke-dasharray="${sliceLength} ${circumference}" 
+          transform="rotate(${rotation} ${centerX} ${centerY})" ${glowAttr} 
+          stroke-linecap="${radius > 0 ? 'round' : 'butt'}"
+          style="--dash-offset: ${sliceLength}; animation: growPie ${1 / speed}s ease forwards; animation-delay: ${i * 0.1 / speed}s" stroke-dashoffset="${sliceLength}"/>
+        
+        ${options.pieShowHoverLabels ? `
+          <g class="hover-label">
+            <text x="${lx}" y="${ly - 5}" fill="${lang.color}" text-anchor="${anchor}" font-weight="700" font-size="14">${lang.name}</text>
+            <text x="${lx}" y="${ly + 12}" fill="${lang.color}" text-anchor="${anchor}" font-size="11" opacity="0.8">${lang.percentage.toFixed(1)}%</text>
+          </g>
+        ` : ""}
+      </g>`;
+
+    const legendY = 90 + i * 35;
     legend += `
       <g class="animate" style="animation-delay: ${0.5 + i * 0.1 / speed}s">
-        <circle cx="280" cy="${ly - 4}" r="6" fill="${lang.color}" ${glowAttr}/>
-        <text x="300" y="${ly}" class="lang-name">${lang.name} <tspan class="percentage">${lang.percentage.toFixed(1)}%</tspan></text>
+        <circle cx="280" cy="${legendY - 4}" r="6" fill="${lang.color}" ${glowAttr}/>
+        <text x="300" y="${legendY}" class="lang-name">${lang.name} <tspan class="percentage">${lang.percentage.toFixed(1)}%</tspan></text>
       </g>`;
     currentOffset += sliceLength;
   });
-  return chart + legend;
+
+  const defaultHole = options.pieShowHoverLabels && options.pieLabelPosition === 'inside' ? `
+    <g class="default-hole-text" pointer-events="none">
+      <text x="${centerX}" y="${centerY - 5}" fill="#888" text-anchor="middle" font-weight="600" font-size="10" opacity="0.5">TOP</text>
+      <text x="${centerX}" y="${centerY + 10}" fill="#888" text-anchor="middle" font-weight="700" font-size="12" opacity="0.8">LANGS</text>
+    </g>
+  ` : "";
+
+  return chart + defaultHole + legend;
 }
 
 function generateModernBarLayout(data: any[], radius: number, speed: number, options: SvgOptions) {

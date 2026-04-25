@@ -351,6 +351,35 @@ export function BuilderSidebar() {
                                     className="w-full h-1.5 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
                                   />
                                 </div>
+
+                                <div className="pt-2 space-y-3">
+                                  <div className="flex items-center justify-between">
+                                    <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Enable Hover Labels</label>
+                                    <label className="relative inline-flex items-center cursor-pointer">
+                                      <input 
+                                        type="checkbox" 
+                                        className="sr-only peer" 
+                                        checked={store.pieShowHoverLabels}
+                                        onChange={(e) => store.setLanguageOption('pieShowHoverLabels', e.target.checked)}
+                                      />
+                                      <div className="w-9 h-5 bg-slate-200 dark:bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500"></div>
+                                    </label>
+                                  </div>
+
+                                  {store.pieShowHoverLabels && (
+                                    <div className="flex items-center justify-between">
+                                      <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Label Position</label>
+                                      <select
+                                        value={store.pieLabelPosition}
+                                        onChange={(e) => store.setLanguageOption('pieLabelPosition', e.target.value)}
+                                        className="text-[10px] bg-slate-100 dark:bg-zinc-800 border-none rounded p-1 text-slate-700 dark:text-slate-300 focus:ring-1 focus:ring-indigo-500"
+                                      >
+                                        <option value="inside">Center (Hole)</option>
+                                        <option value="floating">Floating Tooltip</option>
+                                      </select>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                             )}
 
