@@ -60,7 +60,7 @@ export function BuilderSidebar() {
               <input
                 type="text"
                 placeholder="e.g. torvalds"
-                value={store.username}
+                value={store.username || ""}
                 onChange={(e) => store.setUsername(e.target.value)}
                 className="w-full px-4 py-2 bg-white dark:bg-zinc-950 border border-slate-300 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-sm"
               />
@@ -282,7 +282,7 @@ export function BuilderSidebar() {
                         <input
                           type="text"
                           placeholder="React, Figma, Docker..."
-                          value={skillInput}
+                          value={skillInput || ""}
                           onChange={(e) => setSkillInput(e.target.value)}
                           className="w-full px-4 py-2.5 bg-white dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm transition-all"
                           onKeyDown={(e) => {
@@ -541,14 +541,14 @@ export function BuilderSidebar() {
                         <input
                           type="color"
                           className="w-8 h-8 p-0 border-0 rounded-lg cursor-pointer bg-transparent"
-                          value={`#${store[colorSetting.id as keyof typeof store]}`}
+                          value={`#${store[colorSetting.id as keyof typeof store] || "000000"}`}
                           onChange={(e) => store.setCustomColor(colorSetting.id as any, e.target.value)}
                         />
                         <input
                           type="text"
                           maxLength={6}
                           className="w-14 px-1.5 py-1 text-[10px] font-mono bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-white/10 rounded uppercase text-center"
-                          value={store[colorSetting.id as keyof typeof store] as string}
+                          value={(store[colorSetting.id as keyof typeof store] as string) || ""}
                           onChange={(e) => store.setCustomColor(colorSetting.id as any, e.target.value)}
                         />
                       </div>
