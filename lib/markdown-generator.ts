@@ -20,16 +20,13 @@ export function generateMarkdown(state: BuilderState): MarkdownResult {
     showStreak,
     showTrophies,
     showTopRepos,
-    includeContributions,
-    languageLimit,
-    languageLayout,
-    languageDisplayType,
+    showLanguages,
+    showBadges,
+    analyticsConfig,
+    badgesConfig,
     manualSkills,
     hiddenLanguages,
     hiddenSkills,
-    badgeColorMode,
-    badgeSize,
-    showCustomLanguages,
     theme,
     customBgColor,
     customTextColor,
@@ -37,22 +34,7 @@ export function generateMarkdown(state: BuilderState): MarkdownResult {
     customBorderColor,
     hideBorder,
     layout,
-    blockRadius,
-    elementRadius,
-    showGlow,
-    animationSpeed,
-    donutHoleSize,
-    startAngle,
-    barHeight,
-    lineThickness,
-    cardsPerRow,
-    shadowDepth,
-    bgType,
-    bgColor2,
     widgetOrder,
-    pieShowHoverLabels,
-    pieLabelPosition,
-    pieHideLegend
   } = state;
 
   let themeParams = `&theme=${theme}`;
@@ -71,16 +53,16 @@ export function generateMarkdown(state: BuilderState): MarkdownResult {
   
   // Dynamic Widget Generation based on order
   widgetOrder.forEach((id) => {
-    if (id === 'languages' && showCustomLanguages && languageDisplayType === 'analytics') {
-      const advancedParams = `&blockRadius=${blockRadius}&elementRadius=${elementRadius}&showGlow=${showGlow}&animationSpeed=${animationSpeed}&donutHoleSize=${donutHoleSize}&startAngle=${startAngle}&barHeight=${barHeight}&lineThickness=${lineThickness}&cardsPerRow=${cardsPerRow}&shadowDepth=${shadowDepth}&bgType=${bgType}&bgColor2=${bgColor2}&pieShowHoverLabels=${pieShowHoverLabels}&pieLabelPosition=${pieLabelPosition}&pieHideLegend=${pieHideLegend}`;
-      widgets += `<div align="center">\n  <img src="${baseUrl}/api/github-languages?username=${username}&include_contribs=${includeContributions}&limit=${languageLimit}&layout=${languageLayout}${themeParams}${advancedParams}" alt="Detailed Language Analytics" />\n</div>\n\n`;
+    if (id === 'languages' && showLanguages) {
+      const advancedParams = `&blockRadius=${analyticsConfig.blockRadius}&elementRadius=${analyticsConfig.elementRadius}&showGlow=${analyticsConfig.showGlow}&animationSpeed=${analyticsConfig.animationSpeed}&donutHoleSize=${analyticsConfig.donutHoleSize}&startAngle=${analyticsConfig.startAngle}&barHeight=${analyticsConfig.barHeight}&lineThickness=${analyticsConfig.lineThickness}&cardsPerRow=${analyticsConfig.cardsPerRow}&shadowDepth=${analyticsConfig.shadowDepth}&bgType=${analyticsConfig.bgType}&bgColor2=${analyticsConfig.bgColor2}&pieShowHoverLabels=${analyticsConfig.pieShowHoverLabels}&pieLabelPosition=${analyticsConfig.pieLabelPosition}&pieHideLegend=${analyticsConfig.pieHideLegend}`;
+      widgets += `<div align="center">\n  <img src="${baseUrl}/api/github-languages?username=${username}&include_contribs=${analyticsConfig.includeContributions}&limit=${analyticsConfig.languageLimit}&layout=${analyticsConfig.layout}${themeParams}${advancedParams}" alt="Detailed Language Analytics" />\n</div>\n\n`;
     }
 
-    if (id === 'badges' && showCustomLanguages && languageDisplayType === 'badges') {
+    if (id === 'badges' && showBadges) {
       widgets += `<div align="center">\n`;
       manualSkills.filter(s => !hiddenSkills.includes(s)).forEach(skill => {
-        const color = badgeColorMode === 'brand' ? '' : `&color=${customIconColor}`;
-        widgets += `  <img src="${baseUrl}/api/badge?name=${encodeURIComponent(skill)}${color}&size=${badgeSize}" alt="${skill}" />\n`;
+        const color = badgesConfig.badgeColorMode === 'brand' ? '' : `&color=${customIconColor}`;
+        widgets += `  <img src="${baseUrl}/api/badge?name=${encodeURIComponent(skill)}${color}&size=${badgesConfig.badgeSize}" alt="${skill}" />\n`;
       });
       widgets += `</div>\n\n`;
     }

@@ -3,24 +3,10 @@ import { persist } from 'zustand/middleware';
 
 export type StatTheme = 'default' | 'dark' | 'radical' | 'tokyonight' | 'gruvbox' | 'synthwave' | 'dracula' | 'custom';
 
-export interface BuilderState {
-  username: string;
-  showStats: boolean;
-  showStreak: boolean;
-  showTrophies: boolean;
-  showTopRepos: boolean;
-  showCustomLanguages: boolean;
-  activeWidgetTab: 'analytics' | 'badges' | 'stats' | 'streak' | 'trophies';
-  languageDisplayType: 'analytics' | 'badges';
-  manualSkills: string[];
-  hiddenLanguages: string[];
-  hiddenSkills: string[];
-  badgeColorMode: 'brand' | 'custom';
-  badgeSize: 'sm' | 'md';
-  autoLanguages: { name: string, color: string, percentage: number }[];
+export interface AnalyticsConfig {
   includeContributions: boolean;
   languageLimit: number;
-  languageLayout: 'compact' | 'pie' | 'list' | 'modern-bar' | 'soft-cards' | 'minimalist-line';
+  layout: 'compact' | 'pie' | 'list' | 'modern-bar' | 'soft-cards' | 'minimalist-line';
   blockRadius: number;
   elementRadius: number;
   showGlow: boolean;
@@ -31,14 +17,40 @@ export interface BuilderState {
   lineThickness: number;
   cardsPerRow: number;
   shadowDepth: number;
-  bgType: 'solid' | 'gradient';
-  bgColor2: string;
-  widgetOrder: string[];
   pieShowHoverLabels: boolean;
   pieLabelPosition: 'inside' | 'floating';
   pieHideLegend: boolean;
+  bgType: 'solid' | 'gradient';
+  bgColor2: string;
+}
 
-  // Customization
+export interface BadgesConfig {
+  blockRadius: number;
+  elementRadius: number;
+  badgeSize: 'sm' | 'md';
+  badgeColorMode: 'brand' | 'custom';
+}
+
+export interface BuilderState {
+  username: string;
+  showStats: boolean;
+  showStreak: boolean;
+  showTrophies: boolean;
+  showTopRepos: boolean;
+  showLanguages: boolean; // Renamed from showCustomLanguages
+  showBadges: boolean;    // New separate toggle for badges
+  activeWidgetTab: 'analytics' | 'badges' | 'stats' | 'streak' | 'trophies';
+  
+  analyticsConfig: AnalyticsConfig;
+  badgesConfig: BadgesConfig;
+
+  manualSkills: string[];
+  hiddenLanguages: string[];
+  hiddenSkills: string[];
+  autoLanguages: { name: string, color: string, percentage: number }[];
+  widgetOrder: string[];
+
+  // Global Theme
   theme: StatTheme;
   customBgColor: string;
   customTextColor: string;
@@ -53,18 +65,18 @@ export interface BuilderState {
   setCustomColor: (key: keyof Pick<BuilderState, 'customBgColor' | 'customTextColor' | 'customIconColor' | 'customBorderColor'>, color: string) => void;
   setHideBorder: (hide: boolean) => void;
   setLayout: (layout: 'stacked' | 'grid') => void;
-  setLanguageOption: (key: 'includeContributions' | 'languageLimit' | 'languageLayout' | 'blockRadius' | 'elementRadius' | 'showGlow' | 'animationSpeed' | 'donutHoleSize' | 'startAngle' | 'barHeight' | 'lineThickness' | 'cardsPerRow' | 'shadowDepth' | 'bgType' | 'bgColor2' | 'pieShowHoverLabels' | 'pieLabelPosition' | 'pieHideLegend', value: any) => void;
   setWidgetOrder: (order: string[]) => void;
-  setLanguageDisplayType: (type: 'analytics' | 'badges') => void;
+  
+  setAnalyticsOption: (key: keyof AnalyticsConfig, value: any) => void;
+  setBadgesOption: (key: keyof BadgesConfig, value: any) => void;
+  
   addManualSkill: (skill: string) => void;
   removeManualSkill: (skill: string) => void;
   toggleLanguageVisibility: (lang: string) => void;
   toggleSkillVisibility: (skill: string) => void;
-  setBadgeColorMode: (mode: 'brand' | 'custom') => void;
-  setBadgeSize: (size: 'sm' | 'md') => void;
   setAutoLanguages: (langs: { name: string, color: string, percentage: number }[]) => void;
   setActiveWidgetTab: (tab: 'analytics' | 'badges' | 'stats' | 'streak' | 'trophies') => void;
-  toggleModule: (module: 'showStats' | 'showStreak' | 'showTrophies' | 'showTopRepos' | 'showCustomLanguages') => void;
+  toggleModule: (module: 'showStats' | 'showStreak' | 'showTrophies' | 'showTopRepos' | 'showLanguages' | 'showBadges') => void;
 }
 
 export const useBuilderStore = create<BuilderState>()(
@@ -75,34 +87,43 @@ export const useBuilderStore = create<BuilderState>()(
       showStreak: false,
       showTrophies: false,
       showTopRepos: false,
-      showCustomLanguages: false,
+      showLanguages: true,
+      showBadges: true,
       activeWidgetTab: 'analytics',
-      languageDisplayType: 'analytics',
+      
+      analyticsConfig: {
+        includeContributions: true,
+        languageLimit: 5,
+        layout: 'compact',
+        blockRadius: 20,
+        elementRadius: 10,
+        showGlow: true,
+        animationSpeed: 1,
+        donutHoleSize: 60,
+        startAngle: 0,
+        barHeight: 18,
+        lineThickness: 6,
+        cardsPerRow: 2,
+        shadowDepth: 5,
+        pieShowHoverLabels: true,
+        pieLabelPosition: 'inside',
+        pieHideLegend: false,
+        bgType: 'solid',
+        bgColor2: 'f1f5f9',
+      },
+
+      badgesConfig: {
+        blockRadius: 20,
+        elementRadius: 8,
+        badgeSize: 'md',
+        badgeColorMode: 'brand',
+      },
+
       manualSkills: [],
       hiddenLanguages: [],
       hiddenSkills: [],
-      badgeColorMode: 'brand',
-      badgeSize: 'md',
       autoLanguages: [],
-      includeContributions: true,
-      languageLimit: 5,
-      languageLayout: 'compact',
-      blockRadius: 20,
-      elementRadius: 10,
-      showGlow: true,
-      animationSpeed: 1,
-      donutHoleSize: 60,
-      startAngle: 0,
-      barHeight: 18,
-      lineThickness: 6,
-      cardsPerRow: 2,
-      shadowDepth: 5,
-      bgType: 'solid',
-      bgColor2: 'f1f5f9',
       widgetOrder: ['stats', 'streak', 'trophies', 'languages', 'badges'],
-      pieShowHoverLabels: true,
-      pieLabelPosition: 'inside',
-      pieHideLegend: false,
 
       theme: 'default',
       customBgColor: '000000',
@@ -113,17 +134,25 @@ export const useBuilderStore = create<BuilderState>()(
       layout: 'grid',
 
       setUsername: (username: string) => set({ username }),
-      toggleModule: (module: 'showStats' | 'showStreak' | 'showTrophies' | 'showTopRepos' | 'showCustomLanguages') => 
+      toggleModule: (module) => 
         set((state) => ({ [module]: !state[module] })),
       setTheme: (theme: StatTheme) => set({ theme }),
-      setCustomColor: (key: keyof Pick<BuilderState, 'customBgColor' | 'customTextColor' | 'customIconColor' | 'customBorderColor'>, color: string) => 
-        set({ [key]: color.replace('#', '') }), // Store without #
+      setCustomColor: (key, color) => 
+        set({ [key]: color.replace('#', '') }),
       setHideBorder: (hideBorder: boolean) => set({ hideBorder }),
       setLayout: (layout: 'stacked' | 'grid') => set({ layout }),
       setWidgetOrder: (widgetOrder: string[]) => set({ widgetOrder }),
-      setLanguageOption: (key: keyof Pick<BuilderState, 'includeContributions' | 'languageLimit' | 'languageLayout' | 'borderRadius' | 'showGlow' | 'animationSpeed' | 'donutHoleSize' | 'startAngle' | 'barHeight' | 'cardsPerRow'>, value: any) => 
-        set({ [key]: value }),
-      setLanguageDisplayType: (languageDisplayType) => set({ languageDisplayType }),
+      
+      setAnalyticsOption: (key, value) => 
+        set((state) => ({
+          analyticsConfig: { ...state.analyticsConfig, [key]: value }
+        })),
+      
+      setBadgesOption: (key, value) => 
+        set((state) => ({
+          badgesConfig: { ...state.badgesConfig, [key]: value }
+        })),
+
       addManualSkill: (skill) => set((state) => ({
         manualSkills: state.manualSkills.includes(skill) ? state.manualSkills : [...state.manualSkills, skill]
       })),
@@ -140,8 +169,6 @@ export const useBuilderStore = create<BuilderState>()(
           ? state.hiddenSkills.filter(s => s !== skill)
           : [...state.hiddenSkills, skill]
       })),
-      setBadgeColorMode: (badgeColorMode) => set({ badgeColorMode }),
-      setBadgeSize: (badgeSize) => set({ badgeSize }),
       setAutoLanguages: (autoLanguages) => set({ autoLanguages }),
       setActiveWidgetTab: (activeWidgetTab) => set({ activeWidgetTab }),
     }),

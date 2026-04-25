@@ -6,15 +6,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export function SkillBadgeGrid() {
+  const store = useBuilderStore();
   const { 
     manualSkills, 
     autoLanguages, 
     hiddenLanguages, 
     hiddenSkills, 
-    badgeColorMode, 
-    badgeSize,
+    badgesConfig,
     customIconColor
-  } = useBuilderStore();
+  } = store;
+
+  const { badgeColorMode, badgeSize, elementRadius } = badgesConfig;
 
   const visibleAutoLangs = autoLanguages.filter(l => !hiddenLanguages.includes(l.name));
   const visibleManualSkills = manualSkills.filter(s => !hiddenSkills.includes(s));
@@ -51,12 +53,13 @@ export function SkillBadgeGrid() {
               transition={{ type: "spring", stiffness: 500, damping: 30 }}
             >
               <img 
-                src={`${baseUrl}/api/badge?name=${encodeURIComponent(skill.name)}&color=${color}&size=${badgeSize}`} 
+                src={`${baseUrl}/api/badge?name=${encodeURIComponent(skill.name)}&color=${color}&size=${badgeSize}&radius=${elementRadius}`} 
                 alt={skill.name}
                 className={cn(
                   "shadow-sm hover:shadow-md transition-shadow duration-200 cursor-default",
                   badgeSize === 'sm' ? "h-[26px]" : "h-[32px]"
                 )}
+                style={{ borderRadius: `${elementRadius}px` }}
               />
             </motion.div>
           );

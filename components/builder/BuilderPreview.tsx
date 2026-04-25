@@ -23,7 +23,7 @@ export function BuilderPreview() {
 
     const fetchData = async () => {
       try {
-        const res = await fetch(`/api/github-user-data?username=${store.username}&include_contribs=${store.includeContributions}`);
+        const res = await fetch(`/api/github-user-data?username=${store.username}&include_contribs=${store.analyticsConfig.includeContributions}`);
         if (res.ok) {
           const data = await res.json();
           store.setAutoLanguages(data);
@@ -33,9 +33,13 @@ export function BuilderPreview() {
       }
     };
 
-    const timer = setTimeout(fetchData, 1000);
+    const fetchDataOnce = () => {
+      fetchData();
+    };
+
+    const timer = setTimeout(fetchDataOnce, 1000);
     return () => clearTimeout(timer);
-  }, [store.username, store.includeContributions]);
+  }, [store.username, store.analyticsConfig.includeContributions]);
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(full);
@@ -55,7 +59,6 @@ export function BuilderPreview() {
 
   return (
     <div className="w-full h-full flex flex-col bg-slate-50 dark:bg-zinc-950/50">
-      {/* Toolbar omitted for brevity - assuming it stays the same */}
       <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-white/10 bg-white dark:bg-zinc-900/50 backdrop-blur-md">
         <div className="flex gap-2 p-1 bg-slate-100 dark:bg-zinc-950 rounded-lg">
           <button
@@ -102,11 +105,11 @@ export function BuilderPreview() {
                     <div className="flex flex-col gap-8">
                       <AnimatePresence mode="popLayout">
                         {store.widgetOrder.map((id) => {
-                          const isVisible = id === 'languages' ? store.showCustomLanguages && store.languageDisplayType === 'analytics' : 
-                                          id === 'badges' ? store.showCustomLanguages && store.languageDisplayType === 'badges' :
-                                          id === 'stats' ? store.showStats :
-                                          id === 'streak' ? store.showStreak :
-                                          id === 'trophies' ? store.showTrophies : false;
+                          const isVisible = id === 'languages' ? store.showLanguages : 
+                                           id === 'badges' ? store.showBadges :
+                                           id === 'stats' ? store.showStats :
+                                           id === 'streak' ? store.showStreak :
+                                           id === 'trophies' ? store.showTrophies : false;
 
                           if (!isVisible) return null;
 
@@ -131,7 +134,7 @@ export function BuilderPreview() {
                                 <div className="flex justify-center w-full">
                                   <object 
                                     type="image/svg+xml"
-                                    data={`${baseUrl}/api/github-languages?username=${store.username}&include_contribs=${store.includeContributions}&limit=${store.languageLimit}&layout=${store.languageLayout}${themeParams}&blockRadius=${store.blockRadius}&elementRadius=${store.elementRadius}&showGlow=${store.showGlow}&animationSpeed=${store.animationSpeed}&donutHoleSize=${store.donutHoleSize}&startAngle=${store.startAngle}&barHeight=${store.barHeight}&lineThickness=${store.lineThickness}&cardsPerRow=${store.cardsPerRow}&shadowDepth=${store.shadowDepth}&bgType=${store.bgType}&bgColor2=${store.bgColor2}&pieShowHoverLabels=${store.pieShowHoverLabels}&pieLabelPosition=${store.pieLabelPosition}&pieHideLegend=${store.pieHideLegend}`}
+                                    data={`${baseUrl}/api/github-languages?username=${store.username}&include_contribs=${store.analyticsConfig.includeContributions}&limit=${store.analyticsConfig.languageLimit}&layout=${store.analyticsConfig.layout}${themeParams}&blockRadius=${store.analyticsConfig.blockRadius}&elementRadius=${store.analyticsConfig.elementRadius}&showGlow=${store.analyticsConfig.showGlow}&animationSpeed=${store.analyticsConfig.animationSpeed}&donutHoleSize=${store.analyticsConfig.donutHoleSize}&startAngle=${store.analyticsConfig.startAngle}&barHeight=${store.analyticsConfig.barHeight}&lineThickness=${store.analyticsConfig.lineThickness}&cardsPerRow=${store.analyticsConfig.cardsPerRow}&shadowDepth=${store.analyticsConfig.shadowDepth}&bgType=${store.analyticsConfig.bgType}&bgColor2=${store.analyticsConfig.bgColor2}&pieShowHoverLabels=${store.analyticsConfig.pieShowHoverLabels}&pieLabelPosition=${store.analyticsConfig.pieLabelPosition}&pieHideLegend=${store.analyticsConfig.pieHideLegend}`}
                                     className="max-w-full pointer-events-auto"
                                     style={{ height: 'auto' }}
                                   >
@@ -170,7 +173,6 @@ export function BuilderPreview() {
           )}
         </div>
       </div>
-      
     </div>
   );
 }
