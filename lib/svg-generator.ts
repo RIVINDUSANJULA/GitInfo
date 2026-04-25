@@ -29,7 +29,7 @@ const THEMES: Record<string, any> = {
 
 export function generateLanguageSvg(languages: any[], options: SvgOptions) {
   if (!languages || languages.length === 0) {
-    return generateEmptyStateSvg(options);
+    return createEmptyStateSvg(options);
   }
 
   const theme = THEMES[options.theme || 'default'] || THEMES.default;
@@ -234,7 +234,7 @@ function generateMinimalistLineLayout(data: any[], speed: number) {
   return barSegments;
 }
 
-function generateEmptyStateSvg(options: SvgOptions) {
+function createEmptyStateSvg(options: SvgOptions) {
   const theme = THEMES[options.theme || 'default'] || THEMES.default;
   const bg = options.bg_color || theme.bg;
   const radius = options.borderRadius ?? 20;
