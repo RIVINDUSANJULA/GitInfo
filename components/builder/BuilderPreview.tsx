@@ -128,7 +128,16 @@ export function BuilderPreview() {
                               className="w-full flex justify-center"
                             >
                               {id === 'languages' && (
-                                <div dangerouslySetInnerHTML={{ __html: `<img src="${baseUrl}/api/github-languages?username=${store.username}&include_contribs=${store.includeContributions}&limit=${store.languageLimit}&layout=${store.languageLayout}${themeParams}&blockRadius=${store.blockRadius}&elementRadius=${store.elementRadius}&showGlow=${store.showGlow}&animationSpeed=${store.animationSpeed}&donutHoleSize=${store.donutHoleSize}&startAngle=${store.startAngle}&barHeight=${store.barHeight}&lineThickness=${store.lineThickness}&cardsPerRow=${store.cardsPerRow}&shadowDepth=${store.shadowDepth}&bgType=${store.bgType}&bgColor2=${store.bgColor2}&pieShowHoverLabels=${store.pieShowHoverLabels}&pieLabelPosition=${store.pieLabelPosition}&pieHideLegend=${store.pieHideLegend}" alt="Languages" />` }} />
+                                <div className="flex justify-center w-full">
+                                  <object 
+                                    type="image/svg+xml"
+                                    data={`${baseUrl}/api/github-languages?username=${store.username}&include_contribs=${store.includeContributions}&limit=${store.languageLimit}&layout=${store.languageLayout}${themeParams}&blockRadius=${store.blockRadius}&elementRadius=${store.elementRadius}&showGlow=${store.showGlow}&animationSpeed=${store.animationSpeed}&donutHoleSize=${store.donutHoleSize}&startAngle=${store.startAngle}&barHeight=${store.barHeight}&lineThickness=${store.lineThickness}&cardsPerRow=${store.cardsPerRow}&shadowDepth=${store.shadowDepth}&bgType=${store.bgType}&bgColor2=${store.bgColor2}&pieShowHoverLabels=${store.pieShowHoverLabels}&pieLabelPosition=${store.pieLabelPosition}&pieHideLegend=${store.pieHideLegend}`}
+                                    className="max-w-full pointer-events-auto"
+                                    style={{ height: 'auto' }}
+                                  >
+                                    Languages
+                                  </object>
+                                </div>
                               )}
                               {id === 'badges' && <SkillBadgeGrid />}
                               {id === 'stats' && (

@@ -69,10 +69,9 @@ export function generateLanguageSvg(languages: any[], options: SvgOptions) {
 
   const hoverStyle = options.pieShowHoverLabels ? `
     .segment-group { cursor: pointer; pointer-events: all; }
-    .segment-group .segment { transition: all 0.3s ease-in-out; }
+    .segment-group .segment { transition: all 0.3s ease-in-out; transform-box: fill-box; transform-origin: center; }
     .segment-group:hover .segment { 
       transform: scale(1.05); 
-      transform-origin: center; 
       filter: brightness(1.2) ${options.showGlow ? 'drop-shadow(0 0 10px currentColor)' : ''} !important; 
     }
     .hover-label { 
@@ -84,10 +83,11 @@ export function generateLanguageSvg(languages: any[], options: SvgOptions) {
     .segment-group:hover .hover-label { 
       opacity: 1 !important; 
       visibility: visible !important; 
+      transform: translateY(-2px);
     }
     ${options.pieLabelPosition === 'inside' ? `
-      .default-hole-text { transition: opacity 0.2s ease-in-out; pointer-events: none; }
-      .segment-group:hover ~ .default-hole-text { opacity: 0 !important; }
+      .default-hole-text { transition: opacity 0.2s ease-in-out; pointer-events: none; opacity: 1; }
+      .segment-group:hover ~ .default-hole-text { opacity: 0 !important; visibility: hidden !important; }
     ` : ''}
   ` : '';
 
@@ -258,17 +258,18 @@ function generatePieLayout(data: any[], radius: number, speed: number, options: 
       lx = centerX + Math.cos((midAngle * Math.PI) / 180) * labelRadius;
       ly = centerY + Math.sin((midAngle * Math.PI) / 180) * labelRadius;
       anchor = lx > centerX ? "start" : "end";
+      anchor = Math.cos((midAngle * Math.PI) / 180) > 0 ? "start" : "end";
     }
 
     chart += `
       <g class="segment-group" id="group-${safeId}" color="${lang.color}">
         <path class="segment" d="${d}" fill="${lang.color}" ${glowAttr} 
-          style="opacity: 0; animation: fadeIn ${0.5 / speed}s ease forwards; animation-delay: ${i * 0.1 / speed}s">
+          style="opacity: 1; transform: scale(1); transition: all 0.3s ease-in-out;">
           <title>${lang.name}: ${lang.percentage.toFixed(1)}%</title>
         </path>
         
         ${options.pieShowHoverLabels ? `
-          <g class="hover-label" pointer-events="none">
+          <g class="hover-label" pointer-events="none" style="opacity: 0; visibility: hidden;">
             <text x="${lx}" y="${ly - 5}" fill="${lang.color}" text-anchor="${anchor}" font-weight="800" font-size="16" font-family="'Segoe UI', Ubuntu, Sans-Serif">${lang.name}</text>
             <text x="${lx}" y="${ly + 12}" fill="${lang.color}" text-anchor="${anchor}" font-weight="600" font-size="12" font-family="'Segoe UI', Ubuntu, Sans-Serif" opacity="0.8">${lang.percentage.toFixed(1)}%</text>
           </g>
@@ -280,16 +281,16 @@ function generatePieLayout(data: any[], radius: number, speed: number, options: 
       legend += `
         <g class="animate" id="legend-${safeId}" style="animation-delay: ${0.5 + i * 0.1 / speed}s">
           <circle cx="280" cy="${legendY - 4}" r="6" fill="${lang.color}" ${glowAttr}/>
-          <text x="300" y="${legendY}" class="lang-name" font-weight="500">${lang.name} <tspan class="percentage" font-weight="400">${lang.percentage.toFixed(1)}%</tspan></text>
+          <text x="300" y="${legendY}" class="lang-name" font-weight="500" font-family="'Segoe UI', Ubuntu, Sans-Serif">${lang.name} <tspan class="percentage" font-weight="400">${lang.percentage.toFixed(1)}%</tspan></text>
         </g>`;
     }
     currentAngle = endAngle;
   });
 
   const defaultHole = options.pieShowHoverLabels && options.pieLabelPosition === 'inside' ? `
-    <g class="default-hole-text" pointer-events="none">
-      <text x="${centerX}" y="${centerY - 5}" fill="#888" text-anchor="middle" font-weight="600" font-size="10" opacity="0.4">TOP</text>
-      <text x="${centerX}" y="${centerY + 10}" fill="#888" text-anchor="middle" font-weight="800" font-size="13" opacity="0.7">LANGUAGES</text>
+    <g class="default-hole-text" pointer-events="none" style="opacity: 1; transition: opacity 0.2s ease-in-out;">
+      <text x="${centerX}" y="${centerY - 5}" fill="#888" text-anchor="middle" font-weight="600" font-size="10" opacity="0.4" font-family="'Segoe UI', Ubuntu, Sans-Serif">TOP</text>
+      <text x="${centerX}" y="${centerY + 10}" fill="#888" text-anchor="middle" font-weight="800" font-size="13" opacity="0.7" font-family="'Segoe UI', Ubuntu, Sans-Serif">LANGUAGES</text>
     </g>
   ` : "";
 
