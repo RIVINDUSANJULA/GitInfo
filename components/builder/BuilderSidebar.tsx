@@ -1,10 +1,10 @@
 "use client";
 
 import { useBuilderStore, StatTheme } from "@/store/useBuilderStore";
-import { User, Palette, Settings, Layout, Check, ChevronDown, Code2, BarChart3, Tags, Zap, Trophy, PieChart, GripVertical, Eye, EyeOff, Boxes, Layers } from "lucide-react";
+import { User, Palette, Settings, Layout, Check, ChevronDown, Code2, BarChart3, Tags, Zap, Trophy, PieChart, GripVertical, Eye, EyeOff, Boxes, Layers, Sparkles, Shield, Diamond } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence, Reorder } from "framer-motion";
+import { motion, AnimatePresence, Reorder, LayoutGroup } from "framer-motion";
 
 const THEMES: { id: StatTheme; name: string }[] = [
   { id: "default", name: "Default" },
@@ -274,178 +274,225 @@ export function BuilderSidebar() {
           <AnimatePresence>
             {openSection === 'badges' && (
               <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="overflow-hidden border-t border-slate-200 dark:border-white/10">
-                <div className="p-4 space-y-6 bg-white dark:bg-zinc-950/20">
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5">Add Manual Skill</label>
-                      <div className="relative">
-                        <input
-                          type="text"
-                          placeholder="React, Figma, Docker..."
-                          value={skillInput || ""}
-                          onChange={(e) => setSkillInput(e.target.value)}
-                          className="w-full px-4 py-2.5 bg-white dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm transition-all"
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              handleAddSkill();
-                            }
-                          }}
-                        />
-                        <button 
-                          onClick={handleAddSkill}
-                          className="absolute right-2 top-1.5 p-1 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors"
-                        >
-                          <Check className="w-4 h-4" />
-                        </button>
+                <LayoutGroup>
+                  <div className="p-4 space-y-6 bg-white dark:bg-zinc-950/20">
+                    {/* Badge Aesthetic Selector (Tabs) */}
+                    <div className="space-y-2.5">
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Badge Engine Provider</label>
+                      <div className="flex p-1 bg-slate-100 dark:bg-zinc-900 rounded-xl gap-1">
+                        {[
+                          { id: 'premium', label: 'Premium', icon: Diamond },
+                          { id: 'shields', label: 'Classic', icon: Shield },
+                          { id: 'skillicons', label: 'Dynamic', icon: Sparkles },
+                        ].map((provider) => (
+                          <button
+                            key={provider.id}
+                            onClick={() => store.setBadgesOption('badgeStyle', provider.id as any)}
+                            className={cn(
+                              "flex-1 flex items-center justify-center gap-2 py-2 text-[10px] font-black rounded-lg transition-all uppercase tracking-tighter border",
+                              store.badgesConfig.badgeStyle === provider.id
+                                ? "bg-white dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 shadow-sm"
+                                : "text-slate-500 border-transparent hover:text-slate-700 dark:hover:text-slate-300"
+                            )}
+                          >
+                            <provider.icon className="w-3 h-3" />
+                            {provider.label}
+                          </button>
+                        ))}
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <span className="block text-[10px] uppercase font-black text-slate-400">Color Palette</span>
-                        <div className="flex gap-1 p-1 bg-slate-100 dark:bg-zinc-900 rounded-lg">
-                          {(['brand', 'custom'] as const).map((mode) => (
-                            <button
-                              key={mode}
-                              onClick={() => store.setBadgesOption('badgeColorMode', mode)}
-                              className={cn(
-                                "flex-1 py-1.5 text-[9px] font-black rounded-md transition-all uppercase",
-                                store.badgesConfig.badgeColorMode === mode
-                                  ? "bg-white dark:bg-zinc-800 text-emerald-600 dark:text-emerald-400 shadow-sm"
-                                  : "text-slate-500"
-                              )}
-                            >
-                              {mode}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <span className="block text-[10px] uppercase font-black text-slate-400">Visual Scale</span>
-                        <div className="flex gap-1 p-1 bg-slate-100 dark:bg-zinc-900 rounded-lg">
-                          {(['sm', 'md'] as const).map((size) => (
-                            <button
-                              key={size}
-                              onClick={() => store.setBadgesOption('badgeSize', size)}
-                              className={cn(
-                                "flex-1 py-1.5 text-[9px] font-black rounded-md transition-all uppercase",
-                                store.badgesConfig.badgeSize === size
-                                  ? "bg-white dark:bg-zinc-800 text-emerald-600 dark:text-emerald-400 shadow-sm"
-                                  : "text-slate-500"
-                              )}
-                            >
-                              {size}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5">Badge Aesthetic</label>
-                      <div className="flex gap-2 p-1 bg-slate-100 dark:bg-zinc-900 rounded-xl">
-                        <button 
-                          onClick={() => store.setBadgesOption('badgeStyle', 'premium')}
-                          className={cn(
-                            "flex-1 py-2 text-[10px] font-black rounded-lg transition-all uppercase tracking-tighter",
-                            store.badgesConfig.badgeStyle === 'premium' 
-                              ? "bg-white dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 shadow-sm" 
-                              : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
-                          )}
-                        >
-                          Premium
-                        </button>
-                        <button 
-                          onClick={() => store.setBadgesOption('badgeStyle', 'shields')}
-                          className={cn(
-                            "flex-1 py-2 text-[10px] font-black rounded-lg transition-all uppercase tracking-tighter",
-                            store.badgesConfig.badgeStyle === 'shields' 
-                              ? "bg-white dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 shadow-sm" 
-                              : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
-                          )}
-                        >
-                          Shields.io
-                        </button>
-                      </div>
-                    </div>
-
-                    <label className="flex items-center justify-between cursor-pointer group pt-2">
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Official Brand Colors</span>
-                        <span className="text-[10px] text-slate-400">Fetch hex from Simple Icons</span>
-                      </div>
-                      <div className="relative">
-                        <input
-                          type="checkbox"
-                          className="sr-only"
-                          checked={store.badgesConfig.useOfficialColors}
-                          onChange={(e) => store.setBadgesOption('useOfficialColors', e.target.checked)}
-                        />
-                        <div className={cn("w-10 h-6 rounded-full transition-colors", store.badgesConfig.useOfficialColors ? "bg-emerald-500" : "bg-slate-300 dark:bg-zinc-700")}></div>
-                        <div className={cn("absolute top-1 bg-white w-4 h-4 rounded-full transition-transform shadow-sm", store.badgesConfig.useOfficialColors ? "translate-x-5" : "translate-x-1")}></div>
-                      </div>
-                    </label>
-
-                    {store.badgesConfig.badgeStyle === 'premium' && (
-                      <div className="space-y-4 pt-2">
-                        <div className="space-y-1.5">
-                          <label className="text-[10px] font-bold text-slate-400">BADGE ROUNDNESS: {store.badgesConfig.elementRadius}PX</label>
-                          <input
-                            type="range"
-                            min="0"
-                            max="20"
-                            step="1"
-                            value={store.badgesConfig.elementRadius}
-                            onChange={(e) => store.setBadgesOption('elementRadius', parseInt(e.target.value))}
-                            className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="max-h-60 overflow-y-auto pr-2 space-y-3 custom-scrollbar border border-slate-200 dark:border-white/10 rounded-xl p-3 bg-white/50 dark:bg-zinc-950/30">
-                      {store.autoLanguages.length > 0 && (
-                        <div className="pb-3 mb-2 border-b border-slate-200 dark:border-white/10">
-                          <span className="block text-[10px] uppercase font-black text-slate-400 mb-2.5">Auto-Detected</span>
-                          <div className="flex flex-wrap gap-1.5">
-                            {store.autoLanguages.map(lang => (
-                              <button
-                                key={lang.name}
-                                onClick={() => store.toggleLanguageVisibility(lang.name)}
-                                className={cn(
-                                  "px-2 py-1 rounded-md text-[10px] font-bold border transition-all",
-                                  !store.hiddenLanguages.includes(lang.name)
-                                    ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
-                                    : "bg-slate-100 dark:bg-zinc-800 text-slate-400 border-transparent opacity-50"
-                                )}
-                              >
-                                {lang.name}
-                              </button>
-                            ))}
+                    <motion.div layout className="space-y-4">
+                      {/* Context-Aware Settings */}
+                      {store.badgesConfig.badgeStyle === 'premium' && (
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-1.5">
+                              <label className="text-[10px] font-bold text-slate-400">BLOCK RADIUS: {store.badgesConfig.blockRadius}PX</label>
+                              <input
+                                type="range"
+                                min="0"
+                                max="40"
+                                step="2"
+                                value={store.badgesConfig.blockRadius}
+                                onChange={(e) => store.setBadgesOption('blockRadius', parseInt(e.target.value))}
+                                className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                              />
+                            </div>
+                            <div className="space-y-1.5">
+                              <label className="text-[10px] font-bold text-slate-400">ELEMENT RADIUS: {store.badgesConfig.elementRadius}PX</label>
+                              <input
+                                type="range"
+                                min="0"
+                                max="20"
+                                step="1"
+                                value={store.badgesConfig.elementRadius}
+                                onChange={(e) => store.setBadgesOption('elementRadius', parseInt(e.target.value))}
+                                className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                              />
+                            </div>
                           </div>
-                        </div>
+                          <label className="flex items-center justify-between cursor-pointer group">
+                            <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Neon Glow Engine</span>
+                            <div className="relative">
+                              <input type="checkbox" checked={store.analyticsConfig.showGlow} readOnly className="sr-only" />
+                              <div className={cn("w-9 h-5 rounded-full transition-colors", store.analyticsConfig.showGlow ? "bg-emerald-500" : "bg-slate-300 dark:bg-zinc-700")}></div>
+                              <div className={cn("absolute top-1 bg-white w-3 h-3 rounded-full transition-transform shadow-sm", store.analyticsConfig.showGlow ? "translate-x-5" : "translate-x-1")}></div>
+                            </div>
+                          </label>
+                        </motion.div>
                       )}
 
-                      <div>
-                        <span className="block text-[10px] uppercase font-black text-slate-400 mb-2.5">Custom Skills</span>
-                        {store.manualSkills.length > 0 ? (
-                          <div className="flex flex-wrap gap-1.5">
-                            {store.manualSkills.map(skill => (
-                              <div key={skill} className="flex items-center gap-1.5 bg-white dark:bg-zinc-800 border border-slate-200 dark:border-white/10 rounded-md pl-2 pr-1 py-1 shadow-sm">
-                                <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300">{skill}</span>
-                                <button onClick={() => store.removeManualSkill(skill)} className="p-0.5 hover:bg-rose-500/10 hover:text-rose-500 rounded transition-colors">
-                                  <EyeOff className="w-3 h-3" />
-                                </button>
+                      {store.badgesConfig.badgeStyle === 'shields' && (
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+                           <div className="grid grid-cols-2 gap-2">
+                             <div className="space-y-2">
+                               <span className="block text-[10px] uppercase font-black text-slate-400">Visual Scale</span>
+                               <div className="flex gap-1 p-1 bg-slate-100 dark:bg-zinc-900 rounded-lg">
+                                 {(['sm', 'md'] as const).map((size) => (
+                                   <button
+                                     key={size}
+                                     onClick={() => store.setBadgesOption('badgeSize', size)}
+                                     className={cn(
+                                       "flex-1 py-1.5 text-[9px] font-black rounded-md transition-all uppercase",
+                                       store.badgesConfig.badgeSize === size
+                                         ? "bg-white dark:bg-zinc-800 shadow-sm text-emerald-500"
+                                         : "text-slate-500"
+                                     )}
+                                   >
+                                     {size}
+                                   </button>
+                                 ))}
+                               </div>
+                             </div>
+                           </div>
+                        </motion.div>
+                      )}
+
+                      {store.badgesConfig.badgeStyle === 'skillicons' && (
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-2">
+                              <span className="block text-[10px] uppercase font-black text-slate-400">Dynamic Theme</span>
+                              <div className="flex gap-1 p-1 bg-slate-100 dark:bg-zinc-900 rounded-lg">
+                                {(['dark', 'light'] as const).map((t) => (
+                                  <button
+                                    key={t}
+                                    onClick={() => store.setBadgesOption('skillIconTheme', t)}
+                                    className={cn(
+                                      "flex-1 py-1.5 text-[9px] font-black rounded-md transition-all uppercase",
+                                      store.badgesConfig.skillIconTheme === t
+                                        ? "bg-white dark:bg-zinc-800 shadow-sm text-amber-500"
+                                        : "text-slate-500"
+                                    )}
+                                  >
+                                    {t}
+                                  </button>
+                                ))}
                               </div>
-                            ))}
+                            </div>
+                            <div className="space-y-1.5">
+                              <label className="text-[10px] font-bold text-slate-400 uppercase">Icons Per Line: {store.badgesConfig.skillIconsPerRow}</label>
+                              <input
+                                type="range"
+                                min="1"
+                                max="20"
+                                step="1"
+                                value={store.badgesConfig.skillIconsPerRow}
+                                onChange={(e) => store.setBadgesOption('skillIconsPerRow', parseInt(e.target.value))}
+                                className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                              />
+                            </div>
                           </div>
-                        ) : (
-                          <p className="text-[10px] text-slate-400 italic">No manual skills added.</p>
-                        )}
+                        </motion.div>
+                      )}
+
+                      {/* Common Shared Controls */}
+                      <div className="pt-4 border-t border-slate-200 dark:border-white/10 space-y-4">
+                        <label className="flex items-center justify-between cursor-pointer group">
+                          <div className="flex flex-col">
+                            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Official Brand Colors</span>
+                            <span className="text-[10px] text-slate-400">Sync hex from Simple Icons</span>
+                          </div>
+                          <div className="relative">
+                            <input
+                              type="checkbox"
+                              className="sr-only"
+                              checked={store.badgesConfig.useOfficialColors}
+                              onChange={(e) => store.setBadgesOption('useOfficialColors', e.target.checked)}
+                            />
+                            <div className={cn("w-10 h-6 rounded-full transition-colors", store.badgesConfig.useOfficialColors ? "bg-emerald-500" : "bg-slate-300 dark:bg-zinc-700")}></div>
+                            <div className={cn("absolute top-1 bg-white w-4 h-4 rounded-full transition-transform shadow-sm", store.badgesConfig.useOfficialColors ? "translate-x-5" : "translate-x-1")}></div>
+                          </div>
+                        </label>
+
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5">Add Manual Skill</label>
+                          <div className="relative">
+                            <input
+                              type="text"
+                              placeholder="React, Figma, Docker..."
+                              value={skillInput || ""}
+                              onChange={(e) => setSkillInput(e.target.value)}
+                              className="w-full px-4 py-2.5 bg-white dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm transition-all"
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') handleAddSkill();
+                              }}
+                            />
+                            <button 
+                              onClick={handleAddSkill}
+                              className="absolute right-2 top-1.5 p-1 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors"
+                            >
+                              <Check className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="max-h-60 overflow-y-auto pr-2 space-y-3 custom-scrollbar border border-slate-200 dark:border-white/10 rounded-xl p-3 bg-white/50 dark:bg-zinc-950/30 shadow-inner">
+                          {store.autoLanguages.length > 0 && (
+                            <div className="pb-3 mb-2 border-b border-slate-200 dark:border-white/10">
+                              <span className="block text-[10px] uppercase font-black text-slate-400 mb-2.5">Detected Tech</span>
+                              <div className="flex flex-wrap gap-1.5">
+                                {store.autoLanguages.map(lang => (
+                                  <button
+                                    key={lang.name}
+                                    onClick={() => store.toggleLanguageVisibility(lang.name)}
+                                    className={cn(
+                                      "px-2 py-1 rounded-md text-[10px] font-bold border transition-all",
+                                      !store.hiddenLanguages.includes(lang.name)
+                                        ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
+                                        : "bg-slate-100 dark:bg-zinc-800 text-slate-400 border-transparent opacity-50"
+                                    )}
+                                  >
+                                    {lang.name}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          <div>
+                            <span className="block text-[10px] uppercase font-black text-slate-400 mb-2.5">Custom Library</span>
+                            {store.manualSkills.length > 0 ? (
+                              <div className="flex flex-wrap gap-1.5">
+                                {store.manualSkills.map(skill => (
+                                  <div key={skill} className="flex items-center gap-1.5 bg-white dark:bg-zinc-800 border border-slate-200 dark:border-white/10 rounded-md pl-2 pr-1 py-1 shadow-sm group hover:border-emerald-500/30 transition-all">
+                                    <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300">{skill}</span>
+                                    <button onClick={() => store.removeManualSkill(skill)} className="p-0.5 hover:bg-rose-500/10 hover:text-rose-500 rounded transition-colors">
+                                      <EyeOff className="w-3 h-3" />
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <p className="text-[10px] text-slate-400 italic">No custom skills defined.</p>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    </motion.div>
                   </div>
-                </div>
+                </LayoutGroup>
               </motion.div>
             )}
           </AnimatePresence>

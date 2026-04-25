@@ -5,8 +5,22 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 function getSlug(name: string) {
-  return name
-    .toLowerCase()
+  // Mapping for skillicons.dev specific slugs if they differ from Simple Icons
+  const mapping: Record<string, string> = {
+    'visual studio code': 'vscode',
+    'mongodb': 'mongodb',
+    'next.js': 'nextjs',
+    'postgresql': 'postgres',
+    'markdown': 'md',
+    'html5': 'html',
+    'css3': 'css',
+    'google cloud': 'gcp',
+  };
+
+  const lower = name.toLowerCase();
+  if (mapping[lower]) return mapping[lower];
+
+  return lower
     .replace(/\+/g, 'plus')
     .replace(/\./g, 'dot')
     .replace(/[^a-z0-9]/g, '');
@@ -25,7 +39,7 @@ export function SkillBadgeGrid() {
     customTextColor
   } = store;
 
-  const { badgeColorMode, badgeSize, elementRadius, useOfficialColors, badgeStyle } = badgesConfig;
+  const { badgeColorMode, badgeSize, elementRadius, useOfficialColors, badgeStyle, skillIconTheme, skillIconsPerRow } = badgesConfig;
   const { showGlow } = analyticsConfig;
 
   const visibleAutoLangs = autoLanguages.filter(l => !hiddenLanguages.includes(l.name));
@@ -41,6 +55,24 @@ export function SkillBadgeGrid() {
     return (
       <div className="flex flex-col items-center justify-center h-32 border-2 border-dashed border-slate-200 dark:border-white/5 rounded-xl text-slate-400">
         <p className="text-sm italic">No visible skills or languages. Add some or check visibility.</p>
+      </div>
+    );
+  }
+
+  if (badgeStyle === 'skillicons') {
+    const slugs = allVisibleSkills.map(s => getSlug(s.name)).join(',');
+    const url = `https://skillicons.dev/icons?i=${slugs}&theme=${skillIconTheme}&perline=${skillIconsPerRow}`;
+    
+    return (
+      <div className="flex justify-center w-full py-4">
+        <motion.img 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          key={url}
+          src={url} 
+          alt="Skill Icons" 
+          className="max-w-full h-auto drop-shadow-xl"
+        />
       </div>
     );
   }

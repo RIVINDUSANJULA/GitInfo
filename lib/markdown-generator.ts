@@ -9,8 +9,58 @@ export interface MarkdownResult {
 }
 
 function getSlug(name: string) {
-  return name
-    .toLowerCase()
+  // Simple Icons slugs mapping
+  const mapping: Record<string, string> = {
+    'nodejs': 'nodejs',
+    'react': 'react',
+    'typescript': 'typescript',
+    'javascript': 'javascript',
+    'python': 'python',
+    'tailwind': 'tailwind',
+    'next.js': 'nextjs',
+    'mongodb': 'mongodb',
+    'docker': 'docker',
+    'git': 'git',
+    'github': 'github',
+    'visual studio code': 'vscode',
+    'figma': 'figma',
+    'firebase': 'firebase',
+    'mysql': 'mysql',
+    'postgresql': 'postgres',
+    'redis': 'redis',
+    'graphql': 'graphql',
+    'apollo': 'apollo',
+    'rust': 'rust',
+    'go': 'go',
+    'swift': 'swift',
+    'kotlin': 'kotlin',
+    'dart': 'dart',
+    'flutter': 'flutter',
+    'tensorflow': 'tensorflow',
+    'pytorch': 'pytorch',
+    'kubernetes': 'kubernetes',
+    'aws': 'aws',
+    'azure': 'azure',
+    'google cloud': 'gcp',
+    'linux': 'linux',
+    'nginx': 'nginx',
+    'apache': 'apache',
+    'bash': 'bash',
+    'markdown': 'md',
+    'html5': 'html',
+    'css3': 'css',
+    'sass': 'sass',
+    'less': 'less',
+    'postman': 'postman',
+    'npm': 'npm',
+    'yarn': 'yarn',
+    'pnpm': 'pnpm',
+  };
+
+  const lower = name.toLowerCase();
+  if (mapping[lower]) return mapping[lower];
+
+  return lower
     .replace(/\+/g, 'plus')
     .replace(/\./g, 'dot')
     .replace(/[^a-z0-9]/g, '');
@@ -67,26 +117,31 @@ export function generateMarkdown(state: BuilderState): MarkdownResult {
     }
 
     if (id === 'badges' && showBadges) {
-      widgets += `<div align="center">\n`;
       const allSkills = [
         ...state.autoLanguages.filter(l => !hiddenLanguages.includes(l.name)).map(l => l.name),
         ...manualSkills.filter(s => !hiddenSkills.includes(s))
       ];
 
-      allSkills.forEach(skill => {
-        if (badgesConfig.badgeStyle === 'shields') {
-          const slug = getSlug(skill);
-          // Shields.io URL: https://img.shields.io/badge/[Label]-[HexColor]?style=for-the-badge&logo=[LogoName]&logoColor=white
-          // We use %23 for # in the color
-          const color = badgesConfig.useOfficialColors ? '20232a' : customIconColor; // Default to dark for shields if not official
-          const logoColor = badgesConfig.useOfficialColors ? 'white' : customTextColor;
-          widgets += `  <img src="https://img.shields.io/badge/${encodeURIComponent(skill)}-%23${color}.svg?style=for-the-badge&logo=${slug}&logoColor=${logoColor}" alt="${skill}" loading="lazy" />\n`;
+      if (allSkills.length > 0) {
+        widgets += `<div align="center">\n`;
+        if (badgesConfig.badgeStyle === 'skillicons') {
+          const slugs = allSkills.map(s => getSlug(s)).join(',');
+          widgets += `  <img src="https://skillicons.dev/icons?i=${slugs}&theme=${badgesConfig.skillIconTheme}&perline=${badgesConfig.skillIconsPerRow}" alt="My Skills" />\n`;
         } else {
-          const color = badgesConfig.badgeColorMode === 'brand' ? '' : `&color=${customIconColor}`;
-          widgets += `  <img src="${baseUrl}/api/badge?name=${encodeURIComponent(skill)}${color}&size=${badgesConfig.badgeSize}&radius=${badgesConfig.elementRadius}&useOfficialColor=${badgesConfig.useOfficialColors}&showGlow=${analyticsConfig.showGlow}" alt="${skill}" loading="lazy" />\n`;
+          allSkills.forEach(skill => {
+            if (badgesConfig.badgeStyle === 'shields') {
+              const slug = getSlug(skill);
+              const color = badgesConfig.useOfficialColors ? '20232a' : customIconColor;
+              const logoColor = badgesConfig.useOfficialColors ? 'white' : customTextColor;
+              widgets += `  <img src="https://img.shields.io/badge/${encodeURIComponent(skill)}-%23${color}.svg?style=for-the-badge&logo=${slug}&logoColor=${logoColor}" alt="${skill}" loading="lazy" />\n`;
+            } else {
+              const color = badgesConfig.badgeColorMode === 'brand' ? '' : `&color=${customIconColor}`;
+              widgets += `  <img src="${baseUrl}/api/badge?name=${encodeURIComponent(skill)}${color}&size=${badgesConfig.badgeSize}&radius=${badgesConfig.elementRadius}&useOfficialColor=${badgesConfig.useOfficialColors}&showGlow=${analyticsConfig.showGlow}" alt="${skill}" loading="lazy" />\n`;
+            }
+          });
         }
-      });
-      widgets += `</div>\n\n`;
+        widgets += `</div>\n\n`;
+      }
     }
 
     if (id === 'stats' && showStats) {

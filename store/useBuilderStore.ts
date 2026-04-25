@@ -30,7 +30,9 @@ export interface BadgesConfig {
   badgeSize: 'sm' | 'md';
   badgeColorMode: 'brand' | 'custom';
   useOfficialColors: boolean;
-  badgeStyle: 'premium' | 'shields';
+  badgeStyle: 'premium' | 'shields' | 'skillicons';
+  skillIconTheme: 'dark' | 'light';
+  skillIconsPerRow: number;
 }
 
 export interface BuilderState {
@@ -121,6 +123,8 @@ export const useBuilderStore = create<BuilderState>()(
         badgeColorMode: 'brand',
         useOfficialColors: true,
         badgeStyle: 'premium',
+        skillIconTheme: 'dark',
+        skillIconsPerRow: 10,
       },
 
       manualSkills: [],
