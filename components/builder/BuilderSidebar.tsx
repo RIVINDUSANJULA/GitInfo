@@ -20,9 +20,18 @@ const THEMES: { id: StatTheme; name: string }[] = [
 export function BuilderSidebar() {
   const store = useBuilderStore();
   const [openSection, setOpenSection] = useState<string>("profile");
+  const [skillInput, setSkillInput] = useState("");
 
   const toggleSection = (section: string) => {
     setOpenSection(openSection === section ? "" : section);
+  };
+
+  const handleAddSkill = () => {
+    const val = skillInput.trim();
+    if (val) {
+      store.addManualSkill(val);
+      setSkillInput("");
+    }
   };
 
   return (
@@ -273,18 +282,19 @@ export function BuilderSidebar() {
                         <input
                           type="text"
                           placeholder="React, Figma, Docker..."
+                          value={skillInput}
+                          onChange={(e) => setSkillInput(e.target.value)}
                           className="w-full px-4 py-2.5 bg-white dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm transition-all"
                           onKeyDown={(e) => {
                             if (e.key === 'Enter') {
-                              const val = e.currentTarget.value.trim();
-                              if (val) {
-                                store.addManualSkill(val);
-                                e.currentTarget.value = '';
-                              }
+                              handleAddSkill();
                             }
                           }}
                         />
-                        <button className="absolute right-2 top-1.5 p-1 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors">
+                        <button 
+                          onClick={handleAddSkill}
+                          className="absolute right-2 top-1.5 p-1 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors"
+                        >
                           <Check className="w-4 h-4" />
                         </button>
                       </div>
