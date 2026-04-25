@@ -15,6 +15,12 @@ export function generateMarkdown(state: BuilderState): string {
     includeContributions,
     languageLimit,
     languageLayout,
+    languageDisplayType,
+    manualSkills,
+    hiddenLanguages,
+    hiddenSkills,
+    badgeColorMode,
+    badgeSize,
     showCustomLanguages,
     theme,
     customBgColor,
@@ -44,12 +50,29 @@ export function generateMarkdown(state: BuilderState): string {
   }
 
   if (showStats || showLanguages || showStreak || showTopRepos || showCustomLanguages) {
-    markdown += displayFlex;
+    if (languageDisplayType === 'analytics' || !showCustomLanguages) {
+      markdown += displayFlex;
 
-    if (showCustomLanguages) {
-      // Note: In production, replace 'http://localhost:3000' with your actual domain
+      if (showCustomLanguages && languageDisplayType === 'analytics') {
+        const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://github-customizer.vercel.app';
+        markdown += `  <img src="${baseUrl}/api/github-languages?username=${username}&include_contribs=${includeContributions}&limit=${languageLimit}&layout=${languageLayout}${themeParams}" alt="Detailed Language Analytics" />\n`;
+      }
+    } else if (languageDisplayType === 'badges' && showCustomLanguages) {
+      markdown += `\n<div align="center">\n`;
+      
+      // We'll use a placeholder for the languages in the markdown generation 
+      // because we don't fetch them synchronously here. 
+      // Instead, we'll suggest the user adds them manually or we'll generate 
+      // the list of manual skills first.
+      
       const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://github-customizer.vercel.app';
-      markdown += `  <img src="${baseUrl}/api/github-languages?username=${username}&include_contribs=${includeContributions}&limit=${languageLimit}&layout=${languageLayout}${themeParams}" alt="Detailed Language Analytics" />\n`;
+      
+      manualSkills.filter(s => !hiddenSkills.includes(s)).forEach(skill => {
+        const color = badgeColorMode === 'brand' ? '' : `&color=${customIconColor}`;
+        markdown += `  <img src="${baseUrl}/api/badge?name=${encodeURIComponent(skill)}${color}&size=${badgeSize}" alt="${skill}" />\n`;
+      });
+      
+      markdown += `</div>\n\n`;
     }
 
     if (showStats) {

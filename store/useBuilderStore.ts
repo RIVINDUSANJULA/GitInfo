@@ -7,10 +7,15 @@ export interface BuilderState {
   username: string;
   showStats: boolean;
   showLanguages: boolean;
-  showStreak: boolean;
-  showTrophies: boolean;
   showTopRepos: boolean;
   showCustomLanguages: boolean;
+  languageDisplayType: 'analytics' | 'badges';
+  manualSkills: string[];
+  hiddenLanguages: string[];
+  hiddenSkills: string[];
+  badgeColorMode: 'brand' | 'custom';
+  badgeSize: 'sm' | 'md';
+  autoLanguages: { name: string, color: string, percentage: number }[];
   includeContributions: boolean;
   languageLimit: number;
   languageLayout: 'compact' | 'pie' | 'list';
@@ -32,6 +37,14 @@ export interface BuilderState {
   setHideBorder: (hide: boolean) => void;
   setLayout: (layout: 'stacked' | 'grid') => void;
   setLanguageOption: (key: keyof Pick<BuilderState, 'includeContributions' | 'languageLimit' | 'languageLayout'>, value: any) => void;
+  setLanguageDisplayType: (type: 'analytics' | 'badges') => void;
+  addManualSkill: (skill: string) => void;
+  removeManualSkill: (skill: string) => void;
+  toggleLanguageVisibility: (lang: string) => void;
+  toggleSkillVisibility: (skill: string) => void;
+  setBadgeColorMode: (mode: 'brand' | 'custom') => void;
+  setBadgeSize: (size: 'sm' | 'md') => void;
+  setAutoLanguages: (langs: { name: string, color: string, percentage: number }[]) => void;
 }
 
 export const useBuilderStore = create<BuilderState>()(
@@ -44,6 +57,13 @@ export const useBuilderStore = create<BuilderState>()(
       showTrophies: false,
       showTopRepos: false,
       showCustomLanguages: false,
+      languageDisplayType: 'analytics',
+      manualSkills: [],
+      hiddenLanguages: [],
+      hiddenSkills: [],
+      badgeColorMode: 'brand',
+      badgeSize: 'md',
+      autoLanguages: [],
       includeContributions: true,
       languageLimit: 5,
       languageLayout: 'compact',
@@ -63,6 +83,26 @@ export const useBuilderStore = create<BuilderState>()(
       setHideBorder: (hideBorder) => set({ hideBorder }),
       setLayout: (layout) => set({ layout }),
       setLanguageOption: (key, value) => set({ [key]: value }),
+      setLanguageDisplayType: (languageDisplayType) => set({ languageDisplayType }),
+      addManualSkill: (skill) => set((state) => ({ 
+        manualSkills: state.manualSkills.includes(skill) ? state.manualSkills : [...state.manualSkills, skill] 
+      })),
+      removeManualSkill: (skill) => set((state) => ({ 
+        manualSkills: state.manualSkills.filter(s => s !== skill) 
+      })),
+      toggleLanguageVisibility: (lang) => set((state) => ({
+        hiddenLanguages: state.hiddenLanguages.includes(lang)
+          ? state.hiddenLanguages.filter(l => l !== lang)
+          : [...state.hiddenLanguages, lang]
+      })),
+      toggleSkillVisibility: (skill) => set((state) => ({
+        hiddenSkills: state.hiddenSkills.includes(skill)
+          ? state.hiddenSkills.filter(s => s !== skill)
+          : [...state.hiddenSkills, skill]
+      })),
+      setBadgeColorMode: (badgeColorMode) => set({ badgeColorMode }),
+      setBadgeSize: (badgeSize) => set({ badgeSize }),
+      setAutoLanguages: (autoLanguages) => set({ autoLanguages }),
     }),
     {
       name: 'github-customizer-storage',

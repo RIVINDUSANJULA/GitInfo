@@ -113,66 +113,181 @@ export function BuilderSidebar() {
           
           {openSection === 'languages' && (
             <div className="p-4 border-t border-slate-200 dark:border-white/10 space-y-4">
-              <label className="flex items-center justify-between cursor-pointer group">
-                <span className="text-sm text-slate-700 dark:text-slate-300">Show Advanced Analytics</span>
-                <div className="relative">
-                  <input
-                    type="checkbox"
-                    className="sr-only"
-                    checked={store.showCustomLanguages}
-                    onChange={() => store.toggleModule('showCustomLanguages' as any)}
-                  />
-                  <div className={cn("w-10 h-6 rounded-full transition-colors", store.showCustomLanguages ? "bg-indigo-500" : "bg-slate-300 dark:bg-zinc-700")}></div>
-                  <div className={cn("absolute top-1 bg-white w-4 h-4 rounded-full transition-transform shadow-sm", store.showCustomLanguages ? "translate-x-5" : "translate-x-1")}></div>
-                </div>
-              </label>
+              <div className="flex gap-2 p-1 bg-slate-100 dark:bg-zinc-950 rounded-xl mb-4">
+                <button 
+                  onClick={() => store.setLanguageDisplayType('analytics')}
+                  className={cn("flex-1 py-2 text-xs font-medium rounded-lg transition-all", store.languageDisplayType === 'analytics' ? "bg-white dark:bg-zinc-800 text-slate-900 dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400")}
+                >
+                  Analytics
+                </button>
+                <button 
+                  onClick={() => store.setLanguageDisplayType('badges')}
+                  className={cn("flex-1 py-2 text-xs font-medium rounded-lg transition-all", store.languageDisplayType === 'badges' ? "bg-white dark:bg-zinc-800 text-slate-900 dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400")}
+                >
+                  Skill Badges
+                </button>
+              </div>
 
-              {store.showCustomLanguages && (
-                <div className="space-y-4 pt-2 border-t border-slate-200 dark:border-white/10">
+              {store.languageDisplayType === 'analytics' ? (
+                <>
                   <label className="flex items-center justify-between cursor-pointer group">
-                    <span className="text-sm text-slate-700 dark:text-slate-300">Include Contributions</span>
+                    <span className="text-sm text-slate-700 dark:text-slate-300">Show Advanced Analytics</span>
                     <div className="relative">
                       <input
                         type="checkbox"
                         className="sr-only"
-                        checked={store.includeContributions}
-                        onChange={() => store.setLanguageOption('includeContributions', !store.includeContributions)}
+                        checked={store.showCustomLanguages}
+                        onChange={() => store.toggleModule('showCustomLanguages' as any)}
                       />
-                      <div className={cn("w-10 h-6 rounded-full transition-colors", store.includeContributions ? "bg-indigo-500" : "bg-slate-300 dark:bg-zinc-700")}></div>
-                      <div className={cn("absolute top-1 bg-white w-4 h-4 rounded-full transition-transform shadow-sm", store.includeContributions ? "translate-x-5" : "translate-x-1")}></div>
+                      <div className={cn("w-10 h-6 rounded-full transition-colors", store.showCustomLanguages ? "bg-indigo-500" : "bg-slate-300 dark:bg-zinc-700")}></div>
+                      <div className={cn("absolute top-1 bg-white w-4 h-4 rounded-full transition-transform shadow-sm", store.showCustomLanguages ? "translate-x-5" : "translate-x-1")}></div>
                     </div>
                   </label>
 
+                  {store.showCustomLanguages && (
+                    <div className="space-y-4 pt-2 border-t border-slate-200 dark:border-white/10">
+                      <label className="flex items-center justify-between cursor-pointer group">
+                        <span className="text-sm text-slate-700 dark:text-slate-300">Include Contributions</span>
+                        <div className="relative">
+                          <input
+                            type="checkbox"
+                            className="sr-only"
+                            checked={store.includeContributions}
+                            onChange={() => store.setLanguageOption('includeContributions', !store.includeContributions)}
+                          />
+                          <div className={cn("w-10 h-6 rounded-full transition-colors", store.includeContributions ? "bg-indigo-500" : "bg-slate-300 dark:bg-zinc-700")}></div>
+                          <div className={cn("absolute top-1 bg-white w-4 h-4 rounded-full transition-transform shadow-sm", store.includeContributions ? "translate-x-5" : "translate-x-1")}></div>
+                        </div>
+                      </label>
+
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Display Limit: {store.languageLimit}</label>
+                        <input 
+                          type="range" 
+                          min="3" 
+                          max="12" 
+                          step="1"
+                          value={store.languageLimit}
+                          onChange={(e) => store.setLanguageOption('languageLimit', parseInt(e.target.value))}
+                          className="w-full h-1.5 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Visual Style</label>
+                        <div className="grid grid-cols-3 gap-2">
+                          {(['compact', 'list', 'pie'] as const).map((style) => (
+                            <button
+                              key={style}
+                              onClick={() => store.setLanguageOption('languageLayout', style)}
+                              className={cn(
+                                "py-2 text-xs font-medium rounded-lg border transition-all capitalize",
+                                store.languageLayout === style 
+                                  ? "bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border-indigo-200 dark:border-indigo-500/30" 
+                                  : "bg-white dark:bg-zinc-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10"
+                              )}
+                            >
+                              {style}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Display Limit: {store.languageLimit}</label>
-                    <input 
-                      type="range" 
-                      min="3" 
-                      max="12" 
-                      step="1"
-                      value={store.languageLimit}
-                      onChange={(e) => store.setLanguageOption('languageLimit', parseInt(e.target.value))}
-                      className="w-full h-1.5 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
-                    />
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Add Manual Skill</label>
+                    <div className="flex gap-2">
+                      <input 
+                        type="text" 
+                        id="skill-input"
+                        placeholder="React, Figma, Docker..."
+                        className="flex-1 px-3 py-2 text-sm bg-white dark:bg-zinc-950 border border-slate-300 dark:border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            const val = e.currentTarget.value.trim();
+                            if (val) {
+                              store.addManualSkill(val);
+                              e.currentTarget.value = '';
+                            }
+                          }
+                        }}
+                      />
+                    </div>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Visual Style</label>
-                    <div className="grid grid-cols-3 gap-2">
-                      {(['compact', 'list', 'pie'] as const).map((style) => (
-                        <button
-                          key={style}
-                          onClick={() => store.setLanguageOption('languageLayout', style)}
-                          className={cn(
-                            "py-2 text-xs font-medium rounded-lg border transition-all capitalize",
-                            store.languageLayout === style 
-                              ? "bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border-indigo-200 dark:border-indigo-500/30" 
-                              : "bg-white dark:bg-zinc-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10"
-                          )}
-                        >
-                          {style}
-                        </button>
+                  {store.manualSkills.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {store.manualSkills.map(skill => (
+                        <span key={skill} className="inline-flex items-center gap-1 px-2 py-1 bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 text-xs font-medium rounded-md border border-indigo-100 dark:border-indigo-500/30">
+                          {skill}
+                          <button onClick={() => store.removeManualSkill(skill)} className="hover:text-indigo-900 dark:hover:text-white">&times;</button>
+                        </span>
                       ))}
+                    </div>
+                  )}
+
+                  <div className="pt-2 border-t border-slate-200 dark:border-white/10">
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Badge Options</label>
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <span className="block text-[10px] uppercase font-bold text-slate-400 mb-1.5">Color Mode</span>
+                        <div className="flex gap-1 p-1 bg-slate-100 dark:bg-zinc-900 rounded-lg">
+                          <button onClick={() => store.setBadgeColorMode('brand')} className={cn("flex-1 py-1 text-[10px] font-bold rounded-md transition-all", store.badgeColorMode === 'brand' ? "bg-white dark:bg-zinc-800 shadow-sm" : "text-slate-500")}>BRAND</button>
+                          <button onClick={() => store.setBadgeColorMode('custom')} className={cn("flex-1 py-1 text-[10px] font-bold rounded-md transition-all", store.badgeColorMode === 'custom' ? "bg-white dark:bg-zinc-800 shadow-sm" : "text-slate-500")}>CUSTOM</button>
+                        </div>
+                      </div>
+                      <div>
+                        <span className="block text-[10px] uppercase font-bold text-slate-400 mb-1.5">Badge Size</span>
+                        <div className="flex gap-1 p-1 bg-slate-100 dark:bg-zinc-900 rounded-lg">
+                          <button onClick={() => store.setBadgeSize('sm')} className={cn("flex-1 py-1 text-[10px] font-bold rounded-md transition-all", store.badgeSize === 'sm' ? "bg-white dark:bg-zinc-800 shadow-sm" : "text-slate-500")}>SM</button>
+                          <button onClick={() => store.setBadgeSize('md')} className={cn("flex-1 py-1 text-[10px] font-bold rounded-md transition-all", store.badgeSize === 'md' ? "bg-white dark:bg-zinc-800 shadow-sm" : "text-slate-500")}>MD</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t border-slate-200 dark:border-white/10">
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Visibility Checklist</label>
+                    <div className="max-h-60 overflow-y-auto pr-2 space-y-2 custom-scrollbar border border-slate-200 dark:border-white/10 rounded-lg p-3 bg-white/50 dark:bg-zinc-950/50">
+                      {store.autoLanguages.length > 0 && (
+                        <div className="pb-2 mb-2 border-b border-slate-200 dark:border-white/10">
+                          <span className="block text-[10px] uppercase font-bold text-slate-400 mb-2">GitHub Detected</span>
+                          {store.autoLanguages.map(lang => (
+                            <label key={lang.name} className="flex items-center gap-2 cursor-pointer group py-1">
+                              <input 
+                                type="checkbox" 
+                                checked={!store.hiddenLanguages.includes(lang.name)}
+                                onChange={() => store.toggleLanguageVisibility(lang.name)}
+                                className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                              />
+                              <span className="text-xs text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white flex items-center justify-between flex-1">
+                                {lang.name}
+                                <span className="text-[10px] opacity-50">{lang.percentage.toFixed(1)}%</span>
+                              </span>
+                            </label>
+                          ))}
+                        </div>
+                      )}
+
+                      <span className="block text-[10px] uppercase font-bold text-slate-400 mb-2">Manual Skills</span>
+                      {store.manualSkills.length > 0 ? (
+                        store.manualSkills.map(skill => (
+                          <label key={skill} className="flex items-center gap-2 cursor-pointer group py-1">
+                            <input 
+                              type="checkbox" 
+                              checked={!store.hiddenSkills.includes(skill)}
+                              onChange={() => store.toggleSkillVisibility(skill)}
+                              className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                            />
+                            <span className="text-xs text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white">{skill}</span>
+                          </label>
+                        ))
+                      ) : (
+                        <p className="text-[10px] text-slate-400 italic">No manual skills added yet.</p>
+                      )}
                     </div>
                   </div>
                 </div>

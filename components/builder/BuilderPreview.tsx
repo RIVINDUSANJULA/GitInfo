@@ -3,9 +3,12 @@
 import { useBuilderStore } from "@/store/useBuilderStore";
 import { generateMarkdown } from "@/lib/markdown-generator";
 import { Copy, Download, Check } from "lucide-react";
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { getBrandData } from "@/lib/skills-data";
+
+import { SkillBadgeGrid } from "./SkillBadgeGrid";
 
 export function BuilderPreview() {
   const store = useBuilderStore();
@@ -13,6 +16,25 @@ export function BuilderPreview() {
   const sanitizedMarkdown = markdown.replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gim, "");
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<'preview' | 'code'>('preview');
+
+  useEffect(() => {
+    if (!store.username) return;
+
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`/api/github-user-data?username=${store.username}&include_contribs=${store.includeContributions}`);
+        if (res.ok) {
+          const data = await res.json();
+          store.setAutoLanguages(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch auto languages:", err);
+      }
+    };
+
+    const timer = setTimeout(fetchData, 1000);
+    return () => clearTimeout(timer);
+  }, [store.username, store.includeContributions]);
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(markdown);
@@ -73,10 +95,23 @@ export function BuilderPreview() {
           {activeTab === 'preview' ? (
             <div className="p-8 prose dark:prose-invert max-w-none">
               {store.username ? (
-                <div 
-                  className="preview-markdown flex flex-col gap-4"
-                  dangerouslySetInnerHTML={{ __html: sanitizedMarkdown.replace(/\n/g, '<br/>') }} 
-                />
+                <div className="preview-markdown flex flex-col gap-8">
+                  {store.showCustomLanguages && store.languageDisplayType === 'badges' ? (
+                    <div className="flex flex-col gap-6">
+                      <h1 align="center" className="text-3xl font-bold border-b-0">Hi there, I'm {store.username} 👋</h1>
+                      <SkillBadgeGrid />
+                      <div 
+                        className="flex flex-col gap-4"
+                        dangerouslySetInnerHTML={{ __html: sanitizedMarkdown.split('</h1>')[1]?.replace(/\n/g, '<br/>') || sanitizedMarkdown }} 
+                      />
+                    </div>
+                  ) : (
+                    <div 
+                      className="flex flex-col gap-4"
+                      dangerouslySetInnerHTML={{ __html: sanitizedMarkdown.replace(/\n/g, '<br/>') }} 
+                    />
+                  )}
+                </div>
               ) : (
                 <div className="flex flex-col items-center justify-center h-64 text-slate-400 dark:text-slate-500">
                   <p>Enter your GitHub username to see the preview.</p>
