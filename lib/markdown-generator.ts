@@ -17,7 +17,6 @@ export function generateMarkdown(state: BuilderState): MarkdownResult {
   const {
     username,
     showStats,
-    showLanguages,
     showStreak,
     showTrophies,
     showTopRepos,

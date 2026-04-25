@@ -6,6 +6,8 @@ export type StatTheme = 'default' | 'dark' | 'radical' | 'tokyonight' | 'gruvbox
 export interface BuilderState {
   username: string;
   showStats: boolean;
+  showStreak: boolean;
+  showTrophies: boolean;
   showTopRepos: boolean;
   showCustomLanguages: boolean;
   activeWidgetTab: 'analytics' | 'badges' | 'stats' | 'streak' | 'trophies';
@@ -45,6 +47,7 @@ export interface BuilderState {
   setBadgeSize: (size: 'sm' | 'md') => void;
   setAutoLanguages: (langs: { name: string, color: string, percentage: number }[]) => void;
   setActiveWidgetTab: (tab: 'analytics' | 'badges' | 'stats' | 'streak' | 'trophies') => void;
+  toggleModule: (module: 'showStats' | 'showStreak' | 'showTrophies' | 'showTopRepos' | 'showCustomLanguages') => void;
 }
 
 export const useBuilderStore = create<BuilderState>()(
@@ -76,13 +79,16 @@ export const useBuilderStore = create<BuilderState>()(
       hideBorder: false,
       layout: 'grid',
 
-      setUsername: (username) => set({ username }),
-      toggleModule: (module) => set((state) => ({ [module]: !state[module] })),
-      setTheme: (theme) => set({ theme }),
-      setCustomColor: (key, color) => set({ [key]: color.replace('#', '') }), // Store without #
-      setHideBorder: (hideBorder) => set({ hideBorder }),
-      setLayout: (layout) => set({ layout }),
-      setLanguageOption: (key, value) => set({ [key]: value }),
+      setUsername: (username: string) => set({ username }),
+      toggleModule: (module: 'showStats' | 'showStreak' | 'showTrophies' | 'showTopRepos' | 'showCustomLanguages') => 
+        set((state) => ({ [module]: !state[module] })),
+      setTheme: (theme: StatTheme) => set({ theme }),
+      setCustomColor: (key: keyof Pick<BuilderState, 'customBgColor' | 'customTextColor' | 'customIconColor' | 'customBorderColor'>, color: string) => 
+        set({ [key]: color.replace('#', '') }), // Store without #
+      setHideBorder: (hideBorder: boolean) => set({ hideBorder }),
+      setLayout: (layout: 'stacked' | 'grid') => set({ layout }),
+      setLanguageOption: (key: keyof Pick<BuilderState, 'includeContributions' | 'languageLimit' | 'languageLayout'>, value: any) => 
+        set({ [key]: value }),
       setLanguageDisplayType: (languageDisplayType) => set({ languageDisplayType }),
       addManualSkill: (skill) => set((state) => ({
         manualSkills: state.manualSkills.includes(skill) ? state.manualSkills : [...state.manualSkills, skill]
