@@ -68,14 +68,26 @@ export function generateLanguageSvg(languages: any[], options: SvgOptions) {
   else if (layout === 'minimalist-line') height = 70;
 
   const hoverStyle = options.pieShowHoverLabels ? `
-    .segment-group { cursor: pointer; }
-    .segment-group .segment { transition: all 0.3s ease; }
-    .segment-group:hover .segment { opacity: 1; transform: scale(1.03); transform-origin: center; filter: brightness(1.2) ${options.showGlow ? 'drop-shadow(0 0 8px currentColor)' : ''}; }
-    .hover-label { opacity: 0; visibility: hidden; transition: opacity 0.3s ease; pointer-events: none; }
-    .segment-group:hover .hover-label { opacity: 1; visibility: visible; }
+    .segment-group { cursor: pointer; pointer-events: all; }
+    .segment-group .segment { transition: all 0.3s ease-in-out; }
+    .segment-group:hover .segment { 
+      transform: scale(1.05); 
+      transform-origin: center; 
+      filter: brightness(1.2) ${options.showGlow ? 'drop-shadow(0 0 10px currentColor)' : ''} !important; 
+    }
+    .hover-label { 
+      opacity: 0 !important; 
+      visibility: hidden !important; 
+      transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out; 
+      pointer-events: none !important;
+    }
+    .segment-group:hover .hover-label { 
+      opacity: 1 !important; 
+      visibility: visible !important; 
+    }
     ${options.pieLabelPosition === 'inside' ? `
-      .default-hole-text { transition: opacity 0.3s ease; pointer-events: none; }
-      .segment-group:hover ~ .default-hole-text { opacity: 0; }
+      .default-hole-text { transition: opacity 0.2s ease-in-out; pointer-events: none; }
+      .segment-group:hover ~ .default-hole-text { opacity: 0 !important; }
     ` : ''}
   ` : '';
 
@@ -214,7 +226,7 @@ function generatePieLayout(data: any[], radius: number, speed: number, options: 
     }
 
     chart += `
-      <g class="segment-group" id="lang-${safeId}" color="${lang.color}">
+      <g class="segment-group" id="group-${safeId}" color="${lang.color}">
         <circle class="segment" cx="${centerX}" cy="${centerY}" r="${actualRadius}" fill="transparent" stroke="${lang.color}" 
           stroke-width="${strokeWidth}" stroke-dasharray="${sliceLength} ${circumference}" 
           transform="rotate(${rotation} ${centerX} ${centerY})" ${glowAttr} 
@@ -222,9 +234,9 @@ function generatePieLayout(data: any[], radius: number, speed: number, options: 
           style="--dash-offset: ${sliceLength}; animation: growPie ${1 / speed}s ease forwards; animation-delay: ${i * 0.1 / speed}s" stroke-dashoffset="${sliceLength}"/>
         
         ${options.pieShowHoverLabels ? `
-          <g class="hover-label">
-            <text x="${lx}" y="${ly - 5}" fill="${lang.color}" text-anchor="${anchor}" font-weight="700" font-size="14">${lang.name}</text>
-            <text x="${lx}" y="${ly + 12}" fill="${lang.color}" text-anchor="${anchor}" font-size="11" opacity="0.8">${lang.percentage.toFixed(1)}%</text>
+          <g class="hover-label" pointer-events="none">
+            <text x="${lx}" y="${ly - 5}" fill="${lang.color}" text-anchor="${anchor}" font-weight="700" font-size="14" font-family="'Segoe UI', Ubuntu, Sans-Serif">${lang.name}</text>
+            <text x="${lx}" y="${ly + 12}" fill="${lang.color}" text-anchor="${anchor}" font-size="11" font-family="'Segoe UI', Ubuntu, Sans-Serif" opacity="0.8">${lang.percentage.toFixed(1)}%</text>
           </g>
         ` : ""}
       </g>`;
