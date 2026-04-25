@@ -51,7 +51,8 @@ export function generateMarkdown(state: BuilderState): MarkdownResult {
     bgColor2,
     widgetOrder,
     pieShowHoverLabels,
-    pieLabelPosition
+    pieLabelPosition,
+    pieHideLegend
   } = state;
 
   let themeParams = `&theme=${theme}`;
