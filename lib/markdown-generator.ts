@@ -39,7 +39,11 @@ export function generateMarkdown(state: BuilderState): MarkdownResult {
     layout,
     borderRadius,
     showGlow,
-    animationSpeed
+    animationSpeed,
+    donutHoleSize,
+    startAngle,
+    barHeight,
+    cardsPerRow
   } = state;
 
   let themeParams = `&theme=${theme}`;
@@ -57,7 +61,7 @@ export function generateMarkdown(state: BuilderState): MarkdownResult {
   let customLanguages = '';
   if (showCustomLanguages) {
     if (languageDisplayType === 'analytics') {
-      const advancedParams = `&borderRadius=${borderRadius}&showGlow=${showGlow}&animationSpeed=${animationSpeed}`;
+      const advancedParams = `&borderRadius=${borderRadius}&showGlow=${showGlow}&animationSpeed=${animationSpeed}&donutHoleSize=${donutHoleSize}&startAngle=${startAngle}&barHeight=${barHeight}&cardsPerRow=${cardsPerRow}`;
       customLanguages = `<div align="center">\n  <img src="${baseUrl}/api/github-languages?username=${username}&include_contribs=${includeContributions}&limit=${languageLimit}&layout=${languageLayout}${themeParams}${advancedParams}" alt="Detailed Language Analytics" />\n</div>\n\n`;
     } else {
       customLanguages = `<div align="center">\n`;

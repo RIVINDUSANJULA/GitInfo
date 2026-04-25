@@ -24,6 +24,10 @@ export interface BuilderState {
   borderRadius: number;
   showGlow: boolean;
   animationSpeed: number;
+  donutHoleSize: number;
+  startAngle: number;
+  barHeight: number;
+  cardsPerRow: number;
 
   // Customization
   theme: StatTheme;
@@ -40,7 +44,7 @@ export interface BuilderState {
   setCustomColor: (key: keyof Pick<BuilderState, 'customBgColor' | 'customTextColor' | 'customIconColor' | 'customBorderColor'>, color: string) => void;
   setHideBorder: (hide: boolean) => void;
   setLayout: (layout: 'stacked' | 'grid') => void;
-  setLanguageOption: (key: keyof Pick<BuilderState, 'includeContributions' | 'languageLimit' | 'languageLayout' | 'borderRadius' | 'showGlow' | 'animationSpeed'>, value: any) => void;
+  setLanguageOption: (key: keyof Pick<BuilderState, 'includeContributions' | 'languageLimit' | 'languageLayout' | 'borderRadius' | 'showGlow' | 'animationSpeed' | 'donutHoleSize' | 'startAngle' | 'barHeight' | 'cardsPerRow'>, value: any) => void;
   setLanguageDisplayType: (type: 'analytics' | 'badges') => void;
   addManualSkill: (skill: string) => void;
   removeManualSkill: (skill: string) => void;
@@ -73,9 +77,13 @@ export const useBuilderStore = create<BuilderState>()(
       includeContributions: true,
       languageLimit: 5,
       languageLayout: 'compact',
-      borderRadius: 8,
+      borderRadius: 20,
       showGlow: false,
       animationSpeed: 1,
+      donutHoleSize: 60,
+      startAngle: 0,
+      barHeight: 18,
+      cardsPerRow: 2,
 
       theme: 'default',
       customBgColor: '000000',
@@ -93,7 +101,7 @@ export const useBuilderStore = create<BuilderState>()(
         set({ [key]: color.replace('#', '') }), // Store without #
       setHideBorder: (hideBorder: boolean) => set({ hideBorder }),
       setLayout: (layout: 'stacked' | 'grid') => set({ layout }),
-      setLanguageOption: (key: keyof Pick<BuilderState, 'includeContributions' | 'languageLimit' | 'languageLayout' | 'borderRadius' | 'showGlow' | 'animationSpeed'>, value: any) => 
+      setLanguageOption: (key: keyof Pick<BuilderState, 'includeContributions' | 'languageLimit' | 'languageLayout' | 'borderRadius' | 'showGlow' | 'animationSpeed' | 'donutHoleSize' | 'startAngle' | 'barHeight' | 'cardsPerRow'>, value: any) => 
         set({ [key]: value }),
       setLanguageDisplayType: (languageDisplayType) => set({ languageDisplayType }),
       addManualSkill: (skill) => set((state) => ({

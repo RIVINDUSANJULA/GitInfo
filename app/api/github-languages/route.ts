@@ -28,6 +28,10 @@ export async function GET(req: NextRequest) {
     borderRadius: searchParams.get("borderRadius") ? parseInt(searchParams.get("borderRadius")!) : undefined,
     showGlow: searchParams.get("showGlow") === "true",
     animationSpeed: searchParams.get("animationSpeed") ? parseFloat(searchParams.get("animationSpeed")!) : undefined,
+    donutHoleSize: searchParams.get("donutHoleSize") ? parseInt(searchParams.get("donutHoleSize")!) : undefined,
+    startAngle: searchParams.get("startAngle") ? parseInt(searchParams.get("startAngle")!) : undefined,
+    barHeight: searchParams.get("barHeight") ? parseInt(searchParams.get("barHeight")!) : undefined,
+    cardsPerRow: searchParams.get("cardsPerRow") ? parseInt(searchParams.get("cardsPerRow")!) : undefined,
   };
 
   try {

@@ -4,6 +4,7 @@ import { useBuilderStore, StatTheme } from "@/store/useBuilderStore";
 import { User, Palette, Settings, Layout, Check, ChevronDown, Code2, BarChart3, Tags, Zap, Trophy, PieChart } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 const THEMES: { id: StatTheme; name: string }[] = [
   { id: "default", name: "Default" },
@@ -182,47 +183,134 @@ export function BuilderSidebar() {
                         <span className="text-xs font-bold text-slate-400 uppercase">Advanced Styling</span>
                       </div>
                       
-                      <div>
-                        <div className="flex justify-between mb-1">
-                          <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Corner Radius: {store.borderRadius}px</label>
-                        </div>
-                        <input
-                          type="range"
-                          min="0"
-                          max="20"
-                          step="2"
-                          value={store.borderRadius}
-                          onChange={(e) => store.setLanguageOption('borderRadius', parseInt(e.target.value))}
-                          className="w-full h-1.5 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
-                        />
-                      </div>
+                      <div className="space-y-4 overflow-hidden">
+                        <AnimatePresence mode="wait">
+                          <motion.div
+                            key={store.languageLayout}
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3, ease: "easeInOut" }}
+                            className="space-y-4"
+                          >
+                            {/* Common Settings: Glow & Speed */}
+                            <div className="flex items-center justify-between">
+                              <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Neon Glow Effect</label>
+                              <label className="relative inline-flex items-center cursor-pointer">
+                                <input 
+                                  type="checkbox" 
+                                  className="sr-only peer" 
+                                  checked={store.showGlow}
+                                  onChange={(e) => store.setLanguageOption('showGlow', e.target.checked)}
+                                />
+                                <div className="w-9 h-5 bg-slate-200 dark:bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500"></div>
+                              </label>
+                            </div>
 
-                      <div className="flex items-center justify-between">
-                        <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Neon Glow Effect</label>
-                        <label className="relative inline-flex items-center cursor-pointer">
-                          <input 
-                            type="checkbox" 
-                            className="sr-only peer" 
-                            checked={store.showGlow}
-                            onChange={(e) => store.setLanguageOption('showGlow', e.target.checked)}
-                          />
-                          <div className="w-9 h-5 bg-slate-200 dark:bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500"></div>
-                        </label>
-                      </div>
+                            {/* Conditional: Corner Radius (Hide for PIE) */}
+                            {store.languageLayout !== 'pie' && (
+                              <div>
+                                <div className="flex justify-between mb-1">
+                                  <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Corner Radius: {store.borderRadius}px</label>
+                                </div>
+                                <input
+                                  type="range"
+                                  min="0"
+                                  max="40"
+                                  step="2"
+                                  value={store.borderRadius}
+                                  onChange={(e) => store.setLanguageOption('borderRadius', parseInt(e.target.value))}
+                                  className="w-full h-1.5 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                                />
+                              </div>
+                            )}
 
-                      <div>
-                        <div className="flex justify-between mb-1">
-                          <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Animation Speed: {store.animationSpeed}x</label>
-                        </div>
-                        <input
-                          type="range"
-                          min="0.5"
-                          max="2"
-                          step="0.1"
-                          value={store.animationSpeed}
-                          onChange={(e) => store.setLanguageOption('animationSpeed', parseFloat(e.target.value))}
-                          className="w-full h-1.5 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
-                        />
+                            {/* Conditional: Pie Settings */}
+                            {store.languageLayout === 'pie' && (
+                              <>
+                                <div>
+                                  <div className="flex justify-between mb-1">
+                                    <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Donut Hole Size: {store.donutHoleSize}%</label>
+                                  </div>
+                                  <input
+                                    type="range"
+                                    min="0"
+                                    max="80"
+                                    step="5"
+                                    value={store.donutHoleSize}
+                                    onChange={(e) => store.setLanguageOption('donutHoleSize', parseInt(e.target.value))}
+                                    className="w-full h-1.5 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                                  />
+                                </div>
+                                <div>
+                                  <div className="flex justify-between mb-1">
+                                    <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Start Angle: {store.startAngle}°</label>
+                                  </div>
+                                  <input
+                                    type="range"
+                                    min="0"
+                                    max="360"
+                                    step="15"
+                                    value={store.startAngle}
+                                    onChange={(e) => store.setLanguageOption('startAngle', parseInt(e.target.value))}
+                                    className="w-full h-1.5 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                                  />
+                                </div>
+                              </>
+                            )}
+
+                            {/* Conditional: Bar Height */}
+                            {(store.languageLayout === 'modern-bar' || store.languageLayout === 'compact') && (
+                              <div>
+                                <div className="flex justify-between mb-1">
+                                  <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Bar Height: {store.barHeight}px</label>
+                                </div>
+                                <input
+                                  type="range"
+                                  min="8"
+                                  max="30"
+                                  step="2"
+                                  value={store.barHeight}
+                                  onChange={(e) => store.setLanguageOption('barHeight', parseInt(e.target.value))}
+                                  className="w-full h-1.5 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                                />
+                              </div>
+                            )}
+
+                            {/* Conditional: Cards per Row */}
+                            {store.languageLayout === 'soft-cards' && (
+                              <div>
+                                <div className="flex justify-between mb-1">
+                                  <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Cards per Row: {store.cardsPerRow}</label>
+                                </div>
+                                <input
+                                  type="range"
+                                  min="1"
+                                  max="4"
+                                  step="1"
+                                  value={store.cardsPerRow}
+                                  onChange={(e) => store.setLanguageOption('cardsPerRow', parseInt(e.target.value))}
+                                  className="w-full h-1.5 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                                />
+                              </div>
+                            )}
+
+                            <div>
+                              <div className="flex justify-between mb-1">
+                                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Animation Speed: {store.animationSpeed}x</label>
+                              </div>
+                              <input
+                                type="range"
+                                min="0.5"
+                                max="2"
+                                step="0.1"
+                                value={store.animationSpeed}
+                                onChange={(e) => store.setLanguageOption('animationSpeed', parseFloat(e.target.value))}
+                                className="w-full h-1.5 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                              />
+                            </div>
+                          </motion.div>
+                        </AnimatePresence>
                       </div>
                     </div>
                   </div>
