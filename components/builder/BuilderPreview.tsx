@@ -12,8 +12,9 @@ import { SkillBadgeGrid } from "./SkillBadgeGrid";
 
 export function BuilderPreview() {
   const store = useBuilderStore();
-  const markdown = generateMarkdown(store);
-  const sanitizedMarkdown = markdown.replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gim, "");
+  const markdownResult = generateMarkdown(store);
+  const { header, customLanguages, widgets, footer, full } = markdownResult;
+  
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<'preview' | 'code'>('preview');
 
@@ -37,13 +38,13 @@ export function BuilderPreview() {
   }, [store.username, store.includeContributions]);
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(markdown);
+    navigator.clipboard.writeText(full);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   const downloadMarkdown = () => {
-    const blob = new Blob([markdown], { type: 'text/markdown' });
+    const blob = new Blob([full], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -54,7 +55,7 @@ export function BuilderPreview() {
 
   return (
     <div className="w-full h-full flex flex-col bg-slate-50 dark:bg-zinc-950/50">
-      {/* Toolbar */}
+      {/* Toolbar omitted for brevity - assuming it stays the same */}
       <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-white/10 bg-white dark:bg-zinc-900/50 backdrop-blur-md">
         <div className="flex gap-2 p-1 bg-slate-100 dark:bg-zinc-950 rounded-lg">
           <button
@@ -96,21 +97,32 @@ export function BuilderPreview() {
             <div className="p-8 prose dark:prose-invert max-w-none">
               {store.username ? (
                 <div className="preview-markdown flex flex-col gap-8">
-                  {store.showCustomLanguages && store.languageDisplayType === 'badges' ? (
-                    <div className="flex flex-col gap-6">
-                      <h1 align="center" className="text-3xl font-bold border-b-0">Hi there, I'm {store.username} 👋</h1>
-                      <SkillBadgeGrid />
-                      <div 
-                        className="flex flex-col gap-4"
-                        dangerouslySetInnerHTML={{ __html: sanitizedMarkdown.split('</h1>')[1]?.replace(/\n/g, '<br/>') || sanitizedMarkdown }} 
-                      />
-                    </div>
-                  ) : (
+                  <div className="flex flex-col gap-6">
+                    <div dangerouslySetInnerHTML={{ __html: header.replace(/\n/g, '<br/>') }} />
+                    
+                    <AnimatePresence mode="wait">
+                      {store.showCustomLanguages && (
+                        <motion.div
+                          key={store.languageDisplayType}
+                          initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
+                          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                          exit={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
+                          transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+                        >
+                          {store.languageDisplayType === 'badges' ? (
+                            <SkillBadgeGrid />
+                          ) : (
+                            <div className="flex justify-center" dangerouslySetInnerHTML={{ __html: customLanguages.replace(/\n/g, '<br/>') }} />
+                          )}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
                     <div 
                       className="flex flex-col gap-4"
-                      dangerouslySetInnerHTML={{ __html: sanitizedMarkdown.replace(/\n/g, '<br/>') }} 
+                      dangerouslySetInnerHTML={{ __html: widgets.replace(/\n/g, '<br/>') }} 
                     />
-                  )}
+                  </div>
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center h-64 text-slate-400 dark:text-slate-500">
@@ -121,7 +133,7 @@ export function BuilderPreview() {
           ) : (
             <div className="p-0 h-full">
               <pre className="p-6 text-sm text-slate-800 dark:text-slate-300 overflow-x-auto font-mono whitespace-pre-wrap">
-                {markdown}
+                {full}
               </pre>
             </div>
           )}

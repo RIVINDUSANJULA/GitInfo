@@ -1,7 +1,7 @@
 "use client";
 
 import { useBuilderStore, StatTheme } from "@/store/useBuilderStore";
-import { User, Palette, Settings, Layout, Check, ChevronDown, Code2 } from "lucide-react";
+import { User, Palette, Settings, Layout, Check, ChevronDown, Code2, BarChart3, Tags, Zap, Trophy, PieChart } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -56,7 +56,7 @@ export function BuilderSidebar() {
           )}
         </div>
 
-        {/* Widgets Section */}
+        {/* Unified Widgets Section */}
         <div className="rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden bg-slate-50/50 dark:bg-zinc-900/20">
           <button onClick={() => toggleSection('widgets')} className="w-full flex items-center justify-between p-4 bg-white dark:bg-zinc-900/50 hover:bg-slate-50 dark:hover:bg-zinc-900 transition-colors">
             <div className="flex items-center gap-3">
@@ -67,144 +67,130 @@ export function BuilderSidebar() {
           </button>
           
           {openSection === 'widgets' && (
-            <div className="p-4 border-t border-slate-200 dark:border-white/10 space-y-3">
-              {[
-                { id: 'showStats', label: 'Overall Stats' },
-                { id: 'showLanguages', label: 'Top Languages' },
-                { id: 'showStreak', label: 'GitHub Streak' },
-                { id: 'showTrophies', label: 'Trophies' },
-                { id: 'showTopRepos', label: 'Pinned Repos (Example)' },
-              ].map((widget) => (
-                <label key={widget.id} className="flex items-center justify-between cursor-pointer group">
-                  <span className="text-sm text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">{widget.label}</span>
-                  <div className="relative">
-                    <input
-                      type="checkbox"
-                      className="sr-only"
-                      checked={store[widget.id as keyof typeof store] as boolean}
-                      onChange={() => store.toggleModule(widget.id as any)}
-                    />
-                    <div className={cn("w-10 h-6 rounded-full transition-colors", store[widget.id as keyof typeof store] ? "bg-indigo-500" : "bg-slate-300 dark:bg-zinc-700")}></div>
-                    <div className={cn("absolute top-1 bg-white w-4 h-4 rounded-full transition-transform shadow-sm", store[widget.id as keyof typeof store] ? "translate-x-5" : "translate-x-1")}></div>
-                  </div>
-                </label>
-              ))}
-
-              <div className="pt-4 mt-2 border-t border-slate-200 dark:border-white/10">
-                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Layout Pattern</label>
-                 <div className="flex gap-2">
-                   <button onClick={() => store.setLayout('grid')} className={cn("flex-1 py-2 text-sm font-medium rounded-lg transition-colors border", store.layout === 'grid' ? "bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border-indigo-200 dark:border-indigo-500/30" : "bg-white dark:bg-zinc-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10")}>Grid / Inline</button>
-                   <button onClick={() => store.setLayout('stacked')} className={cn("flex-1 py-2 text-sm font-medium rounded-lg transition-colors border", store.layout === 'stacked' ? "bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border-indigo-200 dark:border-indigo-500/30" : "bg-white dark:bg-zinc-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10")}>Stacked</button>
-                 </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Language Stats Section */}
-        <div className="rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden bg-slate-50/50 dark:bg-zinc-900/20">
-          <button onClick={() => toggleSection('languages')} className="w-full flex items-center justify-between p-4 bg-white dark:bg-zinc-900/50 hover:bg-slate-50 dark:hover:bg-zinc-900 transition-colors">
-            <div className="flex items-center gap-3">
-              <Code2 className="w-5 h-5 text-blue-500" />
-              <span className="font-semibold text-slate-900 dark:text-white">Language Analytics</span>
-            </div>
-            <ChevronDown className={cn("w-5 h-5 text-slate-500 transition-transform", openSection === 'languages' && "rotate-180")} />
-          </button>
-          
-          {openSection === 'languages' && (
-            <div className="p-4 border-t border-slate-200 dark:border-white/10 space-y-4">
-              <div className="flex gap-2 p-1 bg-slate-100 dark:bg-zinc-950 rounded-xl mb-4">
-                <button 
-                  onClick={() => store.setLanguageDisplayType('analytics')}
-                  className={cn("flex-1 py-2 text-xs font-medium rounded-lg transition-all", store.languageDisplayType === 'analytics' ? "bg-white dark:bg-zinc-800 text-slate-900 dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400")}
-                >
-                  Analytics
-                </button>
-                <button 
-                  onClick={() => store.setLanguageDisplayType('badges')}
-                  className={cn("flex-1 py-2 text-xs font-medium rounded-lg transition-all", store.languageDisplayType === 'badges' ? "bg-white dark:bg-zinc-800 text-slate-900 dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400")}
-                >
-                  Skill Badges
-                </button>
-              </div>
-
-              {store.languageDisplayType === 'analytics' ? (
-                <>
-                  <label className="flex items-center justify-between cursor-pointer group">
-                    <span className="text-sm text-slate-700 dark:text-slate-300">Show Advanced Analytics</span>
-                    <div className="relative">
+            <div className="p-4 border-t border-slate-200 dark:border-white/10 space-y-6">
+              {/* Visibility Checklist */}
+              <div>
+                <span className="block text-[10px] uppercase font-bold text-slate-400 mb-3">Include in README</span>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { id: 'showStats', label: 'Stats' },
+                    { id: 'showLanguages', label: 'Top Langs' },
+                    { id: 'showStreak', label: 'Streak' },
+                    { id: 'showTrophies', label: 'Trophies' },
+                    { id: 'showCustomLanguages', label: 'Adv. Analytics' },
+                  ].map((widget) => (
+                    <label key={widget.id} className="flex items-center gap-2 p-2 rounded-lg border border-slate-200 dark:border-white/5 bg-white dark:bg-zinc-950/50 cursor-pointer hover:border-indigo-500/50 transition-all group">
                       <input
                         type="checkbox"
-                        className="sr-only"
-                        checked={store.showCustomLanguages}
-                        onChange={() => store.toggleModule('showCustomLanguages' as any)}
+                        checked={store[widget.id as keyof typeof store] as boolean}
+                        onChange={() => store.toggleModule(widget.id as any)}
+                        className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
                       />
-                      <div className={cn("w-10 h-6 rounded-full transition-colors", store.showCustomLanguages ? "bg-indigo-500" : "bg-slate-300 dark:bg-zinc-700")}></div>
-                      <div className={cn("absolute top-1 bg-white w-4 h-4 rounded-full transition-transform shadow-sm", store.showCustomLanguages ? "translate-x-5" : "translate-x-1")}></div>
+                      <span className="text-xs text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">{widget.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Customization Tab Selector */}
+              <div className="pt-4 border-t border-slate-200 dark:border-white/10">
+                <span className="block text-[10px] uppercase font-bold text-slate-400 mb-3">Customize Widget</span>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+                    { id: 'badges', label: 'Badges', icon: Tags },
+                    { id: 'stats', label: 'Stats', icon: PieChart },
+                    { id: 'streak', label: 'Streak', icon: Zap },
+                    { id: 'trophies', label: 'Trophies', icon: Trophy },
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => {
+                        store.setActiveWidgetTab(tab.id as any);
+                        if (tab.id === 'analytics') store.setLanguageDisplayType('analytics');
+                        if (tab.id === 'badges') store.setLanguageDisplayType('badges');
+                      }}
+                      className={cn(
+                        "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all border",
+                        store.activeWidgetTab === tab.id 
+                          ? "bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border-indigo-200 dark:border-indigo-500/30 shadow-sm" 
+                          : "bg-white dark:bg-zinc-900 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-zinc-800"
+                      )}
+                    >
+                      <tab.icon className="w-3.5 h-3.5" />
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Dynamic Customization Panel */}
+              <div className="pt-4 border-t border-slate-200 dark:border-white/10">
+                {store.activeWidgetTab === 'analytics' && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-400 uppercase">Analytics Settings</span>
                     </div>
-                  </label>
-
-                  {store.showCustomLanguages && (
-                    <div className="space-y-4 pt-2 border-t border-slate-200 dark:border-white/10">
-                      <label className="flex items-center justify-between cursor-pointer group">
-                        <span className="text-sm text-slate-700 dark:text-slate-300">Include Contributions</span>
-                        <div className="relative">
-                          <input
-                            type="checkbox"
-                            className="sr-only"
-                            checked={store.includeContributions}
-                            onChange={() => store.setLanguageOption('includeContributions', !store.includeContributions)}
-                          />
-                          <div className={cn("w-10 h-6 rounded-full transition-colors", store.includeContributions ? "bg-indigo-500" : "bg-slate-300 dark:bg-zinc-700")}></div>
-                          <div className={cn("absolute top-1 bg-white w-4 h-4 rounded-full transition-transform shadow-sm", store.includeContributions ? "translate-x-5" : "translate-x-1")}></div>
-                        </div>
-                      </label>
-
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Display Limit: {store.languageLimit}</label>
-                        <input 
-                          type="range" 
-                          min="3" 
-                          max="12" 
-                          step="1"
-                          value={store.languageLimit}
-                          onChange={(e) => store.setLanguageOption('languageLimit', parseInt(e.target.value))}
-                          className="w-full h-1.5 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                    <label className="flex items-center justify-between cursor-pointer group">
+                      <span className="text-sm text-slate-700 dark:text-slate-300">Include Contributions</span>
+                      <div className="relative">
+                        <input
+                          type="checkbox"
+                          className="sr-only"
+                          checked={store.includeContributions}
+                          onChange={() => store.setLanguageOption('includeContributions', !store.includeContributions)}
                         />
+                        <div className={cn("w-10 h-6 rounded-full transition-colors", store.includeContributions ? "bg-indigo-500" : "bg-slate-300 dark:bg-zinc-700")}></div>
+                        <div className={cn("absolute top-1 bg-white w-4 h-4 rounded-full transition-transform shadow-sm", store.includeContributions ? "translate-x-5" : "translate-x-1")}></div>
                       </div>
+                    </label>
 
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Visual Style</label>
-                        <div className="grid grid-cols-3 gap-2">
-                          {(['compact', 'list', 'pie'] as const).map((style) => (
-                            <button
-                              key={style}
-                              onClick={() => store.setLanguageOption('languageLayout', style)}
-                              className={cn(
-                                "py-2 text-xs font-medium rounded-lg border transition-all capitalize",
-                                store.languageLayout === style 
-                                  ? "bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border-indigo-200 dark:border-indigo-500/30" 
-                                  : "bg-white dark:bg-zinc-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10"
-                              )}
-                            >
-                              {style}
-                            </button>
-                          ))}
-                        </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Display Limit: {store.languageLimit}</label>
+                      <input 
+                        type="range" 
+                        min="3" 
+                        max="12" 
+                        step="1"
+                        value={store.languageLimit}
+                        onChange={(e) => store.setLanguageOption('languageLimit', parseInt(e.target.value))}
+                        className="w-full h-1.5 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Visual Style</label>
+                      <div className="grid grid-cols-3 gap-2">
+                        {(['compact', 'list', 'pie'] as const).map((style) => (
+                          <button
+                            key={style}
+                            onClick={() => store.setLanguageOption('languageLayout', style)}
+                            className={cn(
+                              "py-2 text-xs font-medium rounded-lg border transition-all capitalize",
+                              store.languageLayout === style 
+                                ? "bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border-indigo-200 dark:border-indigo-500/30" 
+                                : "bg-white dark:bg-zinc-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10"
+                            )}
+                          >
+                            {style}
+                          </button>
+                        ))}
                       </div>
                     </div>
-                  )}
-                </>
-              ) : (
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Add Manual Skill</label>
-                    <div className="flex gap-2">
+                  </div>
+                )}
+
+                {store.activeWidgetTab === 'badges' && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-400 uppercase">Badge Grid Settings</span>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Add Manual Skill</label>
                       <input 
                         type="text" 
-                        id="skill-input"
                         placeholder="React, Figma, Docker..."
-                        className="flex-1 px-3 py-2 text-sm bg-white dark:bg-zinc-950 border border-slate-300 dark:border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="w-full px-3 py-2 text-sm bg-white dark:bg-zinc-950 border border-slate-300 dark:border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') {
                             const val = e.currentTarget.value.trim();
@@ -216,21 +202,7 @@ export function BuilderSidebar() {
                         }}
                       />
                     </div>
-                  </div>
 
-                  {store.manualSkills.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {store.manualSkills.map(skill => (
-                        <span key={skill} className="inline-flex items-center gap-1 px-2 py-1 bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 text-xs font-medium rounded-md border border-indigo-100 dark:border-indigo-500/30">
-                          {skill}
-                          <button onClick={() => store.removeManualSkill(skill)} className="hover:text-indigo-900 dark:hover:text-white">&times;</button>
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  <div className="pt-2 border-t border-slate-200 dark:border-white/10">
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Badge Options</label>
                     <div className="grid grid-cols-2 gap-4 mb-4">
                       <div>
                         <span className="block text-[10px] uppercase font-bold text-slate-400 mb-1.5">Color Mode</span>
@@ -247,10 +219,7 @@ export function BuilderSidebar() {
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="pt-2 border-t border-slate-200 dark:border-white/10">
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Visibility Checklist</label>
                     <div className="max-h-60 overflow-y-auto pr-2 space-y-2 custom-scrollbar border border-slate-200 dark:border-white/10 rounded-lg p-3 bg-white/50 dark:bg-zinc-950/50">
                       {store.autoLanguages.length > 0 && (
                         <div className="pb-2 mb-2 border-b border-slate-200 dark:border-white/10">
@@ -290,8 +259,24 @@ export function BuilderSidebar() {
                       )}
                     </div>
                   </div>
-                </div>
-              )}
+                )}
+
+                {(store.activeWidgetTab === 'stats' || store.activeWidgetTab === 'streak' || store.activeWidgetTab === 'trophies') && (
+                  <div className="flex flex-col items-center justify-center py-8 px-4 text-center border border-dashed border-slate-200 dark:border-white/10 rounded-xl bg-slate-50/50 dark:bg-zinc-950/20">
+                    <Settings className="w-8 h-8 text-slate-300 dark:text-zinc-700 mb-3" />
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Settings for <span className="font-bold text-indigo-500 capitalize">{store.activeWidgetTab}</span> will be available soon.</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Layout Pattern (Moved here as it relates to widgets) */}
+              <div className="pt-4 mt-2 border-t border-slate-200 dark:border-white/10">
+                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Overall Layout Pattern</label>
+                 <div className="flex gap-2">
+                   <button onClick={() => store.setLayout('grid')} className={cn("flex-1 py-2 text-sm font-medium rounded-lg transition-colors border", store.layout === 'grid' ? "bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border-indigo-200 dark:border-indigo-500/30" : "bg-white dark:bg-zinc-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10")}>Grid / Inline</button>
+                   <button onClick={() => store.setLayout('stacked')} className={cn("flex-1 py-2 text-sm font-medium rounded-lg transition-colors border", store.layout === 'stacked' ? "bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border-indigo-200 dark:border-indigo-500/30" : "bg-white dark:bg-zinc-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10")}>Stacked</button>
+                 </div>
+              </div>
             </div>
           )}
         </div>

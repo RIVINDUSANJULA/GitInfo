@@ -9,6 +9,7 @@ export interface BuilderState {
   showLanguages: boolean;
   showTopRepos: boolean;
   showCustomLanguages: boolean;
+  activeWidgetTab: 'analytics' | 'badges' | 'stats' | 'streak' | 'trophies';
   languageDisplayType: 'analytics' | 'badges';
   manualSkills: string[];
   hiddenLanguages: string[];
@@ -45,6 +46,7 @@ export interface BuilderState {
   setBadgeColorMode: (mode: 'brand' | 'custom') => void;
   setBadgeSize: (size: 'sm' | 'md') => void;
   setAutoLanguages: (langs: { name: string, color: string, percentage: number }[]) => void;
+  setActiveWidgetTab: (tab: 'analytics' | 'badges' | 'stats' | 'streak' | 'trophies') => void;
 }
 
 export const useBuilderStore = create<BuilderState>()(
@@ -57,6 +59,7 @@ export const useBuilderStore = create<BuilderState>()(
       showTrophies: false,
       showTopRepos: false,
       showCustomLanguages: false,
+      activeWidgetTab: 'analytics',
       languageDisplayType: 'analytics',
       manualSkills: [],
       hiddenLanguages: [],
@@ -103,6 +106,7 @@ export const useBuilderStore = create<BuilderState>()(
       setBadgeColorMode: (badgeColorMode) => set({ badgeColorMode }),
       setBadgeSize: (badgeSize) => set({ badgeSize }),
       setAutoLanguages: (autoLanguages) => set({ autoLanguages }),
+      setActiveWidgetTab: (activeWidgetTab) => set({ activeWidgetTab }),
     }),
     {
       name: 'github-customizer-storage',
