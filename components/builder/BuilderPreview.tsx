@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 export function BuilderPreview() {
   const store = useBuilderStore();
   const markdown = generateMarkdown(store);
+  const sanitizedMarkdown = markdown.replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gim, "");
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<'preview' | 'code'>('preview');
 
@@ -74,7 +75,7 @@ export function BuilderPreview() {
               {store.username ? (
                 <div 
                   className="preview-markdown flex flex-col gap-4"
-                  dangerouslySetInnerHTML={{ __html: markdown.replace(/\n/g, '<br/>') }} 
+                  dangerouslySetInnerHTML={{ __html: sanitizedMarkdown.replace(/\n/g, '<br/>') }} 
                 />
               ) : (
                 <div className="flex flex-col items-center justify-center h-64 text-slate-400 dark:text-slate-500">
@@ -92,27 +93,6 @@ export function BuilderPreview() {
         </div>
       </div>
       
-      <style dangerouslySetInnerHTML={{__html: `
-        .preview-markdown img { 
-          max-width: 100%; 
-          height: auto; 
-          display: inline-block; 
-          margin: 4px; 
-          border-radius: 8px;
-          min-height: 50px;
-          background: rgba(0,0,0,0.05);
-          transition: opacity 0.3s ease;
-        }
-        .dark .preview-markdown img {
-          background: rgba(255,255,255,0.05);
-        }
-        .preview-markdown div[align="center"] { 
-          display: flex; 
-          flex-wrap: wrap; 
-          justify-content: center; 
-          gap: 8px; 
-        }
-      `}} />
     </div>
   );
 }

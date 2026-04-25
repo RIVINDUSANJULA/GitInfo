@@ -1,7 +1,7 @@
 "use client";
 
 import { useBuilderStore, StatTheme } from "@/store/useBuilderStore";
-import { User, Palette, Settings, Layout, Check, ChevronDown } from "lucide-react";
+import { User, Palette, Settings, Layout, Check, ChevronDown, Code2 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
