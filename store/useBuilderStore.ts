@@ -93,7 +93,7 @@ export const useBuilderStore = create<BuilderState>()(
         set({ [key]: color.replace('#', '') }), // Store without #
       setHideBorder: (hideBorder: boolean) => set({ hideBorder }),
       setLayout: (layout: 'stacked' | 'grid') => set({ layout }),
-      setLanguageOption: (key: keyof Pick<BuilderState, 'includeContributions' | 'languageLimit' | 'languageLayout'>, value: any) => 
+      setLanguageOption: (key: keyof Pick<BuilderState, 'includeContributions' | 'languageLimit' | 'languageLayout' | 'borderRadius' | 'showGlow' | 'animationSpeed'>, value: any) => 
         set({ [key]: value }),
       setLanguageDisplayType: (languageDisplayType) => set({ languageDisplayType }),
       addManualSkill: (skill) => set((state) => ({
