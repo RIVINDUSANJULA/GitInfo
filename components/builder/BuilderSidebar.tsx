@@ -45,7 +45,7 @@ export function BuilderSidebar() {
     <div className="w-full h-full bg-white dark:bg-zinc-950/50 backdrop-blur-xl border-r border-slate-200 dark:border-white/10 flex flex-col overflow-y-auto custom-scrollbar">
       <div className="p-6">
         <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
-          GitCustomize <span className="text-[10px] bg-indigo-500 text-white px-1.5 py-0.5 rounded-full font-black uppercase tracking-tighter">PRO</span>
+          GitCustomize
         </h2>
         <p className="text-xs text-slate-500 dark:text-slate-400">Precision README Architecture Engine</p>
       </div>
@@ -120,12 +120,12 @@ export function BuilderSidebar() {
                       <div className="flex justify-between mb-1.5">
                         <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Display Limit: {store.analyticsConfig.languageLimit}</label>
                       </div>
-                      <input
+                        <input
                         type="range"
                         min="3"
                         max="15"
                         step="1"
-                        value={store.analyticsConfig.languageLimit}
+                        value={store.analyticsConfig.languageLimit || 5}
                         onChange={(e) => store.setAnalyticsOption('languageLimit', parseInt(e.target.value))}
                         className="w-full h-1.5 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
                       />
@@ -165,7 +165,7 @@ export function BuilderSidebar() {
                             min="0"
                             max="40"
                             step="2"
-                            value={store.analyticsConfig.blockRadius}
+                            value={store.analyticsConfig.blockRadius || 0}
                             onChange={(e) => store.setAnalyticsOption('blockRadius', parseInt(e.target.value))}
                             className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
                           />
@@ -177,7 +177,7 @@ export function BuilderSidebar() {
                             min="0"
                             max="20"
                             step="1"
-                            value={store.analyticsConfig.elementRadius}
+                            value={store.analyticsConfig.elementRadius || 0}
                             onChange={(e) => store.setAnalyticsOption('elementRadius', parseInt(e.target.value))}
                             className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
                           />
@@ -225,7 +225,7 @@ export function BuilderSidebar() {
                               min="8"
                               max="32"
                               step="2"
-                              value={store.analyticsConfig.barHeight}
+                              value={store.analyticsConfig.barHeight || 18}
                               onChange={(e) => store.setAnalyticsOption('barHeight', parseInt(e.target.value))}
                               className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
                             />
@@ -284,7 +284,7 @@ export function BuilderSidebar() {
                       <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Badge Aesthetic Engine</label>
                       <div className="flex p-1 bg-slate-100 dark:bg-zinc-900 rounded-xl gap-1">
                         {[
-                          { id: 'premium', label: 'Premium', icon: Diamond },
+                          { id: 'premium', label: 'Glassmorphic', icon: Diamond },
                           { id: 'shields', label: 'Classic', icon: Shield },
                           { id: 'skillicons', label: 'Dynamic', icon: Sparkles },
                           { id: 'artistic', label: 'Artistic', icon: Brush },
@@ -318,7 +318,7 @@ export function BuilderSidebar() {
                                 min="0"
                                 max="40"
                                 step="2"
-                                value={store.badgesConfig.blockRadius}
+                                value={store.badgesConfig.blockRadius || 0}
                                 onChange={(e) => store.setBadgesOption('blockRadius', parseInt(e.target.value))}
                                 className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
                               />
@@ -330,7 +330,7 @@ export function BuilderSidebar() {
                                 min="0"
                                 max="20"
                                 step="1"
-                                value={store.badgesConfig.elementRadius}
+                                value={store.badgesConfig.elementRadius || 0}
                                 onChange={(e) => store.setBadgesOption('elementRadius', parseInt(e.target.value))}
                                 className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
                               />
@@ -345,7 +345,7 @@ export function BuilderSidebar() {
                                 min="12"
                                 max="48"
                                 step="2"
-                                value={store.badgesConfig.artisticIconSize}
+                                value={store.badgesConfig.artisticIconSize || 24}
                                 onChange={(e) => store.setBadgesOption('artisticIconSize', parseInt(e.target.value))}
                                 className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
                               />
@@ -422,7 +422,7 @@ export function BuilderSidebar() {
                                 min="1"
                                 max="20"
                                 step="1"
-                                value={store.badgesConfig.skillIconsPerRow}
+                                value={store.badgesConfig.skillIconsPerRow || 10}
                                 onChange={(e) => store.setBadgesOption('skillIconsPerRow', parseInt(e.target.value))}
                                 className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
                               />
