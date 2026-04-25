@@ -31,7 +31,16 @@ export function generateLanguageSvg(languages: any[], options: SvgOptions) {
 
   const data = languages.slice(0, limit);
   const width = 450;
-  const height = layout === 'compact' ? 120 : layout === 'pie' ? 250 : 200;
+  
+  // Calculate dynamic height
+  let height = 120;
+  if (layout === 'compact') {
+    height = 80 + Math.ceil(data.length / 3) * 25;
+  } else if (layout === 'list') {
+    height = 70 + data.length * 30;
+  } else if (layout === 'pie') {
+    height = 280;
+  }
 
   let content = "";
 
@@ -58,26 +67,24 @@ export function generateLanguageSvg(languages: any[], options: SvgOptions) {
 }
 
 function generateCompactLayout(data: any[], titleColor: string, textColor: string) {
-  let x = 25;
   const barWidth = 400;
   const barHeight = 10;
   const barY = 55;
 
   let barSegments = "";
   let legend = "";
-  let currentX = x;
+  let currentX = 25;
 
   data.forEach((lang, i) => {
     const segmentWidth = (lang.percentage / 100) * barWidth;
     barSegments += `<rect x="${currentX}" y="${barY}" width="${segmentWidth}" height="${barHeight}" fill="${lang.color}" ${i === 0 ? 'rx="5"' : ''} ${i === data.length - 1 ? 'rx="5"' : ''}/>`;
 
     // Legend
-    const lx = 25 + (i % 3) * 130;
-    const ly = 85 + Math.floor(i / 3) * 20;
+    const lx = 25 + (i % 3) * 135;
+    const ly = 95 + Math.floor(i / 3) * 25;
     legend += `
-      <circle cx="${lx}" cy="${ly - 4}" r="4" fill="${lang.color}"/>
-      <text x="${lx + 12}" y="${ly}" class="lang-name">${lang.name}</text>
-      <text x="${lx + 85}" y="${ly}" class="percentage">${lang.percentage.toFixed(1)}%</text>
+      <circle cx="${lx}" cy="${ly - 4}" r="5" fill="${lang.color}"/>
+      <text x="${lx + 15}" y="${ly}" class="lang-name">${lang.name}</text>
     `;
 
     currentX += segmentWidth;
@@ -89,13 +96,13 @@ function generateCompactLayout(data: any[], titleColor: string, textColor: strin
 function generateListLayout(data: any[], titleColor: string, textColor: string) {
   let list = "";
   data.forEach((lang, i) => {
-    const y = 65 + i * 25;
-    const barMaxWidth = 250;
+    const y = 70 + i * 30;
+    const barMaxWidth = 230;
     const barWidth = (lang.percentage / 100) * barMaxWidth;
     list += `
       <text x="25" y="${y}" class="lang-name">${lang.name}</text>
-      <rect x="120" y="${y - 10}" width="${barMaxWidth}" height="8" rx="4" fill="#eeeeee" fill-opacity="0.2"/>
-      <rect x="120" y="${y - 10}" width="${barWidth}" height="8" rx="4" fill="${lang.color}"/>
+      <rect x="130" y="${y - 10}" width="${barMaxWidth}" height="10" rx="5" fill="#eeeeee" fill-opacity="0.15"/>
+      <rect x="130" y="${y - 10}" width="${barWidth}" height="10" rx="5" fill="${lang.color}"/>
       <text x="380" y="${y}" class="percentage">${lang.percentage.toFixed(1)}%</text>
     `;
   });
@@ -103,7 +110,46 @@ function generateListLayout(data: any[], titleColor: string, textColor: string) 
 }
 
 function generatePieLayout(data: any[], titleColor: string, textColor: string) {
-  // Simple representation as list for now since SVG pie charts are complex to generate purely by string without math libs
-  // But let's at least make it look different
-  return generateListLayout(data, titleColor, textColor);
+  const centerX = 120;
+  const centerY = 160;
+  const radius = 70;
+  const strokeWidth = 25;
+  const circumference = 2 * Math.PI * radius;
+  
+  let currentOffset = 0;
+  let chart = "";
+  let legend = "";
+
+  data.forEach((lang, i) => {
+    const sliceLength = (lang.percentage / 100) * circumference;
+    const rotation = (currentOffset / circumference) * 360 - 90;
+    
+    chart += `
+      <circle
+        cx="${centerX}"
+        cy="${centerY}"
+        r="${radius}"
+        fill="transparent"
+        stroke="${lang.color}"
+        stroke-width="${strokeWidth}"
+        stroke-dasharray="${sliceLength} ${circumference - sliceLength}"
+        transform="rotate(${rotation} ${centerX} ${centerY})"
+      />
+    `;
+
+    const lx = 250;
+    const ly = 80 + i * 30;
+    legend += `
+      <circle cx="${lx}" cy="${ly - 4}" r="6" fill="${lang.color}"/>
+      <text x="${lx + 18}" y="${ly}" class="lang-name">${lang.name}</text>
+      <text x="${lx + 130}" y="${ly}" class="percentage">${lang.percentage.toFixed(1)}%</text>
+    `;
+
+    currentOffset += sliceLength;
+  });
+
+  // Inner hole for Donut effect
+  chart += `<circle cx="${centerX}" cy="${centerY}" r="${radius - strokeWidth/2 - 1}" fill="transparent" />`;
+
+  return chart + legend;
 }
