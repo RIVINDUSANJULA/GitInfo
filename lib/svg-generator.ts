@@ -149,6 +149,7 @@ function generateCompactLayout(data: any[], radius: number, speed: number, optio
   const gap = radius > 0 ? 2 : 0;
   const totalGaps = (data.length - 1) * gap;
   const availableWidth = barWidth - totalGaps;
+  const glowAttr = options.showGlow ? 'filter="url(#glow)"' : '';
   
   let currentX = 25;
   let barSegments = "";
@@ -158,13 +159,13 @@ function generateCompactLayout(data: any[], radius: number, speed: number, optio
     const segmentWidth = (lang.percentage / 100) * availableWidth;
     const safeId = lang.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
     barSegments += `<rect id="bar-${safeId}" x="${currentX}" y="${barY}" width="${segmentWidth}" height="${barHeight}" fill="${lang.color}" 
-      rx="${radius}" ${glow} class="bar-animate" style="animation-delay: ${i * 0.1 / speed}s"/>`;
+      rx="${radius}" ${glowAttr} class="bar-animate" style="animation-delay: ${i * 0.1 / speed}s"/>`;
 
     const lx = 25 + (i % 3) * 135;
     const ly = barY + barHeight + 35 + Math.floor(i / 3) * 25;
     legend += `
       <g class="animate" id="legend-${safeId}" style="animation-delay: ${0.5 + i * 0.1 / speed}s">
-        <circle cx="${lx}" cy="${ly - 4}" r="5" fill="${lang.color}" ${glow}/>
+        <circle cx="${lx}" cy="${ly - 4}" r="5" fill="${lang.color}" ${glowAttr}/>
         <text x="${lx + 15}" y="${ly}" class="lang-name">${lang.name} <tspan class="percentage">${lang.percentage.toFixed(1)}%</tspan></text>
       </g>`;
     currentX += segmentWidth + gap;

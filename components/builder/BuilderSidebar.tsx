@@ -1,7 +1,7 @@
 "use client";
 
-import { useBuilderStore, StatTheme } from "@/store/useBuilderStore";
-import { User, Palette, Settings, Layout, Check, ChevronDown, Code2, BarChart3, Tags, Zap, Trophy, PieChart, GripVertical, Eye, EyeOff, Boxes, Layers, Sparkles, Shield, Diamond } from "lucide-react";
+import { useBuilderStore, StatTheme, ManualSkill } from "@/store/useBuilderStore";
+import { User, Palette, Settings, Layout, Check, ChevronDown, Code2, BarChart3, Tags, Zap, Trophy, PieChart, GripVertical, Eye, EyeOff, Boxes, Layers, Sparkles, Shield, Diamond, Brush, Search, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence, Reorder, LayoutGroup } from "framer-motion";
@@ -21,6 +21,7 @@ export function BuilderSidebar() {
   const store = useBuilderStore();
   const [openSection, setOpenSection] = useState<string>("profile");
   const [skillInput, setSkillInput] = useState("");
+  const [artisticSearch, setArtisticSearch] = useState("");
 
   const toggleSection = (section: string) => {
     setOpenSection(openSection === section ? "" : section);
@@ -29,9 +30,15 @@ export function BuilderSidebar() {
   const handleAddSkill = () => {
     const val = skillInput.trim();
     if (val) {
-      store.addManualSkill(val);
+      store.addManualSkill({ name: val });
       setSkillInput("");
     }
+  };
+
+  const mapToArtisticIcon = (name: string) => {
+    const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+    // DevIcon pattern: https://cdn.jsdelivr.net/gh/devicons/devicon/icons/[slug]/[slug]-original.svg
+    return `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${slug}/${slug}-original.svg`;
   };
 
   return (
@@ -150,7 +157,6 @@ export function BuilderSidebar() {
                         <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">Advanced Configuration</span>
                       </div>
 
-                      {/* Common Analytics Radii */}
                       <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1.5">
                           <label className="text-[10px] font-bold text-slate-400">BLOCK RADIUS: {store.analyticsConfig.blockRadius}PX</label>
@@ -178,7 +184,6 @@ export function BuilderSidebar() {
                         </div>
                       </div>
 
-                      {/* Layout-Specific Settings */}
                       <div className="space-y-4 pt-2">
                         {store.analyticsConfig.layout === 'pie' && (
                           <div className="p-3 bg-slate-50 dark:bg-zinc-900 rounded-xl border border-slate-200 dark:border-white/5 space-y-4">
@@ -227,7 +232,6 @@ export function BuilderSidebar() {
                           </div>
                         )}
 
-                        {/* Neon Glow & Background Settings */}
                         <div className="flex items-center justify-between pt-2">
                           <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.8)]"></div>
@@ -276,26 +280,26 @@ export function BuilderSidebar() {
               <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="overflow-hidden border-t border-slate-200 dark:border-white/10">
                 <LayoutGroup>
                   <div className="p-4 space-y-6 bg-white dark:bg-zinc-950/20">
-                    {/* Badge Aesthetic Selector (Tabs) */}
                     <div className="space-y-2.5">
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Badge Engine Provider</label>
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Badge Aesthetic Engine</label>
                       <div className="flex p-1 bg-slate-100 dark:bg-zinc-900 rounded-xl gap-1">
                         {[
                           { id: 'premium', label: 'Premium', icon: Diamond },
                           { id: 'shields', label: 'Classic', icon: Shield },
                           { id: 'skillicons', label: 'Dynamic', icon: Sparkles },
+                          { id: 'artistic', label: 'Artistic', icon: Brush },
                         ].map((provider) => (
                           <button
                             key={provider.id}
                             onClick={() => store.setBadgesOption('badgeStyle', provider.id as any)}
                             className={cn(
-                              "flex-1 flex items-center justify-center gap-2 py-2 text-[10px] font-black rounded-lg transition-all uppercase tracking-tighter border",
+                              "flex-1 flex flex-col items-center justify-center gap-1 py-2 text-[8px] font-black rounded-lg transition-all uppercase tracking-tighter border",
                               store.badgesConfig.badgeStyle === provider.id
-                                ? "bg-white dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 shadow-sm"
+                                ? "bg-white dark:bg-zinc-800 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 shadow-sm"
                                 : "text-slate-500 border-transparent hover:text-slate-700 dark:hover:text-slate-300"
                             )}
                           >
-                            <provider.icon className="w-3 h-3" />
+                            <provider.icon className="w-3.5 h-3.5" />
                             {provider.label}
                           </button>
                         ))}
@@ -304,11 +308,11 @@ export function BuilderSidebar() {
 
                     <motion.div layout className="space-y-4">
                       {/* Context-Aware Settings */}
-                      {store.badgesConfig.badgeStyle === 'premium' && (
+                      {(store.badgesConfig.badgeStyle === 'premium' || store.badgesConfig.badgeStyle === 'artistic') && (
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
                           <div className="grid grid-cols-2 gap-3">
                             <div className="space-y-1.5">
-                              <label className="text-[10px] font-bold text-slate-400">BLOCK RADIUS: {store.badgesConfig.blockRadius}PX</label>
+                              <label className="text-[10px] font-bold text-slate-400 uppercase">Block Radius: {store.badgesConfig.blockRadius}px</label>
                               <input
                                 type="range"
                                 min="0"
@@ -320,7 +324,7 @@ export function BuilderSidebar() {
                               />
                             </div>
                             <div className="space-y-1.5">
-                              <label className="text-[10px] font-bold text-slate-400">ELEMENT RADIUS: {store.badgesConfig.elementRadius}PX</label>
+                              <label className="text-[10px] font-bold text-slate-400 uppercase">Badge Roundness: {store.badgesConfig.elementRadius}px</label>
                               <input
                                 type="range"
                                 min="0"
@@ -332,14 +336,34 @@ export function BuilderSidebar() {
                               />
                             </div>
                           </div>
-                          <label className="flex items-center justify-between cursor-pointer group">
-                            <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Neon Glow Engine</span>
-                            <div className="relative">
-                              <input type="checkbox" checked={store.analyticsConfig.showGlow} readOnly className="sr-only" />
-                              <div className={cn("w-9 h-5 rounded-full transition-colors", store.analyticsConfig.showGlow ? "bg-emerald-500" : "bg-slate-300 dark:bg-zinc-700")}></div>
-                              <div className={cn("absolute top-1 bg-white w-3 h-3 rounded-full transition-transform shadow-sm", store.analyticsConfig.showGlow ? "translate-x-5" : "translate-x-1")}></div>
+                          
+                          <div className="grid grid-cols-2 gap-3 pt-2">
+                             <div className="space-y-1.5">
+                              <label className="text-[10px] font-bold text-slate-400 uppercase text-emerald-500">Uniform Icon Scale: {store.badgesConfig.artisticIconSize}px</label>
+                              <input
+                                type="range"
+                                min="12"
+                                max="48"
+                                step="2"
+                                value={store.badgesConfig.artisticIconSize}
+                                onChange={(e) => store.setBadgesOption('artisticIconSize', parseInt(e.target.value))}
+                                className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                              />
                             </div>
-                          </label>
+                            <label className="flex flex-col gap-1.5">
+                              <span className="text-[10px] font-bold text-slate-400 uppercase">Neon Glow</span>
+                              <div className="relative pt-1">
+                                <input 
+                                  type="checkbox" 
+                                  className="sr-only" 
+                                  checked={store.analyticsConfig.showGlow} 
+                                  onChange={(e) => store.setAnalyticsOption('showGlow', e.target.checked)} 
+                                />
+                                <div className={cn("w-10 h-6 rounded-full transition-colors", store.analyticsConfig.showGlow ? "bg-emerald-500" : "bg-slate-300 dark:bg-zinc-700")}></div>
+                                <div className={cn("absolute top-1 bg-white w-4 h-4 rounded-full transition-transform shadow-sm", store.analyticsConfig.showGlow ? "translate-x-5" : "translate-x-1")}></div>
+                              </div>
+                            </label>
+                          </div>
                         </motion.div>
                       )}
 
@@ -407,31 +431,25 @@ export function BuilderSidebar() {
                         </motion.div>
                       )}
 
-                      {/* Common Shared Controls */}
+                      {/* Unified Library Manager */}
                       <div className="pt-4 border-t border-slate-200 dark:border-white/10 space-y-4">
-                        <label className="flex items-center justify-between cursor-pointer group">
-                          <div className="flex flex-col">
-                            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Official Brand Colors</span>
-                            <span className="text-[10px] text-slate-400">Sync hex from Simple Icons</span>
-                          </div>
-                          <div className="relative">
-                            <input
-                              type="checkbox"
-                              className="sr-only"
-                              checked={store.badgesConfig.useOfficialColors}
-                              onChange={(e) => store.setBadgesOption('useOfficialColors', e.target.checked)}
-                            />
-                            <div className={cn("w-10 h-6 rounded-full transition-colors", store.badgesConfig.useOfficialColors ? "bg-emerald-500" : "bg-slate-300 dark:bg-zinc-700")}></div>
-                            <div className={cn("absolute top-1 bg-white w-4 h-4 rounded-full transition-transform shadow-sm", store.badgesConfig.useOfficialColors ? "translate-x-5" : "translate-x-1")}></div>
-                          </div>
-                        </label>
+                        <div className="flex items-center justify-between">
+                           <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Master Skill Library</span>
+                           <label className="flex items-center gap-2 cursor-pointer">
+                              <span className="text-[9px] font-bold text-slate-400 uppercase">Official Colors</span>
+                              <div className="relative">
+                                <input type="checkbox" className="sr-only" checked={store.badgesConfig.useOfficialColors} onChange={(e) => store.setBadgesOption('useOfficialColors', e.target.checked)} />
+                                <div className={cn("w-7 h-4 rounded-full transition-colors", store.badgesConfig.useOfficialColors ? "bg-emerald-500" : "bg-slate-300 dark:bg-zinc-700")}></div>
+                                <div className={cn("absolute top-0.5 bg-white w-3 h-3 rounded-full transition-transform shadow-sm", store.badgesConfig.useOfficialColors ? "translate-x-3.5" : "translate-x-0.5")}></div>
+                              </div>
+                           </label>
+                        </div>
 
                         <div>
-                          <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5">Add Manual Skill</label>
                           <div className="relative">
                             <input
                               type="text"
-                              placeholder="React, Figma, Docker..."
+                              placeholder="Add Skill (React, Node...)"
                               value={skillInput || ""}
                               onChange={(e) => setSkillInput(e.target.value)}
                               className="w-full px-4 py-2.5 bg-white dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm transition-all"
@@ -448,10 +466,11 @@ export function BuilderSidebar() {
                           </div>
                         </div>
 
-                        <div className="max-h-60 overflow-y-auto pr-2 space-y-3 custom-scrollbar border border-slate-200 dark:border-white/10 rounded-xl p-3 bg-white/50 dark:bg-zinc-950/30 shadow-inner">
+                        {/* List of Skills with Artistic Search */}
+                        <div className="max-h-80 overflow-y-auto pr-2 space-y-3 custom-scrollbar border border-slate-200 dark:border-white/10 rounded-xl p-3 bg-white/50 dark:bg-zinc-950/30 shadow-inner">
                           {store.autoLanguages.length > 0 && (
                             <div className="pb-3 mb-2 border-b border-slate-200 dark:border-white/10">
-                              <span className="block text-[10px] uppercase font-black text-slate-400 mb-2.5">Detected Tech</span>
+                              <span className="block text-[10px] uppercase font-black text-slate-400 mb-2.5 tracking-tighter">Detected from Profile</span>
                               <div className="flex flex-wrap gap-1.5">
                                 {store.autoLanguages.map(lang => (
                                   <button
@@ -471,21 +490,50 @@ export function BuilderSidebar() {
                             </div>
                           )}
 
-                          <div>
-                            <span className="block text-[10px] uppercase font-black text-slate-400 mb-2.5">Custom Library</span>
+                          <div className="space-y-3">
+                            <span className="block text-[10px] uppercase font-black text-slate-400 tracking-tighter">Custom Library & Artistic Mapping</span>
                             {store.manualSkills.length > 0 ? (
-                              <div className="flex flex-wrap gap-1.5">
+                              <div className="grid gap-2">
                                 {store.manualSkills.map(skill => (
-                                  <div key={skill} className="flex items-center gap-1.5 bg-white dark:bg-zinc-800 border border-slate-200 dark:border-white/10 rounded-md pl-2 pr-1 py-1 shadow-sm group hover:border-emerald-500/30 transition-all">
-                                    <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300">{skill}</span>
-                                    <button onClick={() => store.removeManualSkill(skill)} className="p-0.5 hover:bg-rose-500/10 hover:text-rose-500 rounded transition-colors">
-                                      <EyeOff className="w-3 h-3" />
-                                    </button>
+                                  <div key={skill.name} className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-white/10 rounded-xl p-2 flex flex-col gap-2 group shadow-sm hover:border-emerald-500/30 transition-all">
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex items-center gap-2">
+                                        <div className="w-6 h-6 rounded bg-slate-100 dark:bg-zinc-800 flex items-center justify-center overflow-hidden">
+                                          {skill.iconUrl ? (
+                                            <img src={skill.iconUrl} alt="" className="w-4 h-4 object-contain" />
+                                          ) : (
+                                            <Code2 className="w-3 h-3 text-slate-400" />
+                                          )}
+                                        </div>
+                                        <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{skill.name}</span>
+                                      </div>
+                                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button 
+                                          onClick={() => store.updateManualSkill(skill.name, { iconUrl: mapToArtisticIcon(skill.name) })}
+                                          className="p-1.5 bg-amber-500/10 text-amber-500 rounded-lg hover:bg-amber-500 hover:text-white transition-all flex items-center gap-1 text-[10px] font-bold"
+                                          title="Find Artistic Icon"
+                                        >
+                                          <Search className="w-3 h-3" />
+                                          Search
+                                        </button>
+                                        <button onClick={() => store.removeManualSkill(skill.name)} className="p-1.5 bg-rose-500/10 text-rose-500 rounded-lg hover:bg-rose-500 hover:text-white transition-all">
+                                          <Trash2 className="w-3 h-3" />
+                                        </button>
+                                      </div>
+                                    </div>
+                                    {skill.iconUrl && (
+                                      <div className="flex items-center gap-2 px-1">
+                                         <div className="flex-1 h-1.5 bg-slate-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                                            <div className="h-full bg-emerald-500 w-full"></div>
+                                         </div>
+                                         <span className="text-[8px] font-bold text-emerald-500 uppercase">Artistic Mapped</span>
+                                      </div>
+                                    )}
                                   </div>
                                 ))}
                               </div>
                             ) : (
-                              <p className="text-[10px] text-slate-400 italic">No custom skills defined.</p>
+                              <p className="text-[10px] text-slate-400 italic text-center py-4">Your custom library is empty. Add some skills to begin!</p>
                             )}
                           </div>
                         </div>

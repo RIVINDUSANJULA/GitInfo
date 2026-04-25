@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 function getSlug(name: string) {
-  // Mapping for skillicons.dev specific slugs if they differ from Simple Icons
   const mapping: Record<string, string> = {
     'visual studio code': 'vscode',
     'mongodb': 'mongodb',
@@ -39,16 +38,15 @@ export function SkillBadgeGrid() {
     customTextColor
   } = store;
 
-  const { badgeColorMode, badgeSize, elementRadius, useOfficialColors, badgeStyle, skillIconTheme, skillIconsPerRow } = badgesConfig;
+  const { badgeColorMode, badgeSize, elementRadius, useOfficialColors, badgeStyle, skillIconTheme, skillIconsPerRow, artisticIconSize } = badgesConfig;
   const { showGlow } = analyticsConfig;
 
   const visibleAutoLangs = autoLanguages.filter(l => !hiddenLanguages.includes(l.name));
-  const visibleManualSkills = manualSkills.filter(s => !hiddenSkills.includes(s));
+  const visibleManualSkills = manualSkills.filter(s => !hiddenSkills.includes(s.name));
 
-  // Combine them
   const allVisibleSkills = [
-    ...visibleAutoLangs.map(l => ({ name: l.name, type: 'auto' as const })),
-    ...visibleManualSkills.map(s => ({ name: s, type: 'manual' as const }))
+    ...visibleAutoLangs.map(l => ({ name: l.name, type: 'auto' as const, iconUrl: undefined })),
+    ...visibleManualSkills.map(s => ({ name: s.name, type: 'manual' as const, iconUrl: s.iconUrl }))
   ];
 
   if (allVisibleSkills.length === 0) {
@@ -68,7 +66,7 @@ export function SkillBadgeGrid() {
         <motion.img 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          key={url}
+          key={`skillicons-${url}`}
           src={url} 
           alt="Skill Icons" 
           className="max-w-full h-auto drop-shadow-xl"
@@ -84,13 +82,17 @@ export function SkillBadgeGrid() {
           const color = customIconColor;
           const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
           
-          const imgSrc = badgeStyle === 'shields' 
-            ? `https://img.shields.io/badge/${encodeURIComponent(skill.name)}-%23${useOfficialColors ? '20232a' : customIconColor}.svg?style=for-the-badge&logo=${getSlug(skill.name)}&logoColor=${useOfficialColors ? 'white' : customTextColor}`
-            : `${baseUrl}/api/badge?name=${encodeURIComponent(skill.name)}&color=${color}&size=${badgeSize}&radius=${elementRadius}&useOfficialColor=${useOfficialColors}&showGlow=${showGlow}`;
+          let imgSrc = "";
+          if (badgeStyle === 'shields') {
+            imgSrc = `https://img.shields.io/badge/${encodeURIComponent(skill.name)}-%23${useOfficialColors ? '20232a' : customIconColor}.svg?style=for-the-badge&logo=${getSlug(skill.name)}&logoColor=${useOfficialColors ? 'white' : customTextColor}`;
+          } else if (badgeStyle === 'artistic' || badgeStyle === 'premium') {
+            const artisticParams = skill.iconUrl ? `&iconUrl=${encodeURIComponent(skill.iconUrl)}&iconSize=${artisticIconSize}` : "";
+            imgSrc = `${baseUrl}/api/badge?name=${encodeURIComponent(skill.name)}&color=${color}&size=${badgeSize}&radius=${elementRadius}&useOfficialColor=${useOfficialColors}&showGlow=${showGlow}${artisticParams}`;
+          }
 
           return (
             <motion.div
-              key={skill.name}
+              key={`${badgeStyle}-${skill.name}`}
               layout
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}

@@ -4,8 +4,8 @@ import { persist } from 'zustand/middleware';
 export type StatTheme = 'default' | 'dark' | 'radical' | 'tokyonight' | 'gruvbox' | 'synthwave' | 'dracula' | 'custom';
 
 export interface AnalyticsConfig {
-  includeContributions: boolean;
   languageLimit: number;
+  includeContributions: boolean;
   layout: 'compact' | 'pie' | 'list' | 'modern-bar' | 'soft-cards' | 'minimalist-line';
   blockRadius: number;
   elementRadius: number;
@@ -30,9 +30,15 @@ export interface BadgesConfig {
   badgeSize: 'sm' | 'md';
   badgeColorMode: 'brand' | 'custom';
   useOfficialColors: boolean;
-  badgeStyle: 'premium' | 'shields' | 'skillicons';
+  badgeStyle: 'premium' | 'shields' | 'skillicons' | 'artistic';
   skillIconTheme: 'dark' | 'light';
   skillIconsPerRow: number;
+  artisticIconSize: number;
+}
+
+export interface ManualSkill {
+  name: string;
+  iconUrl?: string;
 }
 
 export interface BuilderState {
@@ -41,20 +47,18 @@ export interface BuilderState {
   showStreak: boolean;
   showTrophies: boolean;
   showTopRepos: boolean;
-  showLanguages: boolean; // Renamed from showCustomLanguages
-  showBadges: boolean;    // New separate toggle for badges
-  activeWidgetTab: 'analytics' | 'badges' | 'stats' | 'streak' | 'trophies';
+  showLanguages: boolean;
+  showBadges: boolean;
   
   analyticsConfig: AnalyticsConfig;
   badgesConfig: BadgesConfig;
 
-  manualSkills: string[];
+  manualSkills: ManualSkill[];
   hiddenLanguages: string[];
   hiddenSkills: string[];
   autoLanguages: { name: string, color: string, percentage: number }[];
   widgetOrder: string[];
 
-  // Global Theme
   theme: StatTheme;
   customBgColor: string;
   customTextColor: string;
@@ -62,25 +66,24 @@ export interface BuilderState {
   customBorderColor: string;
   hideBorder: boolean;
   layout: 'stacked' | 'grid';
+  activeWidgetTab: string;
 
-  // Actions
   setUsername: (username: string) => void;
+  toggleModule: (module: keyof BuilderState) => void;
   setTheme: (theme: StatTheme) => void;
-  setCustomColor: (key: keyof Pick<BuilderState, 'customBgColor' | 'customTextColor' | 'customIconColor' | 'customBorderColor'>, color: string) => void;
-  setHideBorder: (hide: boolean) => void;
+  setCustomColor: (key: 'customBgColor' | 'customTextColor' | 'customIconColor' | 'customBorderColor', color: string) => void;
+  setHideBorder: (hideBorder: boolean) => void;
   setLayout: (layout: 'stacked' | 'grid') => void;
   setWidgetOrder: (order: string[]) => void;
-  
-  setAnalyticsOption: (key: keyof AnalyticsConfig, value: any) => void;
-  setBadgesOption: (key: keyof BadgesConfig, value: any) => void;
-  
-  addManualSkill: (skill: string) => void;
-  removeManualSkill: (skill: string) => void;
+  setAnalyticsOption: <K extends keyof AnalyticsConfig>(key: K, value: AnalyticsConfig[K]) => void;
+  setBadgesOption: <K extends keyof BadgesConfig>(key: K, value: BadgesConfig[K]) => void;
+  addManualSkill: (skill: ManualSkill) => void;
+  updateManualSkill: (name: string, updates: Partial<ManualSkill>) => void;
+  removeManualSkill: (skillName: string) => void;
   toggleLanguageVisibility: (lang: string) => void;
   toggleSkillVisibility: (skill: string) => void;
   setAutoLanguages: (langs: { name: string, color: string, percentage: number }[]) => void;
-  setActiveWidgetTab: (tab: 'analytics' | 'badges' | 'stats' | 'streak' | 'trophies') => void;
-  toggleModule: (module: 'showStats' | 'showStreak' | 'showTrophies' | 'showTopRepos' | 'showLanguages' | 'showBadges') => void;
+  setActiveWidgetTab: (tab: string) => void;
 }
 
 export const useBuilderStore = create<BuilderState>()(
@@ -88,16 +91,16 @@ export const useBuilderStore = create<BuilderState>()(
     (set) => ({
       username: '',
       showStats: true,
-      showStreak: false,
-      showTrophies: false,
+      showStreak: true,
+      showTrophies: true,
       showTopRepos: false,
       showLanguages: true,
       showBadges: true,
-      activeWidgetTab: 'analytics',
-      
+      activeWidgetTab: 'stats',
+
       analyticsConfig: {
-        includeContributions: true,
         languageLimit: 5,
+        includeContributions: true,
         layout: 'compact',
         blockRadius: 20,
         elementRadius: 10,
@@ -125,6 +128,7 @@ export const useBuilderStore = create<BuilderState>()(
         badgeStyle: 'premium',
         skillIconTheme: 'dark',
         skillIconsPerRow: 10,
+        artisticIconSize: 24,
       },
 
       manualSkills: [],
@@ -162,10 +166,13 @@ export const useBuilderStore = create<BuilderState>()(
         })),
 
       addManualSkill: (skill) => set((state) => ({
-        manualSkills: state.manualSkills.includes(skill) ? state.manualSkills : [...state.manualSkills, skill]
+        manualSkills: state.manualSkills.some(s => s.name === skill.name) ? state.manualSkills : [...state.manualSkills, skill]
       })),
-      removeManualSkill: (skill) => set((state) => ({
-        manualSkills: state.manualSkills.filter(s => s !== skill)
+      updateManualSkill: (name, updates) => set((state) => ({
+        manualSkills: state.manualSkills.map(s => s.name === name ? { ...s, ...updates } : s)
+      })),
+      removeManualSkill: (skillName) => set((state) => ({
+        manualSkills: state.manualSkills.filter(s => s.name !== skillName)
       })),
       toggleLanguageVisibility: (lang) => set((state) => ({
         hiddenLanguages: state.hiddenLanguages.includes(lang)

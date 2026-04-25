@@ -11,16 +11,13 @@ function getSimpleIcon(name: string) {
     .replace(/\./g, 'dot')
     .replace(/[^a-z0-9]/g, '');
   
-  // Try direct slug match (e.g. 'react')
   const iconKey = 'si' + slug.charAt(0).toUpperCase() + slug.slice(1);
   if ((si as any)[iconKey]) return (si as any)[iconKey];
 
-  // Try searching all icons if direct match fails
   for (const icon of Object.values(si)) {
     if ((icon as any).title?.toLowerCase() === name.toLowerCase()) return icon;
     if ((icon as any).slug === slug) return icon;
   }
-
   return null;
 }
 
@@ -32,24 +29,35 @@ export async function GET(req: NextRequest) {
   const radiusParam = searchParams.get("radius");
   const useOfficialColor = searchParams.get("useOfficialColor") === "true";
   const showGlow = searchParams.get("showGlow") === "true";
+  const iconUrl = searchParams.get("iconUrl");
+  const iconSizeParam = searchParams.get("iconSize");
 
   const height = size === "sm" ? 26 : 32;
   const paddingX = size === "sm" ? 10 : 14;
   const fontSize = size === "sm" ? 11 : 13;
   const radius = radiusParam !== null ? parseInt(radiusParam) : height / 4;
+  const artisticIconSize = iconSizeParam ? parseInt(iconSizeParam) : height * 0.6;
 
-  // Fetch Brand Icon
+  // Fetch Brand Icon or External Artistic Icon
   const brandIcon = getSimpleIcon(name);
   const brandColor = brandIcon ? brandIcon.hex : (overrideColor || "4f46e5");
   const finalColor = (useOfficialColor && brandIcon) ? brandColor : (overrideColor || brandColor);
   
-  const iconPath = brandIcon ? brandIcon.path : FALLBACK_ICON_PATH;
+  let iconContent = "";
+  if (iconUrl) {
+    // Artistic Icon from External URL
+    iconContent = `<image href="${iconUrl}" width="${artisticIconSize}" height="${artisticIconSize}" />`;
+  } else {
+    const iconPath = brandIcon ? brandIcon.path : FALLBACK_ICON_PATH;
+    iconContent = `
+      <g transform="scale(${artisticIconSize/24})" fill="white" ${showGlow ? 'filter="url(#iconGlow)"' : ''}>
+        <path d="${iconPath}"/>
+      </g>`;
+  }
   
-  // Rough estimate of text width
   const textWidth = name.length * (fontSize * 0.65) + 4;
-  const iconSize = height * 0.5;
   const gap = 8;
-  const width = paddingX * 2 + iconSize + gap + textWidth;
+  const width = paddingX * 2 + artisticIconSize + gap + textWidth;
 
   const glowFilter = showGlow ? `
     <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
@@ -75,17 +83,14 @@ export async function GET(req: NextRequest) {
       <rect width="${width}" height="${height}" rx="${radius}" fill="url(#grad)" ${showGlow ? 'filter="url(#glow)"' : ''}/>
       <rect width="${width}" height="${height}" rx="${radius}" fill="black" fill-opacity="0.1"/>
       
-      <!-- Icon Wrapper -->
-      <g transform="translate(${paddingX}, ${(height - iconSize) / 2})">
-        <rect width="${iconSize}" height="${iconSize}" rx="${radius/3}" fill="white" fill-opacity="0.2"/>
-        <g transform="scale(${iconSize/24})" fill="white" ${showGlow ? 'filter="url(#iconGlow)"' : ''}>
-          <path d="${iconPath}"/>
-        </g>
+      <!-- Icon Wrapper with Uniform Scaling -->
+      <g transform="translate(${paddingX}, ${(height - artisticIconSize) / 2})">
+        <rect width="${artisticIconSize}" height="${artisticIconSize}" rx="${radius/3}" fill="white" fill-opacity="0.1"/>
+        ${iconContent}
       </g>
       
-      <text x="${paddingX + iconSize + gap}" y="${height / 2 + fontSize / 3 + 1}" fill="white" font-family="Arial, Helvetica, sans-serif" font-size="${fontSize}" font-weight="700" style="text-shadow: 0 1px 2px rgba(0,0,0,0.1)">${name}</text>
+      <text x="${paddingX + artisticIconSize + gap}" y="${height / 2 + fontSize / 3 + 1}" fill="white" font-family="Arial, Helvetica, sans-serif" font-size="${fontSize}" font-weight="700" style="text-shadow: 0 1px 2px rgba(0,0,0,0.1)">${name}</text>
       
-      <!-- Subtle highlight -->
       <rect x="1" y="1" width="${width - 2}" height="${height / 2}" rx="${radius}" fill="white" fill-opacity="0.1"/>
     </svg>
   `.trim();
