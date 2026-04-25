@@ -341,6 +341,23 @@ export function BuilderSidebar() {
                       </div>
                     </div>
 
+                    <label className="flex items-center justify-between cursor-pointer group pt-2">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Official Brand Colors</span>
+                        <span className="text-[10px] text-slate-400">Fetch hex from Simple Icons</span>
+                      </div>
+                      <div className="relative">
+                        <input
+                          type="checkbox"
+                          className="sr-only"
+                          checked={store.badgesConfig.useOfficialColors}
+                          onChange={(e) => store.setBadgesOption('useOfficialColors', e.target.checked)}
+                        />
+                        <div className={cn("w-10 h-6 rounded-full transition-colors", store.badgesConfig.useOfficialColors ? "bg-emerald-500" : "bg-slate-300 dark:bg-zinc-700")}></div>
+                        <div className={cn("absolute top-1 bg-white w-4 h-4 rounded-full transition-transform shadow-sm", store.badgesConfig.useOfficialColors ? "translate-x-5" : "translate-x-1")}></div>
+                      </div>
+                    </label>
+
                     {/* Radius for Badges (Independent) */}
                     <div className="pt-2 space-y-3">
                        <div className="space-y-1.5">

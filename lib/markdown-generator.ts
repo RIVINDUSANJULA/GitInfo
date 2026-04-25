@@ -62,7 +62,7 @@ export function generateMarkdown(state: BuilderState): MarkdownResult {
       widgets += `<div align="center">\n`;
       manualSkills.filter(s => !hiddenSkills.includes(s)).forEach(skill => {
         const color = badgesConfig.badgeColorMode === 'brand' ? '' : `&color=${customIconColor}`;
-        widgets += `  <img src="${baseUrl}/api/badge?name=${encodeURIComponent(skill)}${color}&size=${badgesConfig.badgeSize}" alt="${skill}" />\n`;
+        widgets += `  <img src="${baseUrl}/api/badge?name=${encodeURIComponent(skill)}${color}&size=${badgesConfig.badgeSize}&radius=${badgesConfig.elementRadius}&useOfficialColor=${badgesConfig.useOfficialColors}&showGlow=${analyticsConfig.showGlow}" alt="${skill}" />\n`;
       });
       widgets += `</div>\n\n`;
     }

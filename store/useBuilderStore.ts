@@ -29,6 +29,7 @@ export interface BadgesConfig {
   elementRadius: number;
   badgeSize: 'sm' | 'md';
   badgeColorMode: 'brand' | 'custom';
+  useOfficialColors: boolean;
 }
 
 export interface BuilderState {
@@ -117,6 +118,7 @@ export const useBuilderStore = create<BuilderState>()(
         elementRadius: 8,
         badgeSize: 'md',
         badgeColorMode: 'brand',
+        useOfficialColors: true,
       },
 
       manualSkills: [],

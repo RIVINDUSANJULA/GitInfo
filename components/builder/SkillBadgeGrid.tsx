@@ -1,7 +1,6 @@
 "use client";
 
 import { useBuilderStore } from "@/store/useBuilderStore";
-import { getBrandData } from "@/lib/skills-data";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -13,10 +12,12 @@ export function SkillBadgeGrid() {
     hiddenLanguages, 
     hiddenSkills, 
     badgesConfig,
+    analyticsConfig,
     customIconColor
   } = store;
 
-  const { badgeColorMode, badgeSize, elementRadius } = badgesConfig;
+  const { badgeColorMode, badgeSize, elementRadius, useOfficialColors } = badgesConfig;
+  const { showGlow } = analyticsConfig;
 
   const visibleAutoLangs = autoLanguages.filter(l => !hiddenLanguages.includes(l.name));
   const visibleManualSkills = manualSkills.filter(s => !hiddenSkills.includes(s));
@@ -39,8 +40,7 @@ export function SkillBadgeGrid() {
     <div className="flex flex-wrap gap-3 justify-center">
       <AnimatePresence mode="popLayout">
         {allVisibleSkills.map((skill) => {
-          const brandData = getBrandData(skill.name);
-          const color = badgeColorMode === 'brand' ? brandData.color : customIconColor;
+          const color = customIconColor;
           const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
           
           return (
@@ -53,7 +53,7 @@ export function SkillBadgeGrid() {
               transition={{ type: "spring", stiffness: 500, damping: 30 }}
             >
               <img 
-                src={`${baseUrl}/api/badge?name=${encodeURIComponent(skill.name)}&color=${color}&size=${badgeSize}&radius=${elementRadius}`} 
+                src={`${baseUrl}/api/badge?name=${encodeURIComponent(skill.name)}&color=${color}&size=${badgeSize}&radius=${elementRadius}&useOfficialColor=${useOfficialColors}&showGlow=${showGlow}`} 
                 alt={skill.name}
                 className={cn(
                   "shadow-sm hover:shadow-md transition-shadow duration-200 cursor-default",
