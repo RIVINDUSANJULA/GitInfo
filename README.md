@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🪞 Identity Suite
+# GitInfo
 
 **The ultimate, zero-config architect for interactive developer portfolios.**<br>
 [Not Live Yet](#)
@@ -13,13 +13,13 @@
 
 <br />
 
-<!--<img src="https://via.placeholder.com/1000x500/0a0a0a/00ffcc?text=Drop+a+Video/GIF+of+the+Glassmorphic+Builder+Here" alt="Identity Suite Interface" width="100%" style="border-radius: 16px; box-shadow: 0 0 30px rgba(0, 255, 204, 0.15);" /> 
+<!--<img src="https://via.placeholder.com/1000x500/0a0a0a/00ffcc?text=Drop+a+Video/GIF+of+the+Glassmorphic+Builder+Here" alt="GitInfo Interface" width="100%" style="border-radius: 16px; box-shadow: 0 0 30px rgba(0, 255, 204, 0.15);" /> 
 
 <br />
 <br />
 -->
 
-**Identity Suite** transforms static, boring Markdown files into interactive, high-end web components. Explore a drag-and-drop builder that generates real-time, glassmorphic developer profiles. Bypassing GitHub's strict image caching, this tool ensures your online presence is always live, uniquely styled, and context-aware.
+**GitInfo** transforms static, boring Markdown files into interactive, high-end web components. Explore a drag-and-drop builder that generates real-time, glassmorphic developer profiles. Bypassing GitHub's strict image caching, this tool ensures your online presence is always live, uniquely styled, and context-aware.
 
 </div>
 
@@ -56,7 +56,7 @@ We engineered this suite to bridge the gap between static Markdown and living we
 
 ## 🛠️ Under The Hood
 
-Standard GitHub READMEs cache images for weeks and rely on static text. Identity Suite uses custom Next.js Edge routes and advanced SVG styling to force real-time, dynamic updates.
+Standard GitHub READMEs cache images for weeks and rely on static text. GitInfo uses custom Next.js Edge routes and advanced SVG styling to force real-time, dynamic updates.
 
 | Feature / Input | Engineering Mechanic | Visual Result |
 | :--- | :--- | :--- |
@@ -83,42 +83,8 @@ Built on the absolute bleeding edge of the modern web ecosystem.
 
 ## 🚀 Quick Start (Zero-Config)
 
-Because Identity Suite uses internal proxying and an algorithmic narrative engine, there are **zero external API keys or environment variables required** to run the core application. It works beautifully right out of the box.
+Because GitInfo uses internal proxying and an algorithmic narrative engine, there are **zero external API keys or environment variables required** to run the core application. It works beautifully right out of the box.
 
 ```bash
 # 1. Clone the repository
 git clone [https://github.com/yourusername/identity-suite.git](https://github.com/yourusername/identity-suite.git)
-cd identity-suite
-
-# 2. Install bleeding-edge dependencies
-npm install
-
-# 3. Spin up the visual builder
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to launch the suite and start architecting your profile.
-
----
-
-## 🤝 Contributing
-
-Contributions are what make the open-source community an amazing place to learn, inspire, and create. Whether you're fixing a bug, adding a new social proxy, or improving the glassmorphic rendering, your help is **greatly appreciated**.
-
-Please see our [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines on how to submit pull requests and adhere to our architectural standards. 
-
-*Note: By contributing, you explicitly agree that your code will be licensed under the AGPL-3.0.*
-
----
-
-## ⚖️ License
-
-This project is licensed under the **GNU Affero General Public License v3.0**. 
-
-You are entirely free to fork, modify, and contribute to this repository. However, if you host a modified version of this application as a public-facing web service, you are legally obligated to open-source your modifications under the exact same AGPL-3.0 license. See the [LICENSE](LICENSE) file for complete details.
-
-<br />
-
-<div align="center">
-  <b>Designed & Engineered by M. M. Rivindu Sanjula</b><br>
-</div>
