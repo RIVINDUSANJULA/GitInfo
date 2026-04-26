@@ -27,39 +27,35 @@ export function BuilderSidebar() {
 
   const handleCopy = (e: React.MouseEvent, text: string, id: string) => {
     e.stopPropagation();
-    if (!text) return;
     
-    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://github-customizer.vercel.app';
     const platform = id.split('-')[1];
+    const username = text || 'your-handle';
     
     const query = new URLSearchParams({
       platform,
-      username: text,
+      username,
       style: store.socialProfiles.find(p => p.platform === platform)?.style || store.socialsConfig.cardStyle || 'badge',
-      blockRadius: store.socialsConfig.blockRadius.toString(),
-      elementRadius: store.socialsConfig.elementRadius.toString(),
-      showGlow: store.socialsConfig.showGlow.toString(),
-      useAvatar: store.socialsConfig.useAvatar.toString(),
+      blockRadius: (store.socialsConfig.blockRadius ?? 20).toString(),
+      elementRadius: (store.socialsConfig.elementRadius ?? 10).toString(),
+      showGlow: (store.socialsConfig.showGlow ?? true).toString(),
+      useAvatar: (store.socialsConfig.useAvatar ?? true).toString(),
     });
     
     const profile = store.socialProfiles.find(p => p.platform === platform);
     if (profile?.customColor) query.set('color', profile.customColor);
 
-    const url = `${baseUrl}/api/social-card?${query.toString()}`;
+    const imageUrl = `${baseUrl}/api/social-card?${query.toString()}`;
+    const markdown = `![${platform}](${imageUrl})`;
     
     if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(url);
+      navigator.clipboard.writeText(markdown);
     } else {
-      // Fallback for non-secure contexts
       const textArea = document.createElement("textarea");
-      textArea.value = url;
+      textArea.value = markdown;
       document.body.appendChild(textArea);
       textArea.select();
-      try {
-        document.execCommand('copy');
-      } catch (err) {
-        console.error('Fallback copy failed', err);
-      }
+      try { document.execCommand('copy'); } catch (err) { console.error(err); }
       document.body.removeChild(textArea);
     }
 
