@@ -1,7 +1,40 @@
 "use client";
 
 import { useBuilderStore, StatTheme, ManualSkill, SocialProfile } from "@/store/useBuilderStore";
-import { User, Palette, Settings, Layout, Check, ChevronDown, Code2, BarChart3, Tags, Zap, Trophy, PieChart, GripVertical, Eye, EyeOff, Boxes, Layers, Sparkles, Shield, Diamond, Brush, Search, Trash2, Copy, Share2, Video, Disc, Camera, MessageSquare, Plus, ExternalLink } from "lucide-react";
+import { 
+  User, 
+  Palette, 
+  Settings, 
+  Layout, 
+  Check, 
+  ChevronDown, 
+  Code2, 
+  BarChart3, 
+  Tags, 
+  Zap, 
+  Trophy, 
+  PieChart, 
+  GripVertical, 
+  Eye, 
+  EyeOff, 
+  Boxes, 
+  Layers, 
+  Sparkles, 
+  Shield, 
+  Diamond, 
+  Brush, 
+  Search, 
+  Trash2, 
+  Copy, 
+  Share2, 
+  Video, 
+  Disc, 
+  Camera, 
+  MessageSquare, 
+  Plus, 
+  ExternalLink,
+  Image as ImageIcon
+} from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence, Reorder, LayoutGroup } from "framer-motion";
