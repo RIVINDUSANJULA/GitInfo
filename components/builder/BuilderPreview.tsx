@@ -123,6 +123,28 @@ export function BuilderPreview() {
                           }
                           if (store.hideBorder) themeParams += '&hide_border=true';
 
+                          // Dynamic Component Mapper
+                          const WIDGETS: Record<string, React.ReactNode> = {
+                            aboutme: <AboutMePreview />,
+                            badges: <SkillBadgeGrid />,
+                            socials: <SocialHubPreview />,
+                            stats: <div dangerouslySetInnerHTML={{ __html: `<img src="https://github-readme-stats.vercel.app/api?username=${store.username}&show_icons=true${themeParams}" alt="Stats" />` }} />,
+                            streak: <div dangerouslySetInnerHTML={{ __html: `<img src="https://github-readme-streak-stats.herokuapp.com/?user=${store.username}${themeParams.replace('bg_color', 'background').replace('title_color', 'stroke').replace('text_color', 'currStreakNum').replace('icon_color', 'fire')}" alt="Streak" />` }} />,
+                            trophies: <div dangerouslySetInnerHTML={{ __html: `<img src="https://github-profile-trophy.vercel.app/?username=${store.username}&theme=${store.theme === 'custom' ? 'flat' : store.theme}&no-frame=false&no-bg=true&margin-w=15" alt="Trophies" />` }} />,
+                            languages: (
+                              <div className="flex justify-center w-full">
+                                <object 
+                                  type="image/svg+xml"
+                                  data={`${baseUrl}/api/github-languages?username=${store.username}&include_contribs=${store.analyticsConfig.includeContributions}&limit=${store.analyticsConfig.languageLimit}&layout=${store.analyticsConfig.layout}${themeParams}&blockRadius=${store.analyticsConfig.blockRadius}&elementRadius=${store.analyticsConfig.elementRadius}&showGlow=${store.analyticsConfig.showGlow}&animationSpeed=${store.analyticsConfig.animationSpeed}&donutHoleSize=${store.analyticsConfig.donutHoleSize}&startAngle=${store.analyticsConfig.startAngle}&barHeight=${store.analyticsConfig.barHeight}&lineThickness=${store.analyticsConfig.lineThickness}&cardsPerRow=${store.analyticsConfig.cardsPerRow}&shadowDepth=${store.analyticsConfig.shadowDepth}&bgType=${store.analyticsConfig.bgType}&bgColor2=${store.analyticsConfig.bgColor2}&pieShowHoverLabels=${store.analyticsConfig.pieShowHoverLabels}&pieLabelPosition=${store.analyticsConfig.pieLabelPosition}&pieHideLegend=${store.analyticsConfig.pieHideLegend}`}
+                                  className="max-w-full pointer-events-auto"
+                                  style={{ height: 'auto' }}
+                                >
+                                  Languages
+                                </object>
+                              </div>
+                            )
+                          };
+
                           return (
                             <motion.div
                               key={id}
@@ -133,30 +155,7 @@ export function BuilderPreview() {
                               transition={{ type: "spring", stiffness: 400, damping: 30 }}
                               className="w-full flex justify-center"
                             >
-                              {id === 'languages' && (
-                                <div className="flex justify-center w-full">
-                                  <object 
-                                    type="image/svg+xml"
-                                    data={`${baseUrl}/api/github-languages?username=${store.username}&include_contribs=${store.analyticsConfig.includeContributions}&limit=${store.analyticsConfig.languageLimit}&layout=${store.analyticsConfig.layout}${themeParams}&blockRadius=${store.analyticsConfig.blockRadius}&elementRadius=${store.analyticsConfig.elementRadius}&showGlow=${store.analyticsConfig.showGlow}&animationSpeed=${store.analyticsConfig.animationSpeed}&donutHoleSize=${store.analyticsConfig.donutHoleSize}&startAngle=${store.analyticsConfig.startAngle}&barHeight=${store.analyticsConfig.barHeight}&lineThickness=${store.analyticsConfig.lineThickness}&cardsPerRow=${store.analyticsConfig.cardsPerRow}&shadowDepth=${store.analyticsConfig.shadowDepth}&bgType=${store.analyticsConfig.bgType}&bgColor2=${store.analyticsConfig.bgColor2}&pieShowHoverLabels=${store.analyticsConfig.pieShowHoverLabels}&pieLabelPosition=${store.analyticsConfig.pieLabelPosition}&pieHideLegend=${store.analyticsConfig.pieHideLegend}`}
-                                    className="max-w-full pointer-events-auto"
-                                    style={{ height: 'auto' }}
-                                  >
-                                    Languages
-                                  </object>
-                                </div>
-                              )}
-                                {id === 'aboutme' && <AboutMePreview />}
-                               {id === 'badges' && <SkillBadgeGrid />}
-                               {id === 'socials' && <SocialHubPreview />}
-                              {id === 'stats' && (
-                                <div dangerouslySetInnerHTML={{ __html: `<img src="https://github-readme-stats.vercel.app/api?username=${store.username}&show_icons=true${themeParams}" alt="Stats" />` }} />
-                              )}
-                              {id === 'streak' && (
-                                <div dangerouslySetInnerHTML={{ __html: `<img src="https://github-readme-streak-stats.herokuapp.com/?user=${store.username}${themeParams.replace('bg_color', 'background').replace('title_color', 'stroke').replace('text_color', 'currStreakNum').replace('icon_color', 'fire')}" alt="Streak" />` }} />
-                              )}
-                              {id === 'trophies' && (
-                                <div dangerouslySetInnerHTML={{ __html: `<img src="https://github-profile-trophy.vercel.app/?username=${store.username}&theme=${store.theme === 'custom' ? 'flat' : store.theme}&no-frame=false&no-bg=true&margin-w=15" alt="Trophies" />` }} />
-                              )}
+                              {WIDGETS[id]}
                             </motion.div>
                           );
                         })}
