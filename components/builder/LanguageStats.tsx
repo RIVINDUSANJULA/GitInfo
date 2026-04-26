@@ -13,7 +13,7 @@ interface LanguageData {
 
 export function LanguageStats() {
   const store = useBuilderStore();
-  const languages = store.autoLanguages;
+  const languages = Array.isArray(store.autoLanguages) ? store.autoLanguages : [];
   
   // Determine loading/syncing state
   // If we have a username but no languages yet, we are syncing
@@ -84,6 +84,7 @@ export function LanguageStats() {
 }
 
 function CompactList({ languages }: { languages: LanguageData[] }) {
+  if (!Array.isArray(languages)) return null;
   return (
     <div className="space-y-3">
       {languages.map((lang, i) => (
@@ -111,6 +112,7 @@ function CompactList({ languages }: { languages: LanguageData[] }) {
 }
 
 function ModernBars({ languages }: { languages: LanguageData[] }) {
+  if (!Array.isArray(languages)) return null;
   return (
     <div className="space-y-5">
       {languages.map((lang, index) => (
@@ -146,6 +148,7 @@ function ModernBars({ languages }: { languages: LanguageData[] }) {
 }
 
 function PieChart({ languages }: { languages: LanguageData[] }) {
+  if (!Array.isArray(languages)) return null;
   const radius = 35;
   const circumference = 2 * Math.PI * radius;
   let currentOffset = 0;
@@ -195,6 +198,7 @@ function PieChart({ languages }: { languages: LanguageData[] }) {
 }
 
 function SoftCards({ languages }: { languages: LanguageData[] }) {
+  if (!Array.isArray(languages)) return null;
   return (
     <div className="grid grid-cols-2 gap-3">
       {languages.map((lang, i) => (
@@ -222,6 +226,7 @@ function SoftCards({ languages }: { languages: LanguageData[] }) {
 }
 
 function MinimalistLine({ languages }: { languages: LanguageData[] }) {
+  if (!Array.isArray(languages)) return null;
   return (
     <div className="space-y-6 py-4">
       <div className="h-4 w-full bg-white/5 rounded-full overflow-hidden flex border border-white/10 shadow-inner">
