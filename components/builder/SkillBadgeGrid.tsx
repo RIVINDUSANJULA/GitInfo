@@ -36,6 +36,7 @@ export function SkillBadgeGrid() {
   const { 
     manualSkills, 
     autoLanguages, 
+    autoSkills,
     hiddenLanguages, 
     hiddenSkills, 
     badgesConfig,
@@ -57,10 +58,12 @@ export function SkillBadgeGrid() {
   } = badgesConfig;
 
   const safeAutoLangs = Array.isArray(autoLanguages) ? autoLanguages : [];
+  const safeAutoSkills = Array.isArray(autoSkills) ? autoSkills : [];
   const safeManualSkills = Array.isArray(manualSkills) ? manualSkills : [];
   const safeAllSkillsOrder = Array.isArray(allSkillsOrder) ? allSkillsOrder : [];
 
   const visibleAutoLangs = safeAutoLangs.filter(l => !hiddenLanguages.includes(l.name));
+  const visibleAutoSkills = safeAutoSkills.filter(s => !hiddenSkills.includes(s.name));
   const visibleManualSkills = safeManualSkills.filter(s => !hiddenSkills.includes(s.name));
 
   const allVisibleSkills = [
@@ -69,6 +72,12 @@ export function SkillBadgeGrid() {
       type: 'auto' as const, 
       iconUrl: `https://cdn.simpleicons.org/${getSlug(l.name)}/white`, 
       color: l.color?.replace('#', '') 
+    })),
+    ...visibleAutoSkills.map(s => ({ 
+      name: s.name, 
+      type: 'auto' as const, 
+      iconUrl: `https://cdn.simpleicons.org/${getSlug(s.name)}/white`, 
+      color: undefined 
     })),
     ...visibleManualSkills.map(s => ({ 
       name: s.name, 

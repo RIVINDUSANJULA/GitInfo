@@ -26,10 +26,14 @@ export function BuilderPreview() {
         const res = await fetch(`/api/github-user-data?username=${store.username}&include_contribs=${store.analyticsConfig.includeContributions}${force ? '&forceRefresh=true' : ''}`);
         if (res.ok) {
           const data = await res.json();
-          store.setAutoLanguages(data);
+          const languages = Array.isArray(data.languages) ? data.languages : [];
+          const skills = Array.isArray(data.skills) ? data.skills : [];
+          
+          store.setAutoLanguages(languages);
+          store.setAutoSkills(skills);
           
           // RECONCILE ORDER
-          const autoNames = data.map((l: any) => l.name);
+          const autoNames = [...languages.map((l: any) => l.name), ...skills.map((s: any) => s.name)];
           const manualNames = store.manualSkills.map(s => s.name);
           const currentOrder = store.allSkillsOrder;
           

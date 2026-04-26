@@ -224,15 +224,22 @@ export function BuilderSidebar() {
   };
 
   const combinedSkills = useMemo(() => {
-    const auto = Array.isArray(store.autoLanguages) 
+    const autoLangs = Array.isArray(store.autoLanguages) 
       ? store.autoLanguages.map(l => ({ 
           name: l.name, 
           isAuto: true, 
           iconUrl: mapToArtisticIcon(l.name) 
         })) 
       : [];
+    const autoSkills = Array.isArray(store.autoSkills)
+      ? store.autoSkills.map(s => ({
+          name: s.name,
+          isAuto: true,
+          iconUrl: mapToArtisticIcon(s.name)
+        }))
+      : [];
     const manual = store.manualSkills.map(s => ({ name: s.name, isAuto: false, iconUrl: s.iconUrl }));
-    const all = [...auto, ...manual];
+    const all = [...autoLangs, ...autoSkills, ...manual];
 
     return all.sort((a, b) => {
       const idxA = store.allSkillsOrder.indexOf(a.name);
@@ -242,7 +249,7 @@ export function BuilderSidebar() {
       if (idxB === -1) return -1;
       return idxA - idxB;
     });
-  }, [store.autoLanguages, store.manualSkills, store.allSkillsOrder]);
+  }, [store.autoLanguages, store.autoSkills, store.manualSkills, store.allSkillsOrder]);
 
   return (
     <div className="w-full h-full bg-white dark:bg-zinc-950/50 backdrop-blur-xl border-r border-slate-200 dark:border-white/10 flex flex-col overflow-y-auto custom-scrollbar">
