@@ -154,7 +154,7 @@ export default function AboutMePreview() {
                "text-[8px] font-mono font-black tracking-[0.2em] uppercase",
                isMatrix ? "text-[#00FF41]" : "text-white"
              )}>
-               {headerLabel}
+               {aboutMeConfig.headerLabel}
              </span>
            </div>
         </div>
