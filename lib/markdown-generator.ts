@@ -99,7 +99,7 @@ export function generateMarkdown(state: BuilderState): MarkdownResult {
             } else {
               const color = badgesConfig.badgeColorMode === 'brand' ? '' : `&color=${customIconColor}`;
               const artisticParams = skill.iconUrl ? `&iconUrl=${encodeURIComponent(skill.iconUrl)}&iconSize=${badgesConfig.artisticIconSize}` : "";
-              widgets += `  <img src="${baseUrl}/api/badge?name=${encodeURIComponent(skill.name)}${color}&size=${badgesConfig.badgeSize}&radius=${badgesConfig.elementRadius}&useOfficialColor=${badgesConfig.useOfficialColors}&showGlow=${analyticsConfig.showGlow}${artisticParams}" alt="${skill.name}" loading="lazy" />\n`;
+              widgets += `  <img src="${baseUrl}/api/badge?name=${encodeURIComponent(skill.name)}${color}&size=${badgesConfig.badgeSize}&radius=${badgesConfig.elementRadius}&useOfficialColor=${badgesConfig.useOfficialColors}&showGlow=${badgesConfig.showGlow}${artisticParams}" alt="${skill.name}" loading="lazy" />\n`;
             }
           });
         }

@@ -98,7 +98,7 @@ export function SkillBadgeGrid() {
             imgSrc = `https://img.shields.io/badge/${encodeURIComponent(skill.name)}-%23${useOfficialColors ? '20232a' : customIconColor}.svg?style=for-the-badge&logo=${getSlug(skill.name)}&logoColor=${useOfficialColors ? 'white' : customTextColor}`;
           } else if (badgeStyle === 'artistic' || badgeStyle === 'premium') {
             const artisticParams = skill.iconUrl ? `&iconUrl=${encodeURIComponent(skill.iconUrl)}&iconSize=${artisticIconSize}` : "";
-            imgSrc = `${baseUrl}/api/badge?name=${encodeURIComponent(skill.name)}&color=${color}&size=${badgeSize}&radius=${elementRadius}&useOfficialColor=${useOfficialColors}&showGlow=${showGlow}${artisticParams}`;
+            imgSrc = `${baseUrl}/api/badge?name=${encodeURIComponent(skill.name)}&color=${color}&size=${badgeSize}&radius=${elementRadius}&useOfficialColor=${useOfficialColors}&showGlow=${badgesConfig.showGlow}${artisticParams}`;
           }
 
           return (

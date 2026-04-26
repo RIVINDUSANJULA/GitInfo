@@ -408,11 +408,11 @@ export function BuilderSidebar() {
                                     <input 
                                       type="checkbox" 
                                       className="sr-only" 
-                                      checked={store.analyticsConfig.showGlow || false} 
-                                      onChange={(e) => store.setAnalyticsOption('showGlow', e.target.checked)} 
+                                      checked={store.badgesConfig.showGlow || false} 
+                                      onChange={(e) => store.setBadgesOption('showGlow', e.target.checked)} 
                                     />
-                                    <div className={cn("w-10 h-6 rounded-full transition-colors", store.analyticsConfig.showGlow ? "bg-emerald-500" : "bg-slate-300 dark:bg-zinc-700")}></div>
-                                    <div className={cn("absolute top-1 bg-white w-4 h-4 rounded-full transition-transform shadow-sm", store.analyticsConfig.showGlow ? "translate-x-5" : "translate-x-1")}></div>
+                                    <div className={cn("w-10 h-6 rounded-full transition-colors", store.badgesConfig.showGlow ? "bg-emerald-500" : "bg-slate-300 dark:bg-zinc-700")}></div>
+                                    <div className={cn("absolute top-1 bg-white w-4 h-4 rounded-full transition-transform shadow-sm", store.badgesConfig.showGlow ? "translate-x-5" : "translate-x-1")}></div>
                                   </div>
                                 </label>
                                 <div className="space-y-1.5">

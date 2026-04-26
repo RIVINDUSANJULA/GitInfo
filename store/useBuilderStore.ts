@@ -35,6 +35,7 @@ export interface BadgesConfig {
   skillIconsPerRow: number;
   artisticIconSize: number;
   shadowDepth: number;
+  showGlow: boolean;
 }
 
 export interface ManualSkill {
@@ -135,6 +136,7 @@ export const useBuilderStore = create<BuilderState>()(
         skillIconsPerRow: 10,
         artisticIconSize: 24,
         shadowDepth: 5,
+        showGlow: true,
       },
 
       manualSkills: [],
