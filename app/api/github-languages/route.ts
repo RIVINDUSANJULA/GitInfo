@@ -49,8 +49,10 @@ export async function GET(req: NextRequest) {
     bg_color_2: searchParams.get("bgColor2") || undefined,
   };
 
+  const forceRefresh = searchParams.get("forceRefresh") === "true";
+
   try {
-    const userData = await fetchUserLanguages(username, includeContribs);
+    const userData = await fetchUserLanguages(username, includeContribs, forceRefresh);
     const aggregated = aggregateLanguages(userData);
     const svg = generateLanguageSvg(aggregated, options);
 

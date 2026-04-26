@@ -127,6 +127,9 @@ export interface BuilderState {
   analyticsConfig: AnalyticsConfig;
   badgesConfig: BadgesConfig;
 
+  refreshTrigger: number;
+  triggerRefresh: () => void;
+
   manualSkills: ManualSkill[];
   hiddenLanguages: string[];
   hiddenSkills: string[];
@@ -245,20 +248,23 @@ export const useBuilderStore = create<BuilderState>()(
       },
 
       badgesConfig: {
-        blockRadius: 20,
+        blockRadius: 12,
         elementRadius: 8,
         badgeSize: 'md',
         badgeColorMode: 'brand',
         useOfficialColors: true,
-        badgeStyle: 'premium',
+        badgeStyle: 'artistic',
         skillIconTheme: 'dark',
         skillIconsPerRow: 10,
-        artisticIconSize: 24,
+        artisticIconSize: 20,
         shadowDepth: 5,
         showGlow: true,
-        customBgColor: '000000',
-        customIconColor: '79ff97',
+        customBgColor: "1e293b",
+        customIconColor: "ffffff",
       },
+
+      refreshTrigger: 0,
+      triggerRefresh: () => set((state) => ({ refreshTrigger: state.refreshTrigger + 1 })),
 
       socialsConfig: {
         blockRadius: 20,

@@ -19,6 +19,7 @@ import {
   EyeOff,
   Boxes,
   Layers,
+  RefreshCcw,
   Sparkles,
   Shield,
   Diamond,
@@ -1000,21 +1001,40 @@ export function BuilderSidebar() {
                       />
                     </div>
 
+                    <div className="pt-2">
+                      <button
+                        onClick={() => store.triggerRefresh()}
+                        className="w-full flex items-center justify-center gap-2 py-3 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-zinc-800 transition-all group"
+                      >
+                        <RefreshCcw className="w-3.5 h-3.5 group-active:rotate-180 transition-transform duration-500" />
+                        Sync Real-Time Data
+                      </button>
+                    </div>
+
                     <div>
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5">Visual Style</label>
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                        <Palette className="w-3 h-3 text-indigo-500" />
+                        Language Visualization
+                      </label>
                       <div className="grid grid-cols-2 gap-2">
-                        {(['compact', 'list', 'pie', 'modern-bar', 'soft-cards', 'minimalist-line'] as const).map((style) => (
+                        {[
+                          { id: 'compact', label: '💠 Compact', icon: 'list' },
+                          { id: 'pie', label: '🥧 Pie Chart', icon: 'pie' },
+                          { id: 'modern-bar', label: '📊 Modern Bar', icon: 'bar' },
+                          { id: 'soft-cards', label: '🃏 Soft Cards', icon: 'grid' },
+                          { id: 'minimalist-line', label: '➖ Minimalist', icon: 'line' },
+                        ].map((style) => (
                           <button
-                            key={style}
-                            onClick={() => store.setAnalyticsOption('layout', style)}
+                            key={style.id}
+                            onClick={() => store.setAnalyticsOption('layout', style.id as any)}
                             className={cn(
                               "py-2.5 text-[10px] font-black rounded-xl border transition-all uppercase tracking-tighter flex items-center justify-center gap-2",
-                              store.analyticsConfig.layout === style
-                                ? "bg-indigo-500 text-white border-indigo-500 shadow-lg shadow-indigo-500/20"
+                              store.analyticsConfig.layout === style.id
+                                ? "bg-indigo-500 text-white border-indigo-500 shadow-lg shadow-indigo-500/20 scale-[1.02]"
                                 : "bg-white dark:bg-zinc-900 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-white/10 hover:border-indigo-300"
                             )}
                           >
-                            {style.replace('-', ' ')}
+                            {style.label}
                           </button>
                         ))}
                       </div>
