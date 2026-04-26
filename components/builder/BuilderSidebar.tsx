@@ -30,7 +30,10 @@ export function BuilderSidebar() {
   const handleAddSkill = () => {
     const val = skillInput.trim();
     if (val) {
-      store.addManualSkill({ name: val });
+      store.addManualSkill({ 
+        name: val,
+        iconUrl: mapToArtisticIcon(val)
+      });
       setSkillInput("");
     }
   };
@@ -556,14 +559,6 @@ export function BuilderSidebar() {
                                         <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{skill.name}</span>
                                       </div>
                                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button 
-                                          onClick={() => store.updateManualSkill(skill.name, { iconUrl: mapToArtisticIcon(skill.name) })}
-                                          className="p-1.5 bg-amber-500/10 text-amber-500 rounded-lg hover:bg-amber-500 hover:text-white transition-all flex items-center gap-1 text-[10px] font-bold"
-                                          title="Find Artistic Icon"
-                                        >
-                                          <Search className="w-3 h-3" />
-                                          Search
-                                        </button>
                                         <button onClick={() => store.removeManualSkill(skill.name)} className="p-1.5 bg-rose-500/10 text-rose-500 rounded-lg hover:bg-rose-500 hover:text-white transition-all">
                                           <Trash2 className="w-3 h-3" />
                                         </button>
