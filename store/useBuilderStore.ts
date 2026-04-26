@@ -58,6 +58,7 @@ export interface BuilderState {
   hiddenLanguages: string[];
   hiddenSkills: string[];
   autoLanguages: { name: string, color: string, percentage: number }[];
+  allSkillsOrder: string[];
   widgetOrder: string[];
 
   theme: StatTheme;
@@ -85,6 +86,8 @@ export interface BuilderState {
   toggleSkillVisibility: (skill: string) => void;
   setAutoLanguages: (langs: { name: string, color: string, percentage: number }[]) => void;
   setManualSkills: (skills: ManualSkill[]) => void;
+  allSkillsOrder: string[];
+  setAllSkillsOrder: (order: string[]) => void;
   setActiveWidgetTab: (tab: string) => void;
 }
 
@@ -138,6 +141,7 @@ export const useBuilderStore = create<BuilderState>()(
       hiddenLanguages: [],
       hiddenSkills: [],
       autoLanguages: [],
+      allSkillsOrder: [],
       widgetOrder: ['stats', 'streak', 'trophies', 'languages', 'badges'],
 
       theme: 'default',
@@ -189,6 +193,7 @@ export const useBuilderStore = create<BuilderState>()(
       })),
       setAutoLanguages: (autoLanguages) => set({ autoLanguages }),
       setManualSkills: (manualSkills) => set({ manualSkills }),
+      setAllSkillsOrder: (allSkillsOrder) => set({ allSkillsOrder }),
       setActiveWidgetTab: (activeWidgetTab) => set({ activeWidgetTab }),
     }),
     {

@@ -35,7 +35,8 @@ export function SkillBadgeGrid() {
     badgesConfig,
     analyticsConfig,
     customIconColor,
-    customTextColor
+    customTextColor,
+    allSkillsOrder
   } = store;
 
   const { badgeColorMode, badgeSize, elementRadius, useOfficialColors, badgeStyle, skillIconTheme, skillIconsPerRow, artisticIconSize } = badgesConfig;
@@ -49,7 +50,17 @@ export function SkillBadgeGrid() {
     ...visibleManualSkills.map(s => ({ name: s.name, type: 'manual' as const, iconUrl: s.iconUrl }))
   ];
 
-  if (allVisibleSkills.length === 0) {
+  // Apply unified order
+  const sortedSkills = [...allVisibleSkills].sort((a, b) => {
+    const idxA = allSkillsOrder.indexOf(a.name);
+    const idxB = allSkillsOrder.indexOf(b.name);
+    if (idxA === -1 && idxB === -1) return 0;
+    if (idxA === -1) return 1;
+    if (idxB === -1) return -1;
+    return idxA - idxB;
+  });
+
+  if (sortedSkills.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-32 border-2 border-dashed border-slate-200 dark:border-white/5 rounded-xl text-slate-400">
         <p className="text-sm italic">No visible skills or languages. Add some or check visibility.</p>
@@ -58,7 +69,7 @@ export function SkillBadgeGrid() {
   }
 
   if (badgeStyle === 'skillicons') {
-    const slugs = allVisibleSkills.map(s => getSlug(s.name)).join(',');
+    const slugs = sortedSkills.map(s => getSlug(s.name)).join(',');
     const url = `https://skillicons.dev/icons?i=${slugs}&theme=${skillIconTheme}&perline=${skillIconsPerRow}`;
     
     return (
@@ -78,7 +89,7 @@ export function SkillBadgeGrid() {
   return (
     <div className="flex flex-wrap gap-3 justify-center">
       <AnimatePresence mode="popLayout">
-        {allVisibleSkills.map((skill) => {
+        {sortedSkills.map((skill) => {
           const color = customIconColor;
           const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
           

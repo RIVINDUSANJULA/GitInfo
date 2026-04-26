@@ -2,7 +2,7 @@
 
 import { useBuilderStore, StatTheme, ManualSkill } from "@/store/useBuilderStore";
 import { User, Palette, Settings, Layout, Check, ChevronDown, Code2, BarChart3, Tags, Zap, Trophy, PieChart, GripVertical, Eye, EyeOff, Boxes, Layers, Sparkles, Shield, Diamond, Brush, Search, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence, Reorder, LayoutGroup } from "framer-motion";
 
@@ -21,21 +21,9 @@ export function BuilderSidebar() {
   const store = useBuilderStore();
   const [openSection, setOpenSection] = useState<string>("profile");
   const [skillInput, setSkillInput] = useState("");
-  const [artisticSearch, setArtisticSearch] = useState("");
 
   const toggleSection = (section: string) => {
     setOpenSection(openSection === section ? "" : section);
-  };
-
-  const handleAddSkill = () => {
-    const val = skillInput.trim();
-    if (val) {
-      store.addManualSkill({ 
-        name: val,
-        iconUrl: mapToArtisticIcon(val)
-      });
-      setSkillInput("");
-    }
   };
 
   const mapToArtisticIcon = (name: string) => {
@@ -76,10 +64,34 @@ export function BuilderSidebar() {
 
     const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '');
     const iconName = mapping[slug] || slug;
-    
-    // Iconify Logos set is extremely high quality and consistent
     return `https://api.iconify.design/logos:${iconName}.svg`;
   };
+
+  const handleAddSkill = () => {
+    const val = skillInput.trim();
+    if (val) {
+      store.addManualSkill({ 
+        name: val,
+        iconUrl: mapToArtisticIcon(val)
+      });
+      setSkillInput("");
+    }
+  };
+
+  const combinedSkills = useMemo(() => {
+    const auto = store.autoLanguages.map(l => ({ name: l.name, isAuto: true, iconUrl: undefined }));
+    const manual = store.manualSkills.map(s => ({ name: s.name, isAuto: false, iconUrl: s.iconUrl }));
+    const all = [...auto, ...manual];
+
+    return all.sort((a, b) => {
+      const idxA = store.allSkillsOrder.indexOf(a.name);
+      const idxB = store.allSkillsOrder.indexOf(b.name);
+      if (idxA === -1 && idxB === -1) return 0;
+      if (idxA === -1) return 1;
+      if (idxB === -1) return -1;
+      return idxA - idxB;
+    });
+  }, [store.autoLanguages, store.manualSkills, store.allSkillsOrder]);
 
   return (
     <div className="w-full h-full bg-white dark:bg-zinc-950/50 backdrop-blur-xl border-r border-slate-200 dark:border-white/10 flex flex-col overflow-y-auto custom-scrollbar">
@@ -160,7 +172,7 @@ export function BuilderSidebar() {
                       <div className="flex justify-between mb-1.5">
                         <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Display Limit: {store.analyticsConfig.languageLimit}</label>
                       </div>
-                        <input
+                      <input
                         type="range"
                         min="3"
                         max="15"
@@ -199,7 +211,7 @@ export function BuilderSidebar() {
 
                       <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1.5">
-                          <label className="text-[10px] font-bold text-slate-400">BLOCK RADIUS: {store.analyticsConfig.blockRadius}PX</label>
+                          <label className="text-[10px] font-bold text-slate-400 uppercase">Block Radius: {store.analyticsConfig.blockRadius}px</label>
                           <input
                             type="range"
                             min="0"
@@ -211,7 +223,7 @@ export function BuilderSidebar() {
                           />
                         </div>
                         <div className="space-y-1.5">
-                          <label className="text-[10px] font-bold text-slate-400">ELEMENT RADIUS: {store.analyticsConfig.elementRadius}PX</label>
+                          <label className="text-[10px] font-bold text-slate-400 uppercase">Element Radius: {store.analyticsConfig.elementRadius}px</label>
                           <input
                             type="range"
                             min="0"
@@ -234,7 +246,7 @@ export function BuilderSidebar() {
                                 min="0"
                                 max="85"
                                 step="5"
-                                value={store.analyticsConfig.donutHoleSize}
+                                value={store.analyticsConfig.donutHoleSize || 60}
                                 onChange={(e) => store.setAnalyticsOption('donutHoleSize', parseInt(e.target.value))}
                                 className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
                               />
@@ -259,7 +271,7 @@ export function BuilderSidebar() {
 
                         {store.analyticsConfig.layout === 'modern-bar' && (
                           <div className="space-y-1.5">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase">Bar Height: {store.analyticsConfig.barHeight}PX</label>
+                            <label className="text-[10px] font-bold text-slate-400 uppercase">Bar Height: {store.analyticsConfig.barHeight}px</label>
                             <input
                               type="range"
                               min="8"
@@ -324,6 +336,7 @@ export function BuilderSidebar() {
                       <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Badge Aesthetic Engine</label>
                       <div className="flex p-1 bg-slate-100 dark:bg-zinc-900 rounded-xl gap-1">
                         {[
+                          { id: 'premium', label: 'GlassMorphic', icon: Boxes },
                           { id: 'shields', label: 'Classic', icon: Shield },
                           { id: 'skillicons', label: 'Dynamic', icon: Sparkles },
                           { id: 'artistic', label: 'Artistic', icon: Brush },
@@ -351,7 +364,7 @@ export function BuilderSidebar() {
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
                           <div className="grid grid-cols-2 gap-3">
                             <div className="space-y-1.5">
-                              <label className="text-[10px] font-bold text-slate-400 uppercase">Block Radius: {store.badgesConfig.blockRadius}px</label>
+                              <label className="text-[10px] font-bold text-slate-400 uppercase">Block Radius: {store.badgesConfig.blockRadius || 0}px</label>
                               <input
                                 type="range"
                                 min="0"
@@ -363,7 +376,7 @@ export function BuilderSidebar() {
                               />
                             </div>
                             <div className="space-y-1.5">
-                              <label className="text-[10px] font-bold text-slate-400 uppercase">Badge Roundness: {store.badgesConfig.elementRadius}px</label>
+                              <label className="text-[10px] font-bold text-slate-400 uppercase">Badge Roundness: {store.badgesConfig.elementRadius || 0}px</label>
                               <input
                                 type="range"
                                 min="0"
@@ -389,30 +402,32 @@ export function BuilderSidebar() {
                                 className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
                               />
                             </div>
-                            <label className="flex flex-col gap-1.5">
-                              <span className="text-[10px] font-bold text-slate-400 uppercase">Neon Glow</span>
-                              <div className="relative pt-1">
-                                <input 
-                                  type="checkbox" 
-                                  className="sr-only" 
-                                  checked={store.analyticsConfig.showGlow || false} 
-                                  onChange={(e) => store.setAnalyticsOption('showGlow', e.target.checked)} 
-                                />
-                                <div className={cn("w-10 h-6 rounded-full transition-colors", store.analyticsConfig.showGlow ? "bg-emerald-500" : "bg-slate-300 dark:bg-zinc-700")}></div>
-                                <div className={cn("absolute top-1 bg-white w-4 h-4 rounded-full transition-transform shadow-sm", store.analyticsConfig.showGlow ? "translate-x-5" : "translate-x-1")}></div>
-                              </div>
-                            </label>
-                            <div className="space-y-1.5">
-                              <label className="text-[10px] font-bold text-slate-400 uppercase">Shadow Depth: {store.badgesConfig.shadowDepth || 0}px</label>
-                              <input
-                                type="range"
-                                min="0"
-                                max="10"
-                                step="1"
-                                value={store.badgesConfig.shadowDepth || 0}
-                                onChange={(e) => store.setBadgesOption('shadowDepth', parseInt(e.target.value))}
-                                className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
-                              />
+                            <div className="flex flex-col gap-4">
+                                <label className="flex flex-col gap-1.5">
+                                  <span className="text-[10px] font-bold text-slate-400 uppercase">Neon Glow</span>
+                                  <div className="relative pt-1">
+                                    <input 
+                                      type="checkbox" 
+                                      className="sr-only" 
+                                      checked={store.analyticsConfig.showGlow || false} 
+                                      onChange={(e) => store.setAnalyticsOption('showGlow', e.target.checked)} 
+                                    />
+                                    <div className={cn("w-10 h-6 rounded-full transition-colors", store.analyticsConfig.showGlow ? "bg-emerald-500" : "bg-slate-300 dark:bg-zinc-700")}></div>
+                                    <div className={cn("absolute top-1 bg-white w-4 h-4 rounded-full transition-transform shadow-sm", store.analyticsConfig.showGlow ? "translate-x-5" : "translate-x-1")}></div>
+                                  </div>
+                                </label>
+                                <div className="space-y-1.5">
+                                  <label className="text-[10px] font-bold text-slate-400 uppercase">Shadow Depth: {store.badgesConfig.shadowDepth || 0}px</label>
+                                  <input
+                                    type="range"
+                                    min="0"
+                                    max="10"
+                                    step="1"
+                                    value={store.badgesConfig.shadowDepth || 0}
+                                    onChange={(e) => store.setBadgesOption('shadowDepth', parseInt(e.target.value))}
+                                    className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                                  />
+                                </div>
                             </div>
                           </div>
                         </motion.div>
@@ -423,7 +438,7 @@ export function BuilderSidebar() {
                            <div className="grid grid-cols-2 gap-2">
                              <div className="space-y-2">
                                <span className="block text-[10px] uppercase font-black text-slate-400">Visual Scale</span>
-                               <div className="flex gap-1 p-1 bg-slate-100 dark:bg-zinc-900 rounded-lg">
+                               <div className="flex gap-1 p-1 bg-slate-100 dark:bg-zinc-900 rounded-xl">
                                  {(['sm', 'md'] as const).map((size) => (
                                    <button
                                      key={size}
@@ -449,7 +464,7 @@ export function BuilderSidebar() {
                           <div className="grid grid-cols-2 gap-3">
                             <div className="space-y-2">
                               <span className="block text-[10px] uppercase font-black text-slate-400">Dynamic Theme</span>
-                              <div className="flex gap-1 p-1 bg-slate-100 dark:bg-zinc-900 rounded-lg">
+                              <div className="flex gap-1 p-1 bg-slate-100 dark:bg-zinc-900 rounded-xl">
                                 {(['dark', 'light'] as const).map((t) => (
                                   <button
                                     key={t}
@@ -467,7 +482,7 @@ export function BuilderSidebar() {
                               </div>
                             </div>
                             <div className="space-y-1.5">
-                              <label className="text-[10px] font-bold text-slate-400 uppercase">Icons Per Line: {store.badgesConfig.skillIconsPerRow}</label>
+                              <label className="text-[10px] font-bold text-slate-400 uppercase">Icons Per Line: {store.badgesConfig.skillIconsPerRow || 10}</label>
                               <input
                                 type="range"
                                 min="1"
@@ -517,39 +532,20 @@ export function BuilderSidebar() {
                           </div>
                         </div>
 
-                        {/* List of Skills with Artistic Search */}
+                        {/* Unified Draggable Skill Library */}
                         <div className="max-h-80 overflow-y-auto pr-2 space-y-3 custom-scrollbar border border-slate-200 dark:border-white/10 rounded-xl p-3 bg-white/50 dark:bg-zinc-950/30 shadow-inner">
-                          {store.autoLanguages.length > 0 && (
-                            <div className="pb-3 mb-2 border-b border-slate-200 dark:border-white/10">
-                              <span className="block text-[10px] uppercase font-black text-slate-400 mb-2.5 tracking-tighter">Detected from Profile</span>
-                              <div className="flex flex-wrap gap-1.5">
-                                {store.autoLanguages.map(lang => (
-                                  <button
-                                    key={lang.name}
-                                    onClick={() => store.toggleLanguageVisibility(lang.name)}
-                                    className={cn(
-                                      "px-2 py-1 rounded-md text-[10px] font-bold border transition-all",
-                                      !store.hiddenLanguages.includes(lang.name)
-                                        ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
-                                        : "bg-slate-100 dark:bg-zinc-800 text-slate-400 border-transparent opacity-50"
-                                    )}
-                                  >
-                                    {lang.name}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-
                           <div className="space-y-3">
-                            <span className="block text-[10px] uppercase font-black text-slate-400 tracking-tighter">Custom Library & Artistic Mapping (Drag to Reorder)</span>
-                            {store.manualSkills.length > 0 ? (
-                              <Reorder.Group axis="y" values={store.manualSkills} onReorder={store.setManualSkills} className="grid gap-2">
-                                {store.manualSkills.map(skill => (
+                            <span className="block text-[10px] uppercase font-black text-slate-400 tracking-tighter">Unified Skill Library (Drag to Reorder)</span>
+                            {combinedSkills.length > 0 ? (
+                              <Reorder.Group axis="y" values={combinedSkills} onReorder={(newOrder) => store.setAllSkillsOrder(newOrder.map(s => s.name))} className="grid gap-2">
+                                {combinedSkills.map(skill => (
                                   <Reorder.Item 
                                     key={skill.name} 
                                     value={skill}
-                                    className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-white/10 rounded-xl p-2 flex flex-col gap-2 group shadow-sm hover:border-emerald-500/30 transition-all cursor-grab active:cursor-grabbing"
+                                    className={cn(
+                                      "bg-white dark:bg-zinc-900 border border-slate-200 dark:border-white/10 rounded-xl p-2 flex flex-col gap-2 group shadow-sm hover:border-emerald-500/30 transition-all cursor-grab active:cursor-grabbing",
+                                      skill.isAuto && "border-l-4 border-l-indigo-500"
+                                    )}
                                   >
                                     <div className="flex items-center justify-between">
                                       <div className="flex items-center gap-2">
@@ -561,15 +557,32 @@ export function BuilderSidebar() {
                                             <Code2 className="w-3 h-3 text-slate-400" />
                                           )}
                                         </div>
-                                        <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{skill.name}</span>
+                                        <div className="flex flex-col">
+                                          <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{skill.name}</span>
+                                          {skill.isAuto && <span className="text-[8px] text-indigo-500 font-bold uppercase tracking-widest">GitHub Auto</span>}
+                                        </div>
                                       </div>
                                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button onClick={() => store.removeManualSkill(skill.name)} className="p-1.5 bg-rose-500/10 text-rose-500 rounded-lg hover:bg-rose-500 hover:text-white transition-all">
-                                          <Trash2 className="w-3 h-3" />
-                                        </button>
+                                        {skill.isAuto ? (
+                                          <button 
+                                            onClick={() => store.toggleLanguageVisibility(skill.name)}
+                                            className={cn(
+                                              "p-1.5 rounded-lg transition-all",
+                                              !store.hiddenLanguages.includes(skill.name) 
+                                                ? "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white"
+                                                : "bg-slate-500/10 text-slate-500 hover:bg-slate-500 hover:text-white"
+                                            )}
+                                          >
+                                            {!store.hiddenLanguages.includes(skill.name) ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                                          </button>
+                                        ) : (
+                                          <button onClick={() => store.removeManualSkill(skill.name)} className="p-1.5 bg-rose-500/10 text-rose-500 rounded-lg hover:bg-rose-500 hover:text-white transition-all">
+                                            <Trash2 className="w-3 h-3" />
+                                          </button>
+                                        )}
                                       </div>
                                     </div>
-                                    {skill.iconUrl && (
+                                    {!skill.isAuto && skill.iconUrl && (
                                       <div className="flex items-center gap-2 px-1 pl-7">
                                          <div className="flex-1 h-1.5 bg-slate-100 dark:bg-zinc-800 rounded-full overflow-hidden">
                                             <div className="h-full bg-emerald-500 w-full"></div>
@@ -581,7 +594,7 @@ export function BuilderSidebar() {
                                 ))}
                               </Reorder.Group>
                             ) : (
-                              <p className="text-[10px] text-slate-400 italic text-center py-4">Your custom library is empty. Add some skills to begin!</p>
+                              <p className="text-[10px] text-slate-400 italic text-center py-4">Your library is empty. Enter a username or add skills manually.</p>
                             )}
                           </div>
                         </div>
