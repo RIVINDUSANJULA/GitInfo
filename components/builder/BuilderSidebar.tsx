@@ -715,12 +715,14 @@ export function BuilderSidebar() {
                               </motion.div>
                             )}
 
+                           </motion.div>
+
                             {/* Unified Library Manager */}
                             <div className="pt-4 border-t border-slate-200 dark:border-white/10 space-y-4">
                               <div className="flex flex-col gap-4">
                                 <div className="flex items-center justify-between">
                                    <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Master Skill Library</span>
-                                   <div className="flex items-center gap-4">
+                                    <div className="flex items-center gap-4">
                                       <button 
                                         onClick={() => store.copyAnalyticsThemeToBadges()}
                                         className="flex items-center gap-1.5 px-2 py-1 bg-slate-100 dark:bg-zinc-800 text-[9px] font-black text-slate-500 rounded-lg hover:bg-indigo-500 hover:text-white transition-all border border-slate-200 dark:border-white/5 uppercase tracking-tighter"
@@ -729,7 +731,7 @@ export function BuilderSidebar() {
                                         <Copy className="w-3 h-3" />
                                         Copy Palette
                                       </button>
-                                    <div className="flex items-center gap-4">
+                                      
                                       <label className="flex items-center gap-2 cursor-pointer">
                                         <span className="text-[9px] font-bold text-slate-400 uppercase">Show Icons</span>
                                         <div className="relative">
@@ -738,6 +740,7 @@ export function BuilderSidebar() {
                                           <div className={cn("absolute top-0.5 bg-white w-3 h-3 rounded-full transition-transform shadow-sm", store.badgesConfig.showIcons ? "translate-x-3.5" : "translate-x-0.5")}></div>
                                         </div>
                                       </label>
+                                      
                                       <label className="flex items-center gap-2 cursor-pointer">
                                         <span className="text-[9px] font-bold text-slate-400 uppercase">Official Colors</span>
                                         <div className="relative">
@@ -885,11 +888,10 @@ export function BuilderSidebar() {
                                 </div>
                               </div>
                             </div>
-                          </motion.div>
-                        </div>
-                      </LayoutGroup>
-                    </motion.div>
-                  )}
+                            </div>
+                          </LayoutGroup>
+                        </motion.div>
+                      )}
                 </AnimatePresence>
               </div>
 
