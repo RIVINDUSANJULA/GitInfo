@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { SkillBadgeGrid } from "./SkillBadgeGrid";
 import { SocialHubPreview } from "./SocialHubPreview";
 import AboutMePreview from "./AboutMePreview";
+import { LanguageStats } from "./LanguageStats";
 
 export function BuilderPreview() {
   const store = useBuilderStore();
@@ -132,14 +133,7 @@ export function BuilderPreview() {
                             trophies: <div dangerouslySetInnerHTML={{ __html: `<img src="https://github-profile-trophy.vercel.app/?username=${store.username}&theme=${store.theme === 'custom' ? 'flat' : store.theme}&no-frame=false&no-bg=true&margin-w=15" alt="Trophies" />` }} />,
                             languages: (
                               <div className="flex justify-center w-full">
-                                <object 
-                                  type="image/svg+xml"
-                                  data={`${baseUrl}/api/github-languages?username=${store.username}&include_contribs=${store.analyticsConfig.includeContributions}&limit=${store.analyticsConfig.languageLimit}&layout=${store.analyticsConfig.layout}${themeParams}&blockRadius=${store.analyticsConfig.blockRadius}&elementRadius=${store.analyticsConfig.elementRadius}&showGlow=${store.analyticsConfig.showGlow}&animationSpeed=${store.analyticsConfig.animationSpeed}&donutHoleSize=${store.analyticsConfig.donutHoleSize}&startAngle=${store.analyticsConfig.startAngle}&barHeight=${store.analyticsConfig.barHeight}&lineThickness=${store.analyticsConfig.lineThickness}&cardsPerRow=${store.analyticsConfig.cardsPerRow}&shadowDepth=${store.analyticsConfig.shadowDepth}&bgType=${store.analyticsConfig.bgType}&bgColor2=${store.analyticsConfig.bgColor2}&pieShowHoverLabels=${store.analyticsConfig.pieShowHoverLabels}&pieLabelPosition=${store.analyticsConfig.pieLabelPosition}&pieHideLegend=${store.analyticsConfig.pieHideLegend}`}
-                                  className="max-w-full pointer-events-auto"
-                                  style={{ height: 'auto' }}
-                                >
-                                  Languages
-                                </object>
+                                <LanguageStats />
                               </div>
                             )
                           };
