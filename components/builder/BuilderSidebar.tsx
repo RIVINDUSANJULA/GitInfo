@@ -38,6 +38,8 @@ import {
   Type,
   Flame,
   Maximize,
+  Sun,
+  Droplets,
   Image as ImageIcon
 } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
@@ -151,9 +153,11 @@ export function BuilderSidebar() {
       if (store.aboutMeConfig.headerLabel === undefined) store.setAboutMeOption('headerLabel', '// BIOGRAPHY');
       if (store.aboutMeConfig.glowSpread === undefined) store.setAboutMeOption('glowSpread', 40);
       if (store.aboutMeConfig.lineHeight === undefined) store.setAboutMeOption('lineHeight', 1.6);
-      if (store.aboutMeConfig.letterSpacing === undefined) store.setAboutMeOption('letterSpacing', 0);
-      if (store.aboutMeConfig.alignment === undefined) store.setAboutMeOption('alignment', 'left');
-      if (store.aboutMeConfig.useHoverTilt === undefined) store.setAboutMeOption('useHoverTilt', true);
+      if (store.aboutMeConfig.accentColor === undefined) store.setAboutMeOption('accentColor', 'f43f5e');
+      if (store.aboutMeConfig.headerTextColor === undefined) store.setAboutMeOption('headerTextColor', 'ffffff');
+      if (store.aboutMeConfig.glassTint === undefined) store.setAboutMeOption('glassTint', '000000');
+      if (store.aboutMeConfig.glowOpacity === undefined) store.setAboutMeOption('glowOpacity', 0.5);
+      if (store.aboutMeConfig.luminanceBoost === undefined) store.setAboutMeOption('luminanceBoost', false);
       if (store.aboutMeConfig.preset === undefined) store.setAboutMeOption('preset', 'none');
     }
   }, []);
@@ -586,27 +590,160 @@ export function BuilderSidebar() {
                                     <Zap className="w-2.5 h-2.5" />
                                     Elite Preset Vault
                                   </label>
-                                  <div className="grid grid-cols-3 gap-2">
+                                  <div className="grid grid-cols-4 gap-1.5">
                                     {[
                                       { id: 'matrix', name: 'Matrix', icon: Monitor, color: '#00FF41' },
                                       { id: 'frost', name: 'Frost', icon: Sparkles, color: '#ffffff' },
-                                      { id: 'ember', name: 'Ember', icon: Flame, color: '#f43f5e' }
+                                      { id: 'ember', name: 'Ember', icon: Flame, color: '#f43f5e' },
+                                      { id: 'plasma', name: 'Plasma', icon: Zap, color: '#22d3ee' },
+                                      { id: 'toxic', name: 'Toxic', icon: Droplets, color: '#a3e635' },
+                                      { id: 'magma', name: 'Magma', icon: Flame, color: '#f97316' },
+                                      { id: 'stealth', name: 'Stealth', icon: EyeOff, color: '#525252' }
                                     ].map(p => (
                                       <button 
                                         key={p.id}
                                         onClick={() => store.applyAboutMePreset(store.aboutMeConfig.preset === p.id ? 'none' : p.id as any)}
                                         className={cn(
-                                          "py-2 text-[8px] font-black uppercase rounded-lg border transition-all flex flex-col items-center justify-center gap-1",
+                                          "py-2 text-[7px] font-black uppercase rounded-lg border transition-all flex flex-col items-center justify-center gap-1",
                                           store.aboutMeConfig.preset === p.id 
                                             ? "bg-white/10 border-current shadow-lg" 
                                             : "bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-white/5 text-slate-400"
                                         )}
                                         style={{ color: store.aboutMeConfig.preset === p.id ? p.color : undefined }}
                                       >
-                                        <p.icon className="w-3.5 h-3.5" />
+                                        <p.icon className="w-3 h-3" />
                                         {p.name}
                                       </button>
                                     ))}
+                                  </div>
+                                </div>
+
+                                {/* 🌈 Color Profile */}
+                                <div className="space-y-4 pt-2 border-t border-slate-200 dark:border-white/5">
+                                  <div className="flex items-center justify-between">
+                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                      <Droplets className="w-2.5 h-2.5" />
+                                      Color Profile
+                                    </label>
+                                    <button 
+                                      onClick={() => store.setAboutMeOption('accentColor', store.customIconColor)}
+                                      className="text-[7px] font-bold text-rose-500 bg-rose-500/10 px-1.5 py-0.5 rounded uppercase hover:bg-rose-500 hover:text-white transition-all"
+                                    >
+                                      Harmony Mode
+                                    </button>
+                                  </div>
+
+                                  {/* Color Pickers */}
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-1.5">
+                                      <label className="text-[8px] text-slate-500 uppercase font-bold">Neon Core</label>
+                                      <div className="flex items-center gap-2">
+                                        <input 
+                                          type="color" 
+                                          value={`#${store.aboutMeConfig.accentColor}`}
+                                          onChange={(e) => store.setAboutMeOption('accentColor', e.target.value.replace('#', ''))}
+                                          className="w-8 h-8 rounded-lg bg-transparent cursor-pointer overflow-hidden border-none p-0"
+                                        />
+                                        <input 
+                                          type="text"
+                                          value={store.aboutMeConfig.accentColor}
+                                          onChange={(e) => store.setAboutMeOption('accentColor', e.target.value)}
+                                          className="flex-1 h-8 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-lg px-2 text-[9px] font-mono"
+                                        />
+                                      </div>
+                                    </div>
+                                    <div className="space-y-1.5">
+                                      <label className="text-[8px] text-slate-500 uppercase font-bold">Header Text</label>
+                                      <div className="flex items-center gap-2">
+                                        <input 
+                                          type="color" 
+                                          value={`#${store.aboutMeConfig.headerTextColor}`}
+                                          onChange={(e) => store.setAboutMeOption('headerTextColor', e.target.value.replace('#', ''))}
+                                          className="w-8 h-8 rounded-lg bg-transparent cursor-pointer overflow-hidden border-none p-0"
+                                        />
+                                        <input 
+                                          type="text"
+                                          value={store.aboutMeConfig.headerTextColor}
+                                          onChange={(e) => store.setAboutMeOption('headerTextColor', e.target.value)}
+                                          className="flex-1 h-8 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-lg px-2 text-[9px] font-mono"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div className="space-y-1.5">
+                                    <label className="text-[8px] text-slate-500 uppercase font-bold">Glass Tint</label>
+                                    <div className="flex items-center gap-2">
+                                      <input 
+                                        type="color" 
+                                        value={`#${store.aboutMeConfig.glassTint}`}
+                                        onChange={(e) => store.setAboutMeOption('glassTint', e.target.value.replace('#', ''))}
+                                        className="w-8 h-8 rounded-lg bg-transparent cursor-pointer overflow-hidden border-none p-0"
+                                      />
+                                      <input 
+                                        type="text"
+                                        value={store.aboutMeConfig.glassTint}
+                                        onChange={(e) => store.setAboutMeOption('glassTint', e.target.value)}
+                                        className="flex-1 h-8 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-lg px-2 text-[9px] font-mono"
+                                      />
+                                    </div>
+                                  </div>
+
+                                  {/* Glow & Luminance */}
+                                  <div className="space-y-3">
+                                    <div className="flex items-center justify-between">
+                                      <label className="text-[8px] text-slate-500 uppercase font-bold">Glow Opacity: {Math.round(store.aboutMeConfig.glowOpacity * 100)}%</label>
+                                      <div className="flex items-center gap-2">
+                                        <Sun className={cn("w-3 h-3 transition-colors", store.aboutMeConfig.luminanceBoost ? "text-amber-400" : "text-slate-400")} />
+                                        <button 
+                                          onClick={() => store.setAboutMeOption('luminanceBoost', !store.aboutMeConfig.luminanceBoost)}
+                                          className={cn(
+                                            "w-8 h-4 rounded-full relative transition-colors",
+                                            store.aboutMeConfig.luminanceBoost ? "bg-amber-400" : "bg-slate-200 dark:bg-zinc-800"
+                                          )}
+                                        >
+                                          <div className={cn("absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all", store.aboutMeConfig.luminanceBoost ? "left-4.5" : "left-0.5")} />
+                                        </button>
+                                      </div>
+                                    </div>
+                                    <input 
+                                      type="range" min="0" max="1" step="0.05"
+                                      value={store.aboutMeConfig.glowOpacity}
+                                      onChange={(e) => store.setAboutMeOption('glowOpacity', parseFloat(e.target.value))}
+                                      className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
+                                    />
+                                  </div>
+
+                                  {/* Gradient Borders */}
+                                  <div className="space-y-1.5 pt-1">
+                                    <div className="flex items-center justify-between">
+                                      <label className="text-[8px] text-slate-500 uppercase font-bold">Gradient Border</label>
+                                      <button 
+                                        onClick={() => store.setAboutMeOption('useBorderGradient', !store.aboutMeConfig.useBorderGradient)}
+                                        className={cn(
+                                          "w-8 h-4 rounded-full relative transition-colors",
+                                          store.aboutMeConfig.useBorderGradient ? "bg-indigo-500" : "bg-slate-200 dark:bg-zinc-800"
+                                        )}
+                                      >
+                                        <div className={cn("absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all", store.aboutMeConfig.useBorderGradient ? "left-4.5" : "left-0.5")} />
+                                      </button>
+                                    </div>
+                                    {store.aboutMeConfig.useBorderGradient && (
+                                      <div className="flex items-center gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                                        <input 
+                                          type="color" 
+                                          value={`#${store.aboutMeConfig.borderGradientColor2}`}
+                                          onChange={(e) => store.setAboutMeOption('borderGradientColor2', e.target.value.replace('#', ''))}
+                                          className="w-8 h-8 rounded-lg bg-transparent cursor-pointer overflow-hidden border-none p-0"
+                                        />
+                                        <input 
+                                          type="text"
+                                          value={store.aboutMeConfig.borderGradientColor2}
+                                          onChange={(e) => store.setAboutMeOption('borderGradientColor2', e.target.value)}
+                                          className="flex-1 h-8 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-lg px-2 text-[9px] font-mono"
+                                        />
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
 

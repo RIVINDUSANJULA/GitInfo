@@ -109,19 +109,35 @@ export function generateMarkdown(state: BuilderState): MarkdownResult {
       }
     }
     if (id === 'aboutme' && state.showAboutMe && state.aboutMe) {
-      const { preset, headerLabel, alignment } = state.aboutMeConfig;
+      const { preset, headerLabel, alignment, accentColor, headerTextColor, useBorderGradient, borderGradientColor2 } = state.aboutMeConfig;
       const greeting = `Hi there, I'm ${state.username} 👋`;
       const alignPrefix = alignment === 'center' ? '<div align="center">\n\n' : '';
       const alignSuffix = alignment === 'center' ? '\n\n</div>' : '';
+      const accent = `#${accentColor}`;
+      const headerCol = `#${headerTextColor}`;
 
       if (preset === 'matrix') {
         widgets += `\`\`\`text\n[${headerLabel}]\n\n${greeting.toUpperCase()}\n${'='.repeat(greeting.length)}\n\n${state.aboutMe}\n\`\`\`\n\n`;
-      } else if (preset === 'frost') {
-        widgets += `${alignPrefix}> # ${greeting}\n> ## ${headerLabel}\n> ${state.aboutMe.replace(/\n/g, '\n> ')}${alignSuffix}\n\n`;
-      } else if (preset === 'ember') {
-        widgets += `${alignPrefix}# ${greeting}\n### ${headerLabel}\n**${state.aboutMe}**${alignSuffix}\n\n`;
+      } else if (useBorderGradient) {
+        // High-end SVG export for gradients
+        const gradientId = `grad_${state.username}`;
+        widgets += `${alignPrefix}<svg width="100%" height="auto" viewBox="0 0 800 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="${gradientId}" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="${accent}" />
+      <stop offset="100%" stop-color="#${borderGradientColor2}" />
+    </linearGradient>
+  </defs>
+  <foreignObject width="100%" height="100%">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="color: white; font-family: sans-serif; padding: 20px; border: 2px solid url(#${gradientId}); border-radius: 20px; background: rgba(0,0,0,0.8);">
+      <h1 style="color: ${accent}; margin: 0;">${greeting}</h1>
+      <h3 style="color: ${headerCol}; opacity: 0.6; margin: 10px 0;">${headerLabel}</h3>
+      <p style="color: #ccc; line-height: 1.6;">${state.aboutMe.replace(/\n/g, '<br/>')}</p>
+    </div>
+  </foreignObject>
+</svg>${alignSuffix}\n\n`;
       } else {
-        widgets += `${alignPrefix}# ${greeting}\n### ${headerLabel}\n${state.aboutMe}${alignSuffix}\n\n`;
+        widgets += `${alignPrefix}# <span style="color: ${accent}">${greeting}</span>\n### <span style="color: ${headerCol}">${headerLabel}</span>\n${state.aboutMe}${alignSuffix}\n\n`;
       }
     }
 

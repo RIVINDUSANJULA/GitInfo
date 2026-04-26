@@ -50,13 +50,19 @@ export default function AboutMePreview() {
 
   if (!showAboutMe) return null;
 
-  // PRESET ENGINE (Visual-only overrides)
-  const p = aboutMeConfig.preset;
+  // CHROMATIC ENGINE
+  const config = aboutMeConfig;
+  const p = config.preset;
   const isMatrix = p === 'matrix';
   const isFrost = p === 'frost';
   const isEmber = p === 'ember';
   
-  const glowColor = isMatrix ? '#00FF41' : (isFrost ? '#ffffff' : (isEmber ? '#f43f5e' : (theme === 'custom' ? `#${customIconColor}` : '#f43f5e')));
+  // Base Colors
+  const accent = `#${config.accentColor}`;
+  const accent2 = config.useBorderGradient ? `#${config.borderGradientColor2}` : accent;
+  const headerCol = `#${config.headerTextColor}`;
+  const tint = `#${config.glassTint}`;
+
   const fontClass = isMatrix ? "font-mono" : (isFrost ? "font-serif" : "font-sans");
 
   const content = isGenerating 
@@ -73,32 +79,40 @@ export default function AboutMePreview() {
       transition={{ duration: 0.5 }}
       style={{
         perspective: "1000px",
-        '--bio-glow': glowColor,
-        '--bio-blur': `${aboutMeConfig.glassBlur}px`,
-        '--bio-border-op': aboutMeConfig.borderOpacity,
-        '--bio-glass-op': aboutMeConfig.glassOpacity,
-        '--bio-spread': `${aboutMeConfig.glowSpread}px`,
-        '--bio-stroke': `${aboutMeConfig.strokeWeight}px`,
-        '--bio-lh': aboutMeConfig.lineHeight,
-        '--bio-ls': `${aboutMeConfig.letterSpacing}px`,
+        '--bio-accent': accent,
+        '--bio-accent-2': accent2,
+        '--bio-header': headerCol,
+        '--bio-tint': tint,
+        '--bio-blur': `${config.glassBlur}px`,
+        '--bio-border-op': config.borderOpacity,
+        '--bio-glass-op': config.glassOpacity,
+        '--bio-glow-op': config.glowOpacity,
+        '--bio-spread': `${config.glowSpread}px`,
+        '--bio-stroke': `${config.strokeWeight}px`,
+        '--bio-lh': config.lineHeight,
+        '--bio-ls': `${config.letterSpacing}px`,
       } as any}
       className="relative group w-full"
     >
       <motion.div
-        style={{ rotateX: aboutMeConfig.useHoverTilt ? rotateX : 0, rotateY: aboutMeConfig.useHoverTilt ? rotateY : 0 }}
+        style={{ rotateX: config.useHoverTilt ? rotateX : 0, rotateY: config.useHoverTilt ? rotateY : 0 }}
         className={cn(
           "relative overflow-hidden transition-all duration-700 shadow-2xl",
           fontClass,
           isEmber && "animate-pulse-glow",
           glitch && "animate-glitch",
-          "bg-black/[var(--bio-glass-op)] backdrop-blur-[var(--bio-blur)]",
+          config.luminanceBoost && "brightness-125 contrast-110",
+          "backdrop-blur-[var(--bio-blur)]",
           !aboutMe && !isGenerating && "border-dashed opacity-60"
         )}
         style={{ 
-          borderRadius: `${aboutMeConfig.blockRadius}px`,
-          border: `${aboutMeConfig.borderStyle} var(--bio-stroke) var(--bio-glow)`,
-          borderColor: `rgba(${parseInt(glowColor.slice(1,3), 16)}, ${parseInt(glowColor.slice(3,5), 16)}, ${parseInt(glowColor.slice(5,7), 16)}, var(--bio-border-op))`,
-          boxShadow: aboutMeConfig.showGlow ? `0 0 var(--bio-spread) -12px var(--bio-glow)` : undefined
+          borderRadius: `${config.blockRadius}px`,
+          backgroundColor: `${tint}${Math.round(config.glassOpacity * 255).toString(16).padStart(2, '0')}`,
+          border: `${config.borderStyle} var(--bio-stroke) transparent`,
+          backgroundImage: `linear-gradient(black, black), linear-gradient(to right, var(--bio-accent), var(--bio-accent-2))`,
+          backgroundOrigin: 'border-box',
+          backgroundClip: 'padding-box, border-box',
+          boxShadow: config.showGlow ? `0 0 var(--bio-spread) -10px var(--bio-accent)` : undefined
         }}
       >
         {/* Surface Texture: Noise */}
@@ -145,17 +159,17 @@ export default function AboutMePreview() {
            <div 
             className="px-3 py-1 rounded-br-xl flex items-center gap-2 border-r border-b"
             style={{ 
-              backgroundColor: `${glowColor}25`, 
-              borderColor: `${glowColor}40`,
+              backgroundColor: `var(--bio-accent)25`, 
+              borderColor: `var(--bio-accent)40`,
               backdropFilter: 'blur(8px)'
             }}
            >
-             <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: glowColor, boxShadow: `0 0 8px ${glowColor}` }} />
+             <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: 'var(--bio-accent)', boxShadow: `0 0 8px var(--bio-accent)` }} />
              <span className={cn(
                "text-[8px] font-mono font-black tracking-[0.2em] uppercase",
-               isMatrix ? "text-[#00FF41]" : "text-white"
+               "text-[var(--bio-header)]"
              )}>
-               {aboutMeConfig.headerLabel}
+               {config.headerLabel}
              </span>
            </div>
         </div>
@@ -163,7 +177,7 @@ export default function AboutMePreview() {
         {/* Content Area */}
         <div className={cn(
           "p-8 pt-16 relative z-20",
-          aboutMeConfig.alignment === 'center' ? "text-center" : (aboutMeConfig.alignment === 'justify' ? "text-justify" : "text-left")
+          config.alignment === 'center' ? "text-center" : (config.alignment === 'justify' ? "text-justify" : "text-left")
         )}>
           {/* Unified Greeting Section */}
           <div className="mb-8 space-y-2">
@@ -172,24 +186,24 @@ export default function AboutMePreview() {
               animate={{ opacity: 1, x: 0 }}
               className={cn(
                 "text-4xl md:text-5xl font-black tracking-tighter leading-none",
-                isMatrix ? "text-[#00FF41] font-mono uppercase" : "text-white"
+                isMatrix ? "text-[var(--bio-accent)] font-mono uppercase" : "text-white"
               )}
              >
                 {isMatrix ? `> HI_THERE, I'M ${store.username}` : `Hi there, I'm ${store.username} 👋`}
              </motion.h1>
              <div 
               className={cn(
-                "h-1 rounded-full opacity-20",
-                aboutMeConfig.alignment === 'center' ? "mx-auto w-24" : "w-12"
+                "h-1 rounded-full",
+                config.alignment === 'center' ? "mx-auto w-24" : "w-12"
               )}
-              style={{ backgroundColor: glowColor }}
+              style={{ backgroundColor: 'var(--bio-accent)', opacity: config.glowOpacity }}
              />
           </div>
 
           <div className={cn(
             "prose prose-sm dark:prose-invert max-w-none transition-all duration-1000",
             isGenerating ? "opacity-20 blur-[4px]" : "opacity-100 blur-0",
-            isMatrix ? "prose-p:text-[#00FF41]/90 prose-headings:text-[#00FF41]" : (isFrost ? "prose-p:text-white/80 prose-headings:text-white" : "prose-p:text-slate-300/90 prose-headings:text-white"),
+            isMatrix ? "prose-p:text-[var(--bio-accent)]/90 prose-headings:text-[var(--bio-accent)]" : (isFrost ? "prose-p:text-white/80 prose-headings:text-white" : "prose-p:text-slate-300/90 prose-headings:text-white"),
             "prose-headings:font-black prose-headings:tracking-tighter",
             "prose-strong:font-black prose-strong:text-white",
             "prose-ul:list-none prose-ul:pl-0",
@@ -198,9 +212,9 @@ export default function AboutMePreview() {
           style={{ 
             lineHeight: 'var(--bio-lh)',
             letterSpacing: 'var(--bio-ls)',
-            "--tw-prose-bullets": glowColor,
-            "--tw-prose-counters": glowColor,
-            "--tw-prose-links": glowColor,
+            "--tw-prose-bullets": 'var(--bio-accent)',
+            "--tw-prose-counters": 'var(--bio-accent)',
+            "--tw-prose-links": 'var(--bio-accent)',
             "--tw-prose-bold": "white",
           } as any}>
             <ReactMarkdown key={aboutMe || 'loading'}>

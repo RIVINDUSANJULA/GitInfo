@@ -104,6 +104,11 @@ export interface BuilderState {
     borderOpacity: number;
     borderStyle: 'solid' | 'dashed' | 'double';
     strokeWeight: number;
+    accentColor: string;
+    headerTextColor: string;
+    glassTint: string;
+    glowOpacity: number;
+    luminanceBoost: boolean;
     useBorderGradient: boolean;
     borderGradientColor2: string;
     glassBlur: number;
@@ -116,7 +121,7 @@ export interface BuilderState {
     letterSpacing: number;
     alignment: 'left' | 'center' | 'justify';
     useHoverTilt: boolean;
-    preset: 'none' | 'matrix' | 'frost' | 'ember';
+    preset: 'none' | 'matrix' | 'frost' | 'ember' | 'plasma' | 'toxic' | 'magma' | 'stealth';
   };
 
   analyticsConfig: AnalyticsConfig;
@@ -197,7 +202,11 @@ export const useBuilderStore = create<BuilderState>()(
         blockRadius: 20,
         borderOpacity: 0.3,
         borderStyle: 'solid',
-        strokeWeight: 1,
+        accentColor: 'f43f5e',
+        headerTextColor: 'ffffff',
+        glassTint: '000000',
+        glowOpacity: 0.5,
+        luminanceBoost: false,
         useBorderGradient: false,
         borderGradientColor2: 'f43f5e',
         glassBlur: 12,
@@ -353,6 +362,31 @@ export const useBuilderStore = create<BuilderState>()(
             config.lineHeight = 1.6;
             config.letterSpacing = 0.5;
             config.alignment = 'left';
+          } else if (preset === 'plasma') {
+            config.accentColor = '22d3ee';
+            config.borderGradientColor2 = 'c084fc';
+            config.useBorderGradient = true;
+            config.glowSpread = 50;
+            config.glowOpacity = 0.6;
+          } else if (preset === 'toxic') {
+            config.accentColor = 'a3e635';
+            config.headerTextColor = 'a3e635';
+            config.glassTint = '052e16';
+            config.glowSpread = 60;
+            config.luminanceBoost = true;
+          } else if (preset === 'magma') {
+            config.accentColor = 'f97316';
+            config.borderGradientColor2 = '7f1d1d';
+            config.useBorderGradient = true;
+            config.glassTint = '450a0a';
+            config.glowSpread = 40;
+          } else if (preset === 'stealth') {
+            config.accentColor = 'ffffff';
+            config.borderOpacity = 0.1;
+            config.glassTint = '000000';
+            config.glassOpacity = 0.8;
+            config.glowSpread = 0;
+            config.headerTextColor = '525252';
           }
           
           return { aboutMeConfig: config };
