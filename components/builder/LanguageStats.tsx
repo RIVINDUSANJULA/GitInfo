@@ -13,59 +13,13 @@ interface LanguageData {
 
 export function LanguageStats() {
   const store = useBuilderStore();
-  const [languages, setLanguages] = useState<LanguageData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const languages = store.autoLanguages;
+  
+  // Determine loading/syncing state
+  // If we have a username but no languages yet, we are syncing
+  const isSyncing = store.username && languages.length === 0;
 
-  useEffect(() => {
-    if (!store.username) return;
-
-    const fetchStats = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const isForceRefresh = store.refreshTrigger > 0;
-        const res = await fetch(`/api/github/languages?username=${store.username}&include_contribs=${store.analyticsConfig.includeContributions}${isForceRefresh ? '&forceRefresh=true' : ''}`);
-        if (!res.ok) throw new Error("Failed to fetch");
-        const data = await res.json();
-        setLanguages(data);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStats();
-  }, [store.username, store.analyticsConfig.includeContributions, store.refreshTrigger]);
-
-  if (loading) {
-    return (
-      <div className="w-full space-y-4 p-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl animate-pulse">
-        <div className="h-4 w-32 bg-white/10 rounded-full" />
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="space-y-2">
-            <div className="flex justify-between h-3 w-full bg-white/5 rounded-full" />
-            <div className="h-2 w-full bg-white/5 rounded-full" />
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  if (error || languages.length === 0) {
-    return (
-      <div className="w-full p-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl text-center">
-        <p className="text-xs text-slate-400 italic">Data Syncing...</p>
-      </div>
-    );
-  }
-
-  // Get accent color from store for neon glow
-  const layout = store.analyticsConfig.layout || 'modern-bar';
-  const accent = `#${store.aboutMeConfig.accentColor || 'f43f5e'}`;
-
-  if (loading) {
+  if (isSyncing) {
     return (
       <div className="w-full space-y-4 p-8 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col items-center justify-center min-h-[200px]">
         <div className="relative w-12 h-12">
@@ -79,15 +33,20 @@ export function LanguageStats() {
     );
   }
 
-  if (error || languages.length === 0) {
+  if (languages.length === 0) {
     return (
       <div className="w-full p-8 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl text-center">
         <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 italic">
-          // NO_PUBLIC_DATA
+          // NO_PUBLIC_DATA_FOUND
         </p>
+        <p className="text-[8px] text-slate-600 mt-2">Enter a valid GitHub username to see stats</p>
       </div>
     );
   }
+
+  // Get accent color from store for neon glow
+  const layout = store.analyticsConfig.layout || 'modern-bar';
+  const accent = `#${store.aboutMeConfig.accentColor || 'f43f5e'}`;
 
   return (
     <div className="w-full space-y-6 p-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl relative overflow-hidden group">

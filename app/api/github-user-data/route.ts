@@ -10,9 +10,11 @@ export async function GET(req: NextRequest) {
   }
 
   const includeContribs = searchParams.get("include_contribs") === "true";
+  const forceRefresh = searchParams.get("forceRefresh") === "true";
 
   try {
-    const userData = await fetchUserLanguages(username, includeContribs);
+    console.log(`[GitInfo] Fetching real-time data for: ${username} (force: ${forceRefresh})`);
+    const userData = await fetchUserLanguages(username, includeContribs, forceRefresh);
     const languages = aggregateLanguages(userData);
     const skills = aggregateSkills(userData);
 

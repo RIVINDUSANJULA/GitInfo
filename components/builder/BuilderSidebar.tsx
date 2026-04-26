@@ -114,7 +114,7 @@ export function BuilderSidebar() {
   useEffect(() => {
     let needsUpdate = false;
     const newOrder = [...store.widgetOrder];
-    
+
     if (!newOrder.includes('socials')) {
       newOrder.push('socials');
       needsUpdate = true;
@@ -123,7 +123,7 @@ export function BuilderSidebar() {
       newOrder.unshift('aboutme');
       needsUpdate = true;
     }
-    
+
     if (needsUpdate) {
       store.setWidgetOrder(newOrder);
     }
@@ -530,414 +530,414 @@ export function BuilderSidebar() {
                       </motion.div>
                     )}
 
-                        {store.aboutMeConfig?.mode !== 'ai' && (
-                          <motion.div
-                            key="manual-mode"
-                            initial={{ opacity: 0, x: 10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -10 }}
-                            className="space-y-3 pt-2"
-                          >
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <Brush className="w-2.5 h-2.5" />
-                                {store.aboutMe ? 'Review & Edit Result' : 'Manual Markdown Bio'}
-                              </div>
-                              <div className="flex items-center gap-2">
-                                {store.aboutMe && (
-                                  <button
-                                    onClick={() => store.updateAboutMe('')}
-                                    className="text-[8px] font-bold text-rose-500 bg-rose-500/10 px-1.5 py-0.5 rounded uppercase hover:bg-rose-500 hover:text-white transition-all"
-                                  >
-                                    Clear All
-                                  </button>
-                                )}
-                                <span className="text-[8px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded uppercase tracking-tighter">Live Editor</span>
-                              </div>
-                            </label>
-                            <textarea
-                              value={store.aboutMe || ""}
-                              onChange={(e) => store.updateAboutMe(e.target.value)}
-                              placeholder="Describe your journey, passion, and expertise..."
-                              className="w-full h-64 p-3 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-rose-500/50 transition-all custom-scrollbar resize-none"
-                            />
-                            <p className="text-[8px] text-slate-400 uppercase leading-relaxed font-bold tracking-tight">
-                              ✨ Tip: You can use **Bold**, *Italics*, [Links](https://...), and Emojis 🚀.
-                            </p>
-                          </motion.div>
-                        )}
-
-                        {/* 🎨 Style Customization Sub-section */}
-                        <div className="pt-4 border-t border-slate-200 dark:border-white/10 space-y-4">
-                          <button 
-                            onClick={() => setOpenSections(prev => ({ ...prev, aboutMeStyle: !prev.aboutMeStyle }))}
-                            className="w-full flex items-center justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-rose-500 transition-colors"
-                          >
-                            <div className="flex items-center gap-2">
-                              <Palette className="w-3 h-3" />
-                              Style Customization
-                            </div>
-                            <ChevronDown className={cn("w-3 h-3 transition-transform", openSections.aboutMeStyle && "rotate-180")} />
-                          </button>
-
-                          <AnimatePresence>
-                            {openSections.aboutMeStyle && (
-                              <motion.div 
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: 'auto', opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                className="space-y-4 overflow-hidden pt-2"
+                    {store.aboutMeConfig?.mode !== 'ai' && (
+                      <motion.div
+                        key="manual-mode"
+                        initial={{ opacity: 0, x: 10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -10 }}
+                        className="space-y-3 pt-2"
+                      >
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Brush className="w-2.5 h-2.5" />
+                            {store.aboutMe ? 'Review & Edit Result' : 'Manual Markdown Bio'}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {store.aboutMe && (
+                              <button
+                                onClick={() => store.updateAboutMe('')}
+                                className="text-[8px] font-bold text-rose-500 bg-rose-500/10 px-1.5 py-0.5 rounded uppercase hover:bg-rose-500 hover:text-white transition-all"
                               >
-                                {/* Elite Preset Vault */}
-                                <div className="space-y-2">
-                                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                    <Zap className="w-2.5 h-2.5" />
-                                    Elite Preset Vault
-                                  </label>
-                                  <div className="grid grid-cols-4 gap-1.5">
-                                    {[
-                                      { id: 'matrix', name: 'Matrix', icon: Monitor, color: '#00FF41' },
-                                      { id: 'frost', name: 'Frost', icon: Sparkles, color: '#ffffff' },
-                                      { id: 'ember', name: 'Ember', icon: Flame, color: '#f43f5e' },
-                                      { id: 'plasma', name: 'Plasma', icon: Zap, color: '#22d3ee' },
-                                      { id: 'toxic', name: 'Toxic', icon: Droplets, color: '#a3e635' },
-                                      { id: 'magma', name: 'Magma', icon: Flame, color: '#f97316' },
-                                      { id: 'stealth', name: 'Stealth', icon: EyeOff, color: '#525252' }
-                                    ].map(p => (
-                                      <button 
-                                        key={p.id}
-                                        onClick={() => store.applyAboutMePreset(store.aboutMeConfig.preset === p.id ? 'none' : p.id as any)}
-                                        className={cn(
-                                          "py-2 text-[7px] font-black uppercase rounded-lg border transition-all flex flex-col items-center justify-center gap-1",
-                                          store.aboutMeConfig.preset === p.id 
-                                            ? "bg-white/10 border-current shadow-lg" 
-                                            : "bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-white/5 text-slate-400"
-                                        )}
-                                        style={{ color: store.aboutMeConfig.preset === p.id ? p.color : undefined }}
-                                      >
-                                        <p.icon className="w-3 h-3" />
-                                        {p.name}
-                                      </button>
-                                    ))}
-                                  </div>
-                                </div>
+                                Clear All
+                              </button>
+                            )}
+                            <span className="text-[8px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded uppercase tracking-tighter">Live Editor</span>
+                          </div>
+                        </label>
+                        <textarea
+                          value={store.aboutMe || ""}
+                          onChange={(e) => store.updateAboutMe(e.target.value)}
+                          placeholder="Describe your journey, passion, and expertise..."
+                          className="w-full h-64 p-3 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-rose-500/50 transition-all custom-scrollbar resize-none"
+                        />
+                        <p className="text-[8px] text-slate-400 uppercase leading-relaxed font-bold tracking-tight">
+                          ✨ Tip: You can use **Bold**, *Italics*, [Links](https://...), and Emojis 🚀.
+                        </p>
+                      </motion.div>
+                    )}
 
-                                {/* 🌈 Color Profile */}
-                                <div className="space-y-4 pt-2 border-t border-slate-200 dark:border-white/5">
-                                  <div className="flex items-center justify-between">
-                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                      <Droplets className="w-2.5 h-2.5" />
-                                      Color Profile
-                                    </label>
-                                    <button 
-                                      onClick={() => store.setAboutMeOption('accentColor', store.customIconColor)}
-                                      className="text-[7px] font-bold text-rose-500 bg-rose-500/10 px-1.5 py-0.5 rounded uppercase hover:bg-rose-500 hover:text-white transition-all"
-                                    >
-                                      Harmony Mode
-                                    </button>
-                                  </div>
+                    {/* 🎨 Style Customization Sub-section */}
+                    <div className="pt-4 border-t border-slate-200 dark:border-white/10 space-y-4">
+                      <button
+                        onClick={() => setOpenSections(prev => ({ ...prev, aboutMeStyle: !prev.aboutMeStyle }))}
+                        className="w-full flex items-center justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-rose-500 transition-colors"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Palette className="w-3 h-3" />
+                          Style Customization
+                        </div>
+                        <ChevronDown className={cn("w-3 h-3 transition-transform", openSections.aboutMeStyle && "rotate-180")} />
+                      </button>
 
-                                  {/* Color Pickers */}
-                                  <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-1.5">
-                                      <label className="text-[8px] text-slate-500 uppercase font-bold">Neon Core</label>
-                                      <div className="flex items-center gap-2">
-                                        <input 
-                                          type="color" 
-                                          value={`#${store.aboutMeConfig.accentColor}`}
-                                          onChange={(e) => store.setAboutMeOption('accentColor', e.target.value.replace('#', ''))}
-                                          className="w-8 h-8 rounded-lg bg-transparent cursor-pointer overflow-hidden border-none p-0"
-                                        />
-                                        <input 
-                                          type="text"
-                                          value={store.aboutMeConfig.accentColor || ""}
-                                          onChange={(e) => store.setAboutMeOption('accentColor', e.target.value)}
-                                          className="flex-1 h-8 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-lg px-2 text-[9px] font-mono"
-                                        />
-                                      </div>
-                                    </div>
-                                    <div className="space-y-1.5">
-                                      <label className="text-[8px] text-slate-500 uppercase font-bold">Header Text</label>
-                                      <div className="flex items-center gap-2">
-                                        <input 
-                                          type="color" 
-                                          value={`#${store.aboutMeConfig.headerTextColor}`}
-                                          onChange={(e) => store.setAboutMeOption('headerTextColor', e.target.value.replace('#', ''))}
-                                          className="w-8 h-8 rounded-lg bg-transparent cursor-pointer overflow-hidden border-none p-0"
-                                        />
-                                        <input 
-                                          type="text"
-                                          value={store.aboutMeConfig.headerTextColor || ""}
-                                          onChange={(e) => store.setAboutMeOption('headerTextColor', e.target.value)}
-                                          className="flex-1 h-8 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-lg px-2 text-[9px] font-mono"
-                                        />
-                                      </div>
-                                    </div>
-                                  </div>
+                      <AnimatePresence>
+                        {openSections.aboutMeStyle && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            className="space-y-4 overflow-hidden pt-2"
+                          >
+                            {/* Elite Preset Vault */}
+                            <div className="space-y-2">
+                              <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                <Zap className="w-2.5 h-2.5" />
+                                Elite Preset Vault
+                              </label>
+                              <div className="grid grid-cols-4 gap-1.5">
+                                {[
+                                  { id: 'matrix', name: 'Matrix', icon: Monitor, color: '#00FF41' },
+                                  { id: 'frost', name: 'Frost', icon: Sparkles, color: '#ffffff' },
+                                  { id: 'ember', name: 'Ember', icon: Flame, color: '#f43f5e' },
+                                  { id: 'plasma', name: 'Plasma', icon: Zap, color: '#22d3ee' },
+                                  { id: 'toxic', name: 'Toxic', icon: Droplets, color: '#a3e635' },
+                                  { id: 'magma', name: 'Magma', icon: Flame, color: '#f97316' },
+                                  { id: 'stealth', name: 'Stealth', icon: EyeOff, color: '#525252' }
+                                ].map(p => (
+                                  <button
+                                    key={p.id}
+                                    onClick={() => store.applyAboutMePreset(store.aboutMeConfig.preset === p.id ? 'none' : p.id as any)}
+                                    className={cn(
+                                      "py-2 text-[7px] font-black uppercase rounded-lg border transition-all flex flex-col items-center justify-center gap-1",
+                                      store.aboutMeConfig.preset === p.id
+                                        ? "bg-white/10 border-current shadow-lg"
+                                        : "bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-white/5 text-slate-400"
+                                    )}
+                                    style={{ color: store.aboutMeConfig.preset === p.id ? p.color : undefined }}
+                                  >
+                                    <p.icon className="w-3 h-3" />
+                                    {p.name}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
 
-                                  <div className="space-y-1.5">
-                                    <label className="text-[8px] text-slate-500 uppercase font-bold">Glass Tint</label>
-                                    <div className="flex items-center gap-2">
-                                      <input 
-                                        type="color" 
-                                        value={`#${store.aboutMeConfig.glassTint}`}
-                                        onChange={(e) => store.setAboutMeOption('glassTint', e.target.value.replace('#', ''))}
-                                        className="w-8 h-8 rounded-lg bg-transparent cursor-pointer overflow-hidden border-none p-0"
-                                      />
-                                      <input 
-                                        type="text"
-                                        value={store.aboutMeConfig.glassTint || ""}
-                                        onChange={(e) => store.setAboutMeOption('glassTint', e.target.value)}
-                                        className="flex-1 h-8 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-lg px-2 text-[9px] font-mono"
-                                      />
-                                    </div>
-                                  </div>
+                            {/* 🌈 Color Profile */}
+                            <div className="space-y-4 pt-2 border-t border-slate-200 dark:border-white/5">
+                              <div className="flex items-center justify-between">
+                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                  <Droplets className="w-2.5 h-2.5" />
+                                  Color Profile
+                                </label>
+                                <button
+                                  onClick={() => store.setAboutMeOption('accentColor', store.customIconColor)}
+                                  className="text-[7px] font-bold text-rose-500 bg-rose-500/10 px-1.5 py-0.5 rounded uppercase hover:bg-rose-500 hover:text-white transition-all"
+                                >
+                                  Harmony Mode
+                                </button>
+                              </div>
 
-                                  {/* Glow & Luminance */}
-                                  <div className="space-y-3">
-                                    <div className="flex items-center justify-between">
-                                      <label className="text-[8px] text-slate-500 uppercase font-bold">Glow Opacity: {Math.round(store.aboutMeConfig.glowOpacity * 100)}%</label>
-                                      <div className="flex items-center gap-2">
-                                        <Sun className={cn("w-3 h-3 transition-colors", store.aboutMeConfig.luminanceBoost ? "text-amber-400" : "text-slate-400")} />
-                                        <button 
-                                          onClick={() => store.setAboutMeOption('luminanceBoost', !store.aboutMeConfig.luminanceBoost)}
-                                          className={cn(
-                                            "w-8 h-4 rounded-full relative transition-colors",
-                                            store.aboutMeConfig.luminanceBoost ? "bg-amber-400" : "bg-slate-200 dark:bg-zinc-800"
-                                          )}
-                                        >
-                                          <div className={cn("absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all", store.aboutMeConfig.luminanceBoost ? "left-4.5" : "left-0.5")} />
-                                        </button>
-                                      </div>
-                                    </div>
-                                    <input 
-                                      type="range" min="0" max="1" step="0.05"
-                                      value={store.aboutMeConfig.glowOpacity}
-                                      onChange={(e) => store.setAboutMeOption('glowOpacity', parseFloat(e.target.value))}
-                                      className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
+                              {/* Color Pickers */}
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-1.5">
+                                  <label className="text-[8px] text-slate-500 uppercase font-bold">Neon Core</label>
+                                  <div className="flex items-center gap-2">
+                                    <input
+                                      type="color"
+                                      value={`#${store.aboutMeConfig.accentColor}`}
+                                      onChange={(e) => store.setAboutMeOption('accentColor', e.target.value.replace('#', ''))}
+                                      className="w-8 h-8 rounded-lg bg-transparent cursor-pointer overflow-hidden border-none p-0"
+                                    />
+                                    <input
+                                      type="text"
+                                      value={store.aboutMeConfig.accentColor || ""}
+                                      onChange={(e) => store.setAboutMeOption('accentColor', e.target.value)}
+                                      className="flex-1 h-8 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-lg px-2 text-[9px] font-mono"
                                     />
                                   </div>
-
-                                  {/* Gradient Borders */}
-                                  <div className="space-y-1.5 pt-1">
-                                    <div className="flex items-center justify-between">
-                                      <label className="text-[8px] text-slate-500 uppercase font-bold">Gradient Border</label>
-                                      <button 
-                                        onClick={() => store.setAboutMeOption('useBorderGradient', !store.aboutMeConfig.useBorderGradient)}
-                                        className={cn(
-                                          "w-8 h-4 rounded-full relative transition-colors",
-                                          store.aboutMeConfig.useBorderGradient ? "bg-indigo-500" : "bg-slate-200 dark:bg-zinc-800"
-                                        )}
-                                      >
-                                        <div className={cn("absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all", store.aboutMeConfig.useBorderGradient ? "left-4.5" : "left-0.5")} />
-                                      </button>
-                                    </div>
-                                    {store.aboutMeConfig.useBorderGradient && (
-                                      <div className="flex items-center gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
-                                        <input 
-                                          type="color" 
-                                          value={`#${store.aboutMeConfig.borderGradientColor2}`}
-                                          onChange={(e) => store.setAboutMeOption('borderGradientColor2', e.target.value.replace('#', ''))}
-                                          className="w-8 h-8 rounded-lg bg-transparent cursor-pointer overflow-hidden border-none p-0"
-                                        />
-                                        <input 
-                                          type="text"
-                                          value={store.aboutMeConfig.borderGradientColor2 || ""}
-                                          onChange={(e) => store.setAboutMeOption('borderGradientColor2', e.target.value)}
-                                          className="flex-1 h-8 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-lg px-2 text-[9px] font-mono"
-                                        />
-                                      </div>
-                                    )}
-                                  </div>
                                 </div>
-
-                                {/* Edge Architecture */}
-                                <div className="space-y-3 pt-2 border-t border-slate-200 dark:border-white/5">
-                                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                    <Maximize className="w-2.5 h-2.5" />
-                                    Edge Architecture
-                                  </label>
-                                  
-                                  <div className="flex items-center justify-between">
-                                    <span className="text-[9px] text-slate-500 uppercase font-bold">Border Gradient</span>
-                                    <button 
-                                      onClick={() => store.setAboutMeOption('useBorderGradient', !store.aboutMeConfig.useBorderGradient)}
-                                      className={cn(
-                                        "w-8 h-4 rounded-full relative transition-colors",
-                                        store.aboutMeConfig.useBorderGradient ? "bg-rose-500" : "bg-slate-200 dark:bg-zinc-800"
-                                      )}
-                                    >
-                                      <div className={cn("absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all", store.aboutMeConfig.useBorderGradient ? "left-4.5" : "left-0.5")} />
-                                    </button>
-                                  </div>
-
-                                  <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-1.5">
-                                      <label className="text-[8px] text-slate-500 uppercase font-bold">Weight: {store.aboutMeConfig.strokeWeight}px</label>
-                                      <input 
-                                        type="range" min="0.5" max="4" step="0.5"
-                                        value={store.aboutMeConfig.strokeWeight}
-                                        onChange={(e) => store.setAboutMeOption('strokeWeight', parseFloat(e.target.value))}
-                                        className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
-                                      />
-                                    </div>
-                                    <div className="space-y-1.5">
-                                      <label className="text-[8px] text-slate-500 uppercase font-bold">Neon Spread: {store.aboutMeConfig.glowSpread}px</label>
-                                      <input 
-                                        type="range" min="0" max="100" step="5"
-                                        value={store.aboutMeConfig.glowSpread}
-                                        onChange={(e) => store.setAboutMeOption('glowSpread', parseInt(e.target.value))}
-                                        className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
-                                      />
-                                    </div>
-                                  </div>
-                                </div>
-
-                                {/* Surface Texture */}
-                                <div className="space-y-3 pt-2 border-t border-slate-200 dark:border-white/5">
-                                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                    <Layers className="w-2.5 h-2.5" />
-                                    Surface Texture
-                                  </label>
-                                  <div className="grid grid-cols-2 gap-2">
-                                    <button 
-                                      onClick={() => store.setAboutMeOption('showNoise', !store.aboutMeConfig.showNoise)}
-                                      className={cn(
-                                        "py-1.5 text-[8px] font-bold uppercase rounded-lg border transition-all",
-                                        store.aboutMeConfig.showNoise ? "bg-rose-500/10 border-rose-500 text-rose-500" : "bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-white/5 text-slate-400"
-                                      )}
-                                    >
-                                      Noise Overlay
-                                    </button>
-                                    <button 
-                                      onClick={() => store.setAboutMeOption('showGrid', !store.aboutMeConfig.showGrid)}
-                                      className={cn(
-                                        "py-1.5 text-[8px] font-bold uppercase rounded-lg border transition-all",
-                                        store.aboutMeConfig.showGrid ? "bg-rose-500/10 border-rose-500 text-rose-500" : "bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-white/5 text-slate-400"
-                                      )}
-                                    >
-                                      Dot Matrix
-                                    </button>
-                                  </div>
-                                </div>
-
-                                {/* Typography Sculpting */}
-                                <div className="space-y-3 pt-2 border-t border-slate-200 dark:border-white/5">
-                                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                    <Type className="w-2.5 h-2.5" />
-                                    Typography Sculpting
-                                  </label>
-                                  <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-1.5">
-                                      <label className="text-[8px] text-slate-500 uppercase font-bold">Line Scaling: {store.aboutMeConfig.lineHeight}</label>
-                                      <input 
-                                        type="range" min="1.2" max="2.4" step="0.1"
-                                        value={store.aboutMeConfig.lineHeight}
-                                        onChange={(e) => store.setAboutMeOption('lineHeight', parseFloat(e.target.value))}
-                                        className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
-                                      />
-                                    </div>
-                                    <div className="space-y-1.5">
-                                      <label className="text-[8px] text-slate-500 uppercase font-bold">Tracking: {store.aboutMeConfig.letterSpacing}px</label>
-                                      <input 
-                                        type="range" min="-1" max="5" step="0.5"
-                                        value={store.aboutMeConfig.letterSpacing}
-                                        onChange={(e) => store.setAboutMeOption('letterSpacing', parseFloat(e.target.value))}
-                                        className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
-                                      />
-                                    </div>
-                                  </div>
-                                  <div className="flex bg-slate-100 dark:bg-zinc-900 p-0.5 rounded-xl">
-                                    {(['left', 'center', 'justify'] as const).map(a => (
-                                      <button 
-                                        key={a}
-                                        onClick={() => store.setAboutMeOption('alignment', a)}
-                                        className={cn(
-                                          "flex-1 py-1 text-[8px] font-black uppercase rounded-lg transition-all",
-                                          store.aboutMeConfig.alignment === a ? "bg-white dark:bg-zinc-700 text-rose-500 shadow-sm" : "text-slate-400"
-                                        )}
-                                      >
-                                        {a}
-                                      </button>
-                                    ))}
-                                  </div>
-                                </div>
-
-                                {/* Custom Header Label */}
                                 <div className="space-y-1.5">
-                                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Header Label</label>
-                                  <input 
+                                  <label className="text-[8px] text-slate-500 uppercase font-bold">Header Text</label>
+                                  <div className="flex items-center gap-2">
+                                    <input
+                                      type="color"
+                                      value={`#${store.aboutMeConfig.headerTextColor}`}
+                                      onChange={(e) => store.setAboutMeOption('headerTextColor', e.target.value.replace('#', ''))}
+                                      className="w-8 h-8 rounded-lg bg-transparent cursor-pointer overflow-hidden border-none p-0"
+                                    />
+                                    <input
+                                      type="text"
+                                      value={store.aboutMeConfig.headerTextColor || ""}
+                                      onChange={(e) => store.setAboutMeOption('headerTextColor', e.target.value)}
+                                      className="flex-1 h-8 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-lg px-2 text-[9px] font-mono"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="space-y-1.5">
+                                <label className="text-[8px] text-slate-500 uppercase font-bold">Glass Tint</label>
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    type="color"
+                                    value={`#${store.aboutMeConfig.glassTint}`}
+                                    onChange={(e) => store.setAboutMeOption('glassTint', e.target.value.replace('#', ''))}
+                                    className="w-8 h-8 rounded-lg bg-transparent cursor-pointer overflow-hidden border-none p-0"
+                                  />
+                                  <input
                                     type="text"
-                                    value={store.aboutMeConfig.headerLabel || ""}
-                                    onChange={(e) => store.setAboutMeOption('headerLabel', e.target.value)}
-                                    placeholder="// ABOUT ME"
-                                    className="w-full h-8 px-3 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-lg text-[10px] focus:outline-none focus:ring-1 focus:ring-rose-500/50"
+                                    value={store.aboutMeConfig.glassTint || ""}
+                                    onChange={(e) => store.setAboutMeOption('glassTint', e.target.value)}
+                                    className="flex-1 h-8 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-lg px-2 text-[9px] font-mono"
                                   />
                                 </div>
+                              </div>
 
-                                {/* Glass depth */}
-                                <div className="grid grid-cols-2 gap-4 pt-1">
-                                  <div className="space-y-2">
-                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Blur: {store.aboutMeConfig.glassBlur}px</label>
-                                    <input 
-                                      type="range" min="0" max="20" step="1"
-                                      value={store.aboutMeConfig.glassBlur}
-                                      onChange={(e) => store.setAboutMeOption('glassBlur', parseInt(e.target.value))}
-                                      className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
-                                    />
-                                  </div>
-                                  <div className="space-y-2">
-                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Opacity: {Math.round(store.aboutMeConfig.glassOpacity * 100)}%</label>
-                                    <input 
-                                      type="range" min="0.05" max="0.8" step="0.05"
-                                      value={store.aboutMeConfig.glassOpacity}
-                                      onChange={(e) => store.setAboutMeOption('glassOpacity', parseFloat(e.target.value))}
-                                      className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
-                                    />
+                              {/* Glow & Luminance */}
+                              <div className="space-y-3">
+                                <div className="flex items-center justify-between">
+                                  <label className="text-[8px] text-slate-500 uppercase font-bold">Glow Opacity: {Math.round(store.aboutMeConfig.glowOpacity * 100)}%</label>
+                                  <div className="flex items-center gap-2">
+                                    <Sun className={cn("w-3 h-3 transition-colors", store.aboutMeConfig.luminanceBoost ? "text-amber-400" : "text-slate-400")} />
+                                    <button
+                                      onClick={() => store.setAboutMeOption('luminanceBoost', !store.aboutMeConfig.luminanceBoost)}
+                                      className={cn(
+                                        "w-8 h-4 rounded-full relative transition-colors",
+                                        store.aboutMeConfig.luminanceBoost ? "bg-amber-400" : "bg-slate-200 dark:bg-zinc-800"
+                                      )}
+                                    >
+                                      <div className={cn("absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all", store.aboutMeConfig.luminanceBoost ? "left-4.5" : "left-0.5")} />
+                                    </button>
                                   </div>
                                 </div>
+                                <input
+                                  type="range" min="0" max="1" step="0.05"
+                                  value={store.aboutMeConfig.glowOpacity}
+                                  onChange={(e) => store.setAboutMeOption('glowOpacity', parseFloat(e.target.value))}
+                                  className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
+                                />
+                              </div>
 
-                                {/* Border Aesthetics */}
-                                <div className="space-y-3 pt-1">
-                                  <div className="flex items-center justify-between">
-                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Border Opacity: {Math.round(store.aboutMeConfig.borderOpacity * 100)}%</label>
-                                    <div className="flex bg-slate-100 dark:bg-zinc-900 p-0.5 rounded-md gap-0.5">
-                                      {(['solid', 'dashed', 'double'] as const).map(s => (
-                                        <button 
-                                          key={s}
-                                          onClick={() => store.setAboutMeOption('borderStyle', s)}
-                                          className={cn(
-                                            "px-1.5 py-0.5 text-[7px] font-bold uppercase rounded transition-all",
-                                            store.aboutMeConfig.borderStyle === s ? "bg-white dark:bg-zinc-700 text-rose-500" : "text-slate-400"
-                                          )}
-                                        >
-                                          {s}
-                                        </button>
-                                      ))}
-                                    </div>
+                              {/* Gradient Borders */}
+                              <div className="space-y-1.5 pt-1">
+                                <div className="flex items-center justify-between">
+                                  <label className="text-[8px] text-slate-500 uppercase font-bold">Gradient Border</label>
+                                  <button
+                                    onClick={() => store.setAboutMeOption('useBorderGradient', !store.aboutMeConfig.useBorderGradient)}
+                                    className={cn(
+                                      "w-8 h-4 rounded-full relative transition-colors",
+                                      store.aboutMeConfig.useBorderGradient ? "bg-indigo-500" : "bg-slate-200 dark:bg-zinc-800"
+                                    )}
+                                  >
+                                    <div className={cn("absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all", store.aboutMeConfig.useBorderGradient ? "left-4.5" : "left-0.5")} />
+                                  </button>
+                                </div>
+                                {store.aboutMeConfig.useBorderGradient && (
+                                  <div className="flex items-center gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                                    <input
+                                      type="color"
+                                      value={`#${store.aboutMeConfig.borderGradientColor2}`}
+                                      onChange={(e) => store.setAboutMeOption('borderGradientColor2', e.target.value.replace('#', ''))}
+                                      className="w-8 h-8 rounded-lg bg-transparent cursor-pointer overflow-hidden border-none p-0"
+                                    />
+                                    <input
+                                      type="text"
+                                      value={store.aboutMeConfig.borderGradientColor2 || ""}
+                                      onChange={(e) => store.setAboutMeOption('borderGradientColor2', e.target.value)}
+                                      className="flex-1 h-8 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-lg px-2 text-[9px] font-mono"
+                                    />
                                   </div>
-                                  <input 
-                                    type="range" min="0" max="1" step="0.05"
-                                    value={store.aboutMeConfig.borderOpacity}
-                                    onChange={(e) => store.setAboutMeOption('borderOpacity', parseFloat(e.target.value))}
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Edge Architecture */}
+                            <div className="space-y-3 pt-2 border-t border-slate-200 dark:border-white/5">
+                              <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                <Maximize className="w-2.5 h-2.5" />
+                                Edge Architecture
+                              </label>
+
+                              <div className="flex items-center justify-between">
+                                <span className="text-[9px] text-slate-500 uppercase font-bold">Border Gradient</span>
+                                <button
+                                  onClick={() => store.setAboutMeOption('useBorderGradient', !store.aboutMeConfig.useBorderGradient)}
+                                  className={cn(
+                                    "w-8 h-4 rounded-full relative transition-colors",
+                                    store.aboutMeConfig.useBorderGradient ? "bg-rose-500" : "bg-slate-200 dark:bg-zinc-800"
+                                  )}
+                                >
+                                  <div className={cn("absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all", store.aboutMeConfig.useBorderGradient ? "left-4.5" : "left-0.5")} />
+                                </button>
+                              </div>
+
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-1.5">
+                                  <label className="text-[8px] text-slate-500 uppercase font-bold">Weight: {store.aboutMeConfig.strokeWeight}px</label>
+                                  <input
+                                    type="range" min="0.5" max="4" step="0.5"
+                                    value={store.aboutMeConfig.strokeWeight}
+                                    onChange={(e) => store.setAboutMeOption('strokeWeight', parseFloat(e.target.value))}
                                     className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
                                   />
                                 </div>
-
-                                {/* Neon Intensity */}
-                                <div className="space-y-2 pt-1">
-                                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Glow Spread: {store.aboutMeConfig.glowSpread}px</label>
-                                  <input 
+                                <div className="space-y-1.5">
+                                  <label className="text-[8px] text-slate-500 uppercase font-bold">Neon Spread: {store.aboutMeConfig.glowSpread}px</label>
+                                  <input
                                     type="range" min="0" max="100" step="5"
                                     value={store.aboutMeConfig.glowSpread}
                                     onChange={(e) => store.setAboutMeOption('glowSpread', parseInt(e.target.value))}
                                     className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
                                   />
                                 </div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </div>
+                              </div>
+                            </div>
+
+                            {/* Surface Texture */}
+                            <div className="space-y-3 pt-2 border-t border-slate-200 dark:border-white/5">
+                              <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                <Layers className="w-2.5 h-2.5" />
+                                Surface Texture
+                              </label>
+                              <div className="grid grid-cols-2 gap-2">
+                                <button
+                                  onClick={() => store.setAboutMeOption('showNoise', !store.aboutMeConfig.showNoise)}
+                                  className={cn(
+                                    "py-1.5 text-[8px] font-bold uppercase rounded-lg border transition-all",
+                                    store.aboutMeConfig.showNoise ? "bg-rose-500/10 border-rose-500 text-rose-500" : "bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-white/5 text-slate-400"
+                                  )}
+                                >
+                                  Noise Overlay
+                                </button>
+                                <button
+                                  onClick={() => store.setAboutMeOption('showGrid', !store.aboutMeConfig.showGrid)}
+                                  className={cn(
+                                    "py-1.5 text-[8px] font-bold uppercase rounded-lg border transition-all",
+                                    store.aboutMeConfig.showGrid ? "bg-rose-500/10 border-rose-500 text-rose-500" : "bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-white/5 text-slate-400"
+                                  )}
+                                >
+                                  Dot Matrix
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Typography Sculpting */}
+                            <div className="space-y-3 pt-2 border-t border-slate-200 dark:border-white/5">
+                              <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                <Type className="w-2.5 h-2.5" />
+                                Typography Sculpting
+                              </label>
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-1.5">
+                                  <label className="text-[8px] text-slate-500 uppercase font-bold">Line Scaling: {store.aboutMeConfig.lineHeight}</label>
+                                  <input
+                                    type="range" min="1.2" max="2.4" step="0.1"
+                                    value={store.aboutMeConfig.lineHeight}
+                                    onChange={(e) => store.setAboutMeOption('lineHeight', parseFloat(e.target.value))}
+                                    className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
+                                  />
+                                </div>
+                                <div className="space-y-1.5">
+                                  <label className="text-[8px] text-slate-500 uppercase font-bold">Tracking: {store.aboutMeConfig.letterSpacing}px</label>
+                                  <input
+                                    type="range" min="-1" max="5" step="0.5"
+                                    value={store.aboutMeConfig.letterSpacing}
+                                    onChange={(e) => store.setAboutMeOption('letterSpacing', parseFloat(e.target.value))}
+                                    className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
+                                  />
+                                </div>
+                              </div>
+                              <div className="flex bg-slate-100 dark:bg-zinc-900 p-0.5 rounded-xl">
+                                {(['left', 'center', 'justify'] as const).map(a => (
+                                  <button
+                                    key={a}
+                                    onClick={() => store.setAboutMeOption('alignment', a)}
+                                    className={cn(
+                                      "flex-1 py-1 text-[8px] font-black uppercase rounded-lg transition-all",
+                                      store.aboutMeConfig.alignment === a ? "bg-white dark:bg-zinc-700 text-rose-500 shadow-sm" : "text-slate-400"
+                                    )}
+                                  >
+                                    {a}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Custom Header Label */}
+                            <div className="space-y-1.5">
+                              <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Header Label</label>
+                              <input
+                                type="text"
+                                value={store.aboutMeConfig.headerLabel || ""}
+                                onChange={(e) => store.setAboutMeOption('headerLabel', e.target.value)}
+                                placeholder="// ABOUT ME"
+                                className="w-full h-8 px-3 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-lg text-[10px] focus:outline-none focus:ring-1 focus:ring-rose-500/50"
+                              />
+                            </div>
+
+                            {/* Glass depth */}
+                            <div className="grid grid-cols-2 gap-4 pt-1">
+                              <div className="space-y-2">
+                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Blur: {store.aboutMeConfig.glassBlur}px</label>
+                                <input
+                                  type="range" min="0" max="20" step="1"
+                                  value={store.aboutMeConfig.glassBlur}
+                                  onChange={(e) => store.setAboutMeOption('glassBlur', parseInt(e.target.value))}
+                                  className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Opacity: {Math.round(store.aboutMeConfig.glassOpacity * 100)}%</label>
+                                <input
+                                  type="range" min="0.05" max="0.8" step="0.05"
+                                  value={store.aboutMeConfig.glassOpacity}
+                                  onChange={(e) => store.setAboutMeOption('glassOpacity', parseFloat(e.target.value))}
+                                  className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
+                                />
+                              </div>
+                            </div>
+
+                            {/* Border Aesthetics */}
+                            <div className="space-y-3 pt-1">
+                              <div className="flex items-center justify-between">
+                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Border Opacity: {Math.round(store.aboutMeConfig.borderOpacity * 100)}%</label>
+                                <div className="flex bg-slate-100 dark:bg-zinc-900 p-0.5 rounded-md gap-0.5">
+                                  {(['solid', 'dashed', 'double'] as const).map(s => (
+                                    <button
+                                      key={s}
+                                      onClick={() => store.setAboutMeOption('borderStyle', s)}
+                                      className={cn(
+                                        "px-1.5 py-0.5 text-[7px] font-bold uppercase rounded transition-all",
+                                        store.aboutMeConfig.borderStyle === s ? "bg-white dark:bg-zinc-700 text-rose-500" : "text-slate-400"
+                                      )}
+                                    >
+                                      {s}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                              <input
+                                type="range" min="0" max="1" step="0.05"
+                                value={store.aboutMeConfig.borderOpacity}
+                                onChange={(e) => store.setAboutMeOption('borderOpacity', parseFloat(e.target.value))}
+                                className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
+                              />
+                            </div>
+
+                            {/* Neon Intensity */}
+                            <div className="space-y-2 pt-1">
+                              <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Glow Spread: {store.aboutMeConfig.glowSpread}px</label>
+                              <input
+                                type="range" min="0" max="100" step="5"
+                                value={store.aboutMeConfig.glowSpread}
+                                onChange={(e) => store.setAboutMeOption('glowSpread', parseInt(e.target.value))}
+                                className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
+                              />
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
                   </AnimatePresence>
                 </div>
               </motion.div>
