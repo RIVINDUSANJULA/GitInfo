@@ -5,18 +5,44 @@ import * as si from 'simple-icons';
 const FALLBACK_ICON_PATH = "M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM6 10h2v2H6zm0 4h8v2H6zm10 0h2v2h-2zm-6-4h8v2-8z";
 
 function getSimpleIcon(name: string) {
-  const slug = name
-    .toLowerCase()
+  const mapping: Record<string, string> = {
+    'visual studio code': 'visualstudiocode',
+    'mongodb': 'mongodb',
+    'next.js': 'nextdotjs',
+    'postgresql': 'postgresql',
+    'markdown': 'markdown',
+    'html5': 'html5',
+    'css3': 'css3',
+    'google cloud': 'googlecloud',
+    'c++': 'cplusplus',
+    'c#': 'csharp',
+    'objective-c': 'objectivec',
+    'jupyter notebook': 'jupyter',
+    'shell': 'bash',
+    'powershell': 'powershell',
+    'nodejs': 'nodedotjs',
+    'node.js': 'nodedotjs',
+    'express': 'express',
+    'tailwindcss': 'tailwindcss',
+    'scikit-learn': 'scikitlearn',
+    'aws': 'amazonaws',
+    'azure': 'microsoftazure',
+  };
+
+  const lower = name.toLowerCase().trim();
+  const searchSlug = mapping[lower] || lower
+    .replace(/\s+/g, '')
     .replace(/\+/g, 'plus')
     .replace(/\./g, 'dot')
     .replace(/[^a-z0-9]/g, '');
   
-  const iconKey = 'si' + slug.charAt(0).toUpperCase() + slug.slice(1);
+  // Try direct key match
+  const iconKey = 'si' + searchSlug.charAt(0).toUpperCase() + searchSlug.slice(1);
   if ((si as any)[iconKey]) return (si as any)[iconKey];
 
+  // Try slug match
   for (const icon of Object.values(si)) {
-    if ((icon as any).title?.toLowerCase() === name.toLowerCase()) return icon;
-    if ((icon as any).slug === slug) return icon;
+    if ((icon as any).slug === searchSlug || (icon as any).title?.toLowerCase() === lower) return icon;
   }
   return null;
 }

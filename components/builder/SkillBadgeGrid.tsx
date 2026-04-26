@@ -20,12 +20,53 @@ function getSlug(name: string) {
     'jupyter notebook': 'jupyter',
     'shell': 'bash',
     'powershell': 'powershell',
+    'nodejs': 'node-dot-js',
+    'node.js': 'node-dot-js',
+    'express': 'express',
+    'tailwindcss': 'tailwind-css',
+    'scikit-learn': 'scikitlearn',
+    'react': 'react',
+    'typescript': 'typescript',
+    'javascript': 'javascript',
+    'python': 'python',
+    'java': 'java',
+    'ruby': 'ruby',
+    'php': 'php',
+    'go': 'go',
+    'rust': 'rust',
+    'swift': 'swift',
+    'kotlin': 'kotlin',
+    'dart': 'dart',
+    'flutter': 'flutter',
+    'docker': 'docker',
+    'kubernetes': 'kubernetes',
+    'git': 'git',
+    'aws': 'amazonaws',
+    'azure': 'microsoftazure',
+    'firebase': 'firebase',
+    'heroku': 'heroku',
+    'vercel': 'vercel',
+    'netlify': 'netlify',
+    'mysql': 'mysql',
+    'sqlite': 'sqlite',
+    'redis': 'redis',
+    'graphql': 'graphql',
+    'nginx': 'nginx',
+    'apache': 'apache',
+    'linux': 'linux',
+    'macos': 'macos',
+    'windows': 'windows',
+    'unity': 'unity',
+    'unreal engine': 'unrealengine',
+    'arduino': 'arduino',
+    'raspberry pi': 'raspberrypi',
   };
 
-  const lower = name.toLowerCase();
+  const lower = name.toLowerCase().trim();
   if (mapping[lower]) return mapping[lower];
 
   return lower
+    .replace(/\s+/g, '')
     .replace(/\+/g, 'plus')
     .replace(/\./g, 'dot')
     .replace(/[^a-z0-9]/g, '');
