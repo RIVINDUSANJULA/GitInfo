@@ -268,6 +268,15 @@ export function BuilderSidebar() {
                       placeholder="e.g. torvalds"
                       value={store.username || ""}
                       onChange={(e) => store.setUsername(e.target.value)}
+                      className="w-full px-4 py-2 bg-white dark:bg-zinc-950 border border-slate-300 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-sm mb-4"
+                    />
+
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Professional Title</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Full Stack Engineer"
+                      value={store.title || ""}
+                      onChange={(e) => store.setTitle(e.target.value)}
                       className="w-full px-4 py-2 bg-white dark:bg-zinc-950 border border-slate-300 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-sm"
                     />
                   </div>
@@ -303,7 +312,7 @@ export function BuilderSidebar() {
                             onClick={() => store.setAboutMeOption('mode', 'manual')}
                             className={cn(
                               "flex-1 flex items-center justify-center gap-2 py-1.5 text-[9px] font-black uppercase rounded-lg transition-all",
-                              (store.aboutMeConfig?.mode || 'manual') === 'manual' ? "bg-white dark:bg-zinc-700 text-rose-500 shadow-sm" : "text-slate-400"
+                              (store.aboutMeConfig?.mode !== 'ai') ? "bg-white dark:bg-zinc-700 text-rose-500 shadow-sm" : "text-slate-400"
                             )}
                           >
                             <Brush className="w-3 h-3" />
@@ -313,7 +322,7 @@ export function BuilderSidebar() {
                             onClick={() => store.setAboutMeOption('mode', 'ai')}
                             className={cn(
                               "flex-1 flex items-center justify-center gap-2 py-1.5 text-[9px] font-black uppercase rounded-lg transition-all",
-                              store.aboutMeConfig?.mode === 'ai' ? "bg-white dark:bg-zinc-700 text-rose-500 shadow-sm" : "text-slate-400"
+                              (store.aboutMeConfig?.mode === 'ai') ? "bg-white dark:bg-zinc-700 text-rose-500 shadow-sm" : "text-slate-400"
                             )}
                           >
                             <Sparkles className="w-3 h-3" />
@@ -322,7 +331,7 @@ export function BuilderSidebar() {
                         </div>
 
                         <AnimatePresence mode="wait">
-                          {(store.aboutMeConfig?.mode === 'ai') ? (
+                          {store.aboutMeConfig?.mode === 'ai' && (
                             <motion.div 
                               key="ai-mode"
                               initial={{ opacity: 0, x: -10 }}
@@ -427,7 +436,7 @@ export function BuilderSidebar() {
                                       headers: { 'Content-Type': 'application/json' },
                                       body: JSON.stringify({
                                         username: store.username,
-                                        title: store.title,
+                                        title: store.title || 'Developer',
                                         skills: combinedSkills.map(s => s.name),
                                         socials: store.socialProfiles.map(p => p.platform),
                                         vibe: store.aboutMeConfig.vibe,
@@ -468,7 +477,9 @@ export function BuilderSidebar() {
                                 )}
                               </button>
                             </motion.div>
-                          ) : (
+                          )}
+
+                          {store.aboutMeConfig?.mode !== 'ai' && (
                             <motion.div 
                               key="manual-mode"
                               initial={{ opacity: 0, x: 10 }}

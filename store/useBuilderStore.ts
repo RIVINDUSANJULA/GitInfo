@@ -79,6 +79,7 @@ export interface ManualSkill {
 
 export interface BuilderState {
   username: string;
+  title: string;
   showStats: boolean;
   showStreak: boolean;
   showTrophies: boolean;
@@ -147,12 +148,14 @@ export interface BuilderState {
   setActiveWidgetTab: (tab: string) => void;
   setAboutMeOption: <K extends keyof BuilderState['aboutMeConfig']>(key: K, value: BuilderState['aboutMeConfig'][K]) => void;
   updateAboutMe: (content: string) => void;
+  setTitle: (title: string) => void;
 }
 
 export const useBuilderStore = create<BuilderState>()(
   persist(
     (set) => ({
       username: '',
+      title: '',
       showStats: true,
       showStreak: true,
       showTrophies: true,
@@ -308,6 +311,7 @@ export const useBuilderStore = create<BuilderState>()(
         }
       })),
       setActiveWidgetTab: (activeWidgetTab) => set({ activeWidgetTab }),
+      setTitle: (title) => set({ title }),
     }),
     {
       name: 'github-customizer-storage',
