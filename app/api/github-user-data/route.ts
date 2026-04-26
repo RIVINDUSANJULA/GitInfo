@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
   try {
     console.log(`[GitInfo] Fetching real-time data for: ${username} (force: ${forceRefresh})`);
     const userData = await fetchUserLanguages(username, includeContribs, forceRefresh);
-    const languages = aggregateLanguages(userData);
+    const languages = aggregateLanguages(userData, false); 
     const skills = aggregateSkills(userData);
 
     return NextResponse.json({ languages, skills });

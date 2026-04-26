@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useBuilderStore } from "@/store/useBuilderStore";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -16,7 +17,25 @@ export function LanguageStats() {
   const store = useBuilderStore();
   const limit = store.analyticsConfig.languageLimit || 6;
   const rawLanguages = Array.isArray(store.autoLanguages) ? store.autoLanguages : [];
-  const languages = rawLanguages.slice(0, limit);
+  
+  // Dynamic Grouping for Analytics focus
+  const languages = useMemo(() => {
+    if (rawLanguages.length <= limit) return rawLanguages;
+    
+    const main = rawLanguages.slice(0, limit);
+    const others = rawLanguages.slice(limit);
+    const othersTotalPercent = others.reduce((acc, l) => acc + l.percentage, 0);
+    
+    return [
+      ...main,
+      {
+        name: "Others",
+        percentage: othersTotalPercent,
+        color: "#8e8e8e"
+      }
+    ];
+  }, [rawLanguages, limit]);
+
   const layout = store.analyticsConfig.layout || 'modern-bar';
   
   const isSyncing = store.username && languages.length === 0;

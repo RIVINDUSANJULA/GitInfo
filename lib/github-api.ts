@@ -50,6 +50,11 @@ export async function fetchUserLanguages(username: string, includeContribs: bool
         repositoriesContributedTo(first: 100, contributionTypes: [COMMIT, PULL_REQUEST], privacy: PUBLIC) {
           nodes {
             isPrivate
+            repositoryTopics(first: 10) {
+              nodes {
+                topic { name }
+              }
+            }
             languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
               edges {
                 size
@@ -183,39 +188,40 @@ async function fetchResilientPublicData(username: string) {
 export function aggregateSkills(userData: any) {
   const skillCount: Record<string, number> = {};
   
-  // 1. Process topics (from REST API path or GraphQL)
-  if (userData.topics) {
-    userData.topics.forEach((topic: string) => {
+  // 1. Process topics
+  const processTopics = (topics: any[]) => {
+    topics.forEach((node: any) => {
+      const topic = node.topic.name.toLowerCase();
       skillCount[topic] = (skillCount[topic] || 0) + 1;
     });
-  }
+  };
 
-  // 2. Process topics from GraphQL repositories
   if (userData.repositories?.nodes) {
     userData.repositories.nodes.forEach((repo: any) => {
-      if (repo.repositoryTopics?.nodes) {
-        repo.repositoryTopics.nodes.forEach((node: any) => {
-          const topic = node.topic.name;
-          skillCount[topic] = (skillCount[topic] || 0) + 1;
-        });
-      }
+      if (repo.repositoryTopics?.nodes) processTopics(repo.repositoryTopics.nodes);
     });
   }
 
-  // 3. Process languages (as secondary skills)
-  const langs = aggregateLanguages(userData);
-  langs.forEach(l => {
+  if (userData.repositoriesContributedTo?.nodes) {
+    userData.repositoriesContributedTo.nodes.forEach((repo: any) => {
+      if (repo.repositoryTopics?.nodes) processTopics(repo.repositoryTopics.nodes);
+    });
+  }
+
+  // 2. Process languages (full list)
+  const allLangs = aggregateLanguages(userData, false); // Get ALL languages
+  allLangs.forEach(l => {
     const name = l.name.toLowerCase();
-    skillCount[name] = (skillCount[name] || 0) + 2; // Weight languages slightly higher
+    skillCount[name] = (skillCount[name] || 0) + 2; // Weight languages higher
   });
 
   return Object.entries(skillCount)
     .map(([name, count]) => ({ name, count }))
     .sort((a, b) => b.count - a.count)
-    .slice(0, 15); // Top 15 skills
+    .slice(0, 30); // Return top 30 for better library coverage
 }
 
-export function aggregateLanguages(userData: any) {
+export function aggregateLanguages(userData: any, groupOthers = true) {
   const languageMap: Record<string, { size: number; color: string }> = {};
 
   const processRepo = (repo: any) => {
@@ -243,7 +249,6 @@ export function aggregateLanguages(userData: any) {
   const totalBytes = Object.values(languageMap).reduce((acc, curr) => acc + curr.size, 0);
   if (totalBytes === 0) return [];
 
-  // Group < 1% into "Others"
   const aggregated = Object.entries(languageMap)
     .map(([name, { size, color }]) => ({
       name,
@@ -252,6 +257,8 @@ export function aggregateLanguages(userData: any) {
       percentage: (size / totalBytes) * 100,
     }))
     .sort((a, b) => b.size - a.size);
+
+  if (!groupOthers) return aggregated;
 
   const DISPLAY_LIMIT = 6;
   const mainLangs = aggregated.slice(0, DISPLAY_LIMIT);
