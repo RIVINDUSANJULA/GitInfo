@@ -479,9 +479,19 @@ export function BuilderSidebar() {
                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                   <Brush className="w-2.5 h-2.5" />
-                                  Manual Markdown Bio
+                                  {store.aboutMe ? 'Review & Edit Result' : 'Manual Markdown Bio'}
                                 </div>
-                                <span className="text-[8px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded uppercase tracking-tighter">Live Editor</span>
+                                <div className="flex items-center gap-2">
+                                  {store.aboutMe && (
+                                    <button 
+                                      onClick={() => store.updateAboutMe('')}
+                                      className="text-[8px] font-bold text-rose-500 bg-rose-500/10 px-1.5 py-0.5 rounded uppercase hover:bg-rose-500 hover:text-white transition-all"
+                                    >
+                                      Clear All
+                                    </button>
+                                  )}
+                                  <span className="text-[8px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded uppercase tracking-tighter">Live Editor</span>
+                                </div>
                               </label>
                               <textarea
                                 value={store.aboutMe}
