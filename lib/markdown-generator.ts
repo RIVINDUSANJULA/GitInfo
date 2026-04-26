@@ -122,20 +122,23 @@ export function generateMarkdown(state: BuilderState): MarkdownResult {
     }
 
     if (id === 'socials' && state.showSocials && state.socialProfiles.length > 0) {
-      widgets += `<div align="center">\n`;
-      state.socialProfiles.filter(p => p.isVisible).forEach((profile) => {
-        const query = new URLSearchParams({
-          username: profile.username || 'username',
-          style: profile.style || 'badge',
-          blockRadius: state.socialsConfig.blockRadius.toString(),
-          elementRadius: state.socialsConfig.elementRadius.toString(),
-          showGlow: state.socialsConfig.showGlow.toString(),
+      const visibleProfiles = state.socialProfiles.filter(p => p.isVisible);
+      if (visibleProfiles.length > 0) {
+        widgets += `<p align="center">\n`;
+        visibleProfiles.forEach((profile) => {
+          const query = new URLSearchParams({
+            username: profile.username || 'username',
+            style: profile.style || 'badge',
+            blockRadius: state.socialsConfig.blockRadius.toString(),
+            elementRadius: state.socialsConfig.elementRadius.toString(),
+            showGlow: state.socialsConfig.showGlow.toString(),
+          });
+          if (profile.customColor) query.set('color', profile.customColor);
+          
+          widgets += `  <img src="${baseUrl}/api/social-card?platform=${profile.platform}&${query.toString()}" alt="${profile.platform}" />\n`;
         });
-        if (profile.customColor) query.set('color', profile.customColor);
-        
-        widgets += `  <img src="${baseUrl}/api/social-card?platform=${profile.platform}&${query.toString()}" alt="${profile.platform}" />\n`;
-      });
-      widgets += `</div>\n\n`;
+        widgets += `</p>\n\n`;
+      }
     }
   });
 

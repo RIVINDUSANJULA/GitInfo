@@ -72,6 +72,7 @@ export interface BuilderState {
   showTopRepos: boolean;
   showLanguages: boolean;
   showBadges: boolean;
+  showSocials: boolean;
   
   analyticsConfig: AnalyticsConfig;
   badgesConfig: BadgesConfig;

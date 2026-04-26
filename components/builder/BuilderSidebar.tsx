@@ -744,7 +744,8 @@ export function BuilderSidebar() {
                                           id === 'badges' ? store.showBadges :
                                           id === 'stats' ? store.showStats :
                                           id === 'streak' ? store.showStreak :
-                                          id === 'trophies' ? store.showTrophies : true;
+                                          id === 'trophies' ? store.showTrophies :
+                                          id === 'socials' ? store.showSocials : true;
                           
                           const label = id === 'languages' ? 'Language Analytics' :
                                        id === 'badges' ? 'Skill Badges' :
@@ -773,6 +774,7 @@ export function BuilderSidebar() {
                                   else if (id === 'stats') store.toggleModule('showStats');
                                   else if (id === 'streak') store.toggleModule('showStreak');
                                   else if (id === 'trophies') store.toggleModule('showTrophies');
+                                  else if (id === 'socials') store.toggleModule('showSocials');
                                 }}
                               >
                                 {isVisible ? <Eye className="w-4 h-4 text-indigo-500" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
