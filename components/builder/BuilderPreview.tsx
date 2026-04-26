@@ -34,13 +34,21 @@ export function BuilderPreview() {
           
           // RECONCILE ORDER
           const rawAutoNames = [...languages.map((l: any) => l.name), ...skills.map((s: any) => s.name)];
-          const autoNames = Array.from(new Set(rawAutoNames));
           
-          const manualNames = store.manualSkills.map(s => s.name);
+          // Case-insensitive de-duplication for reconciliation
+          const uniqueDetectedMap = new Map();
+          [...rawAutoNames, ...store.manualSkills.map(s => s.name)].forEach(name => {
+            const key = name.toLowerCase();
+            if (!uniqueDetectedMap.has(key)) {
+              uniqueDetectedMap.set(key, name);
+            }
+          });
+          
+          const uniqueDetectedNames = Array.from(uniqueDetectedMap.values());
           const currentOrder = store.allSkillsOrder;
+          const currentOrderLower = currentOrder.map(n => n.toLowerCase());
           
-          const uniqueAllDetected = Array.from(new Set([...autoNames, ...manualNames]));
-          const newSkills = uniqueAllDetected.filter(name => !currentOrder.includes(name));
+          const newSkills = uniqueDetectedNames.filter(name => !currentOrderLower.includes(name.toLowerCase()));
           if (newSkills.length > 0) {
             store.setAllSkillsOrder([...currentOrder, ...newSkills]);
           }

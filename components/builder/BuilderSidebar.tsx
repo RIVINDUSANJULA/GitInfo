@@ -241,12 +241,13 @@ export function BuilderSidebar() {
     const manual = store.manualSkills.map(s => ({ name: s.name, isAuto: false, iconUrl: s.iconUrl }));
     const allRaw = [...autoLangs, ...autoSkills, ...manual];
     
-    // Unique-ify by name (Manual takes precedence)
+    // Unique-ify by name (Manual takes precedence, case-insensitive)
     const uniqueMap = new Map();
     allRaw.forEach(item => {
-      const existing = uniqueMap.get(item.name);
+      const key = item.name.toLowerCase();
+      const existing = uniqueMap.get(key);
       if (!existing || (!item.isAuto && existing.isAuto)) {
-        uniqueMap.set(item.name, item);
+        uniqueMap.set(key, item);
       }
     });
     

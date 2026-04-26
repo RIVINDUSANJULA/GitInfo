@@ -87,13 +87,14 @@ export function SkillBadgeGrid() {
     }))
   ];
 
-  // De-duplicate by name
+  // De-duplicate by name (case-insensitive)
   const uniqueSkillsMap = new Map();
   allVisibleSkillsRaw.forEach(skill => {
-    const existing = uniqueSkillsMap.get(skill.name);
+    const key = skill.name.toLowerCase();
+    const existing = uniqueSkillsMap.get(key);
     // Priority: Manual > Auto-Language (w/ Color) > Auto-Skill (Topic)
     if (!existing || skill.type === 'manual' || (skill.type === 'auto' && skill.color && !existing.color)) {
-      uniqueSkillsMap.set(skill.name, skill);
+      uniqueSkillsMap.set(key, skill);
     }
   });
 
