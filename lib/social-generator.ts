@@ -9,6 +9,7 @@ export interface SocialCardOptions {
   elementRadius: number;
   showGlow: boolean;
   themeColor?: string;
+  syncAvatarColor?: boolean;
 }
 
 function getSimpleIcon(name: string) {

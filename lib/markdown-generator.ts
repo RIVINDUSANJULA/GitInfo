@@ -81,7 +81,7 @@ export function generateMarkdown(state: BuilderState): MarkdownResult {
 
     if (id === 'badges' && showBadges) {
       const allSkills = [
-        ...state.autoLanguages.filter(l => !hiddenLanguages.includes(l.name)).map(l => ({ name: l.name, iconUrl: undefined })),
+        ...state.autoLanguages.filter(l => !hiddenLanguages.includes(l.name)).map(l => ({ name: l.name, iconUrl: undefined, color: undefined })),
         ...manualSkills.filter(s => !hiddenSkills.includes(s.name))
       ];
 
