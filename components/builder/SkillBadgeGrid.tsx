@@ -14,8 +14,6 @@ function getSlug(name: string) {
     'html5': 'html',
     'css3': 'css',
     'google cloud': 'gcp',
-    'c++': 'cpp',
-    'c#': 'csharp',
   };
 
   const lower = name.toLowerCase();
@@ -32,10 +30,10 @@ export function SkillBadgeGrid() {
   const { 
     manualSkills, 
     autoLanguages, 
-    autoSkills,
     hiddenLanguages, 
     hiddenSkills, 
     badgesConfig,
+    analyticsConfig,
     allSkillsOrder
   } = store;
 
@@ -52,35 +50,13 @@ export function SkillBadgeGrid() {
     customIconColor
   } = badgesConfig;
 
-  const skillMap = new Map<string, any>();
-  
-  const autoLangs = Array.isArray(autoLanguages) ? autoLanguages : [];
-  const autoSks = Array.isArray(autoSkills) ? autoSkills : [];
-  const manualSks = Array.isArray(manualSkills) ? manualSkills : [];
+  const visibleAutoLangs = autoLanguages.filter(l => !hiddenLanguages.includes(l.name));
+  const visibleManualSkills = manualSkills.filter(s => !hiddenSkills.includes(s.name));
 
-  // Filter visibility
-  const visibleAutoLangs = autoLangs.filter(l => !hiddenLanguages.includes(l.name));
-  const visibleAutoSkills = autoSks.filter(s => !hiddenSkills.includes(s.name));
-  const visibleManualSkills = manualSks.filter(s => !hiddenSkills.includes(s.name));
-
-  // 1. Auto Languages
-  visibleAutoLangs.forEach(l => {
-    skillMap.set(l.name.toLowerCase(), { name: l.name, type: 'auto' as const, iconUrl: undefined, color: undefined });
-  });
-
-  // 2. Auto Skills (Topics)
-  visibleAutoSkills.forEach(s => {
-    if (!skillMap.has(s.name.toLowerCase())) {
-      skillMap.set(s.name.toLowerCase(), { name: s.name, type: 'auto' as const, iconUrl: undefined, color: undefined });
-    }
-  });
-
-  // 3. Manual Skills
-  visibleManualSkills.forEach(s => {
-    skillMap.set(s.name.toLowerCase(), { name: s.name, type: 'manual' as const, iconUrl: s.iconUrl, color: s.color });
-  });
-
-  const allVisibleSkills = Array.from(skillMap.values());
+  const allVisibleSkills = [
+    ...visibleAutoLangs.map(l => ({ name: l.name, type: 'auto' as const, iconUrl: undefined, color: undefined })),
+    ...visibleManualSkills.map(s => ({ name: s.name, type: 'manual' as const, iconUrl: s.iconUrl, color: s.color }))
+  ];
 
   // Apply unified order
   const sortedSkills = [...allVisibleSkills].sort((a, b) => {
@@ -131,6 +107,11 @@ export function SkillBadgeGrid() {
             imgSrc = `https://img.shields.io/badge/${encodeURIComponent(skill.name)}-%23${shieldsColor}.svg?style=for-the-badge&logo=${getSlug(skill.name)}&logoColor=${logoColor}`;
           } else if (badgeStyle === 'artistic' || badgeStyle === 'premium') {
             const artisticParams = skill.iconUrl ? `&iconUrl=${encodeURIComponent(skill.iconUrl)}&iconSize=${artisticIconSize}` : "";
+            
+            // Logic: 
+            // 1. If individual skill color exists, use it as background, keep white text
+            // 2. If Official Colors ON, use official background, white text
+            // 3. If Official Colors OFF, use customBgColor and customIconColor (for text/icon)
             
             const bgColor = skill.color ? skill.color : (useOfficialColors ? '' : customBgColor);
             const textColor = useOfficialColors ? 'ffffff' : customIconColor;
