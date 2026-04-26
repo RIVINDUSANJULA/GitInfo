@@ -34,6 +34,8 @@ import {
   Plus,
   ExternalLink,
   Bot,
+  Monitor,
+  Type,
   Image as ImageIcon
 } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
@@ -491,42 +493,173 @@ export function BuilderSidebar() {
                       </motion.div>
                     )}
 
-                    {store.aboutMeConfig?.mode !== 'ai' && (
-                      <motion.div
-                        key="manual-mode"
-                        initial={{ opacity: 0, x: 10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -10 }}
-                        className="space-y-3 pt-2"
-                      >
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Brush className="w-2.5 h-2.5" />
-                            {store.aboutMe ? 'Review & Edit Result' : 'Manual Markdown Bio'}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            {store.aboutMe && (
-                              <button
-                                onClick={() => store.updateAboutMe('')}
-                                className="text-[8px] font-bold text-rose-500 bg-rose-500/10 px-1.5 py-0.5 rounded uppercase hover:bg-rose-500 hover:text-white transition-all"
+                        {store.aboutMeConfig?.mode !== 'ai' && (
+                          <motion.div
+                            key="manual-mode"
+                            initial={{ opacity: 0, x: 10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -10 }}
+                            className="space-y-3 pt-2"
+                          >
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <Brush className="w-2.5 h-2.5" />
+                                {store.aboutMe ? 'Review & Edit Result' : 'Manual Markdown Bio'}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                {store.aboutMe && (
+                                  <button
+                                    onClick={() => store.updateAboutMe('')}
+                                    className="text-[8px] font-bold text-rose-500 bg-rose-500/10 px-1.5 py-0.5 rounded uppercase hover:bg-rose-500 hover:text-white transition-all"
+                                  >
+                                    Clear All
+                                  </button>
+                                )}
+                                <span className="text-[8px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded uppercase tracking-tighter">Live Editor</span>
+                              </div>
+                            </label>
+                            <textarea
+                              value={store.aboutMe}
+                              onChange={(e) => store.updateAboutMe(e.target.value)}
+                              placeholder="Describe your journey, passion, and expertise..."
+                              className="w-full h-64 p-3 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-rose-500/50 transition-all custom-scrollbar resize-none"
+                            />
+                            <p className="text-[8px] text-slate-400 uppercase leading-relaxed font-bold tracking-tight">
+                              ✨ Tip: You can use **Bold**, *Italics*, [Links](https://...), and Emojis 🚀.
+                            </p>
+                          </motion.div>
+                        )}
+
+                        {/* 🎨 Style Customization Sub-section */}
+                        <div className="pt-4 border-t border-slate-200 dark:border-white/10 space-y-4">
+                          <button 
+                            onClick={() => setOpenSections(prev => ({ ...prev, aboutMeStyle: !prev.aboutMeStyle }))}
+                            className="w-full flex items-center justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-rose-500 transition-colors"
+                          >
+                            <div className="flex items-center gap-2">
+                              <Palette className="w-3 h-3" />
+                              Style Customization
+                            </div>
+                            <ChevronDown className={cn("w-3 h-3 transition-transform", openSections.aboutMeStyle && "rotate-180")} />
+                          </button>
+
+                          <AnimatePresence>
+                            {openSections.aboutMeStyle && (
+                              <motion.div 
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                className="space-y-4 overflow-hidden pt-2"
                               >
-                                Clear All
-                              </button>
+                                {/* Special Presets */}
+                                <div className="space-y-2">
+                                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                    <Zap className="w-2.5 h-2.5" />
+                                    Special Presets
+                                  </label>
+                                  <div className="flex gap-2">
+                                    <button 
+                                      onClick={() => store.setAboutMeOption('preset', store.aboutMeConfig.preset === 'matrix' ? 'none' : 'matrix')}
+                                      className={cn(
+                                        "flex-1 py-2 text-[9px] font-black uppercase rounded-lg border transition-all flex items-center justify-center gap-2",
+                                        store.aboutMeConfig.preset === 'matrix' 
+                                          ? "bg-[#00FF41]/10 border-[#00FF41] text-[#00FF41] shadow-[0_0_15px_rgba(0,255,65,0.2)]" 
+                                          : "bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-white/5 text-slate-400"
+                                      )}
+                                    >
+                                      <Monitor className="w-3 h-3" />
+                                      Matrix Mode
+                                    </button>
+                                    <button 
+                                      onClick={() => store.setAboutMeOption('preset', store.aboutMeConfig.preset === 'paper' ? 'none' : 'paper')}
+                                      className={cn(
+                                        "flex-1 py-2 text-[9px] font-black uppercase rounded-lg border transition-all flex items-center justify-center gap-2",
+                                        store.aboutMeConfig.preset === 'paper' 
+                                          ? "bg-amber-500/10 border-amber-500 text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.2)]" 
+                                          : "bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-white/5 text-slate-400"
+                                      )}
+                                    >
+                                      <Type className="w-3 h-3" />
+                                      Paper/Ink
+                                    </button>
+                                  </div>
+                                </div>
+
+                                {/* Custom Header Label */}
+                                <div className="space-y-1.5">
+                                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Header Label</label>
+                                  <input 
+                                    type="text"
+                                    value={store.aboutMeConfig.headerLabel}
+                                    onChange={(e) => store.setAboutMeOption('headerLabel', e.target.value)}
+                                    placeholder="// ABOUT ME"
+                                    className="w-full h-8 px-3 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-lg text-[10px] focus:outline-none focus:ring-1 focus:ring-rose-500/50"
+                                  />
+                                </div>
+
+                                {/* Glass depth */}
+                                <div className="grid grid-cols-2 gap-4 pt-1">
+                                  <div className="space-y-2">
+                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Blur: {store.aboutMeConfig.glassBlur}px</label>
+                                    <input 
+                                      type="range" min="0" max="20" step="1"
+                                      value={store.aboutMeConfig.glassBlur}
+                                      onChange={(e) => store.setAboutMeOption('glassBlur', parseInt(e.target.value))}
+                                      className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Opacity: {Math.round(store.aboutMeConfig.glassOpacity * 100)}%</label>
+                                    <input 
+                                      type="range" min="0.05" max="0.8" step="0.05"
+                                      value={store.aboutMeConfig.glassOpacity}
+                                      onChange={(e) => store.setAboutMeOption('glassOpacity', parseFloat(e.target.value))}
+                                      className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
+                                    />
+                                  </div>
+                                </div>
+
+                                {/* Border Aesthetics */}
+                                <div className="space-y-3 pt-1">
+                                  <div className="flex items-center justify-between">
+                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Border Opacity: {Math.round(store.aboutMeConfig.borderOpacity * 100)}%</label>
+                                    <div className="flex bg-slate-100 dark:bg-zinc-900 p-0.5 rounded-md gap-0.5">
+                                      {(['solid', 'dashed', 'double'] as const).map(s => (
+                                        <button 
+                                          key={s}
+                                          onClick={() => store.setAboutMeOption('borderStyle', s)}
+                                          className={cn(
+                                            "px-1.5 py-0.5 text-[7px] font-bold uppercase rounded transition-all",
+                                            store.aboutMeConfig.borderStyle === s ? "bg-white dark:bg-zinc-700 text-rose-500" : "text-slate-400"
+                                          )}
+                                        >
+                                          {s}
+                                        </button>
+                                      ))}
+                                    </div>
+                                  </div>
+                                  <input 
+                                    type="range" min="0" max="1" step="0.05"
+                                    value={store.aboutMeConfig.borderOpacity}
+                                    onChange={(e) => store.setAboutMeOption('borderOpacity', parseFloat(e.target.value))}
+                                    className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
+                                  />
+                                </div>
+
+                                {/* Neon Intensity */}
+                                <div className="space-y-2 pt-1">
+                                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Glow Spread: {store.aboutMeConfig.glowSpread}px</label>
+                                  <input 
+                                    type="range" min="0" max="100" step="5"
+                                    value={store.aboutMeConfig.glowSpread}
+                                    onChange={(e) => store.setAboutMeOption('glowSpread', parseInt(e.target.value))}
+                                    className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
+                                  />
+                                </div>
+                              </motion.div>
                             )}
-                            <span className="text-[8px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded uppercase tracking-tighter">Live Editor</span>
-                          </div>
-                        </label>
-                        <textarea
-                          value={store.aboutMe}
-                          onChange={(e) => store.updateAboutMe(e.target.value)}
-                          placeholder="Describe your journey, passion, and expertise..."
-                          className="w-full h-64 p-3 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-rose-500/50 transition-all custom-scrollbar resize-none"
-                        />
-                        <p className="text-[8px] text-slate-400 uppercase leading-relaxed font-bold tracking-tight">
-                          ✨ Tip: You can use **Bold**, *Italics*, [Links](https://...), and Emojis 🚀.
-                        </p>
-                      </motion.div>
-                    )}
+                          </AnimatePresence>
+                        </div>
                   </AnimatePresence>
                 </div>
               </motion.div>

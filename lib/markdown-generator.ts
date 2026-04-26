@@ -110,7 +110,14 @@ export function generateMarkdown(state: BuilderState): MarkdownResult {
       }
     }
     if (id === 'aboutme' && state.showAboutMe && state.aboutMe) {
-      widgets += `${state.aboutMe}\n\n`;
+      const { preset, headerLabel } = state.aboutMeConfig;
+      if (preset === 'matrix') {
+        widgets += `\`\`\`text\n[${headerLabel}]\n\n${state.aboutMe}\n\`\`\`\n\n`;
+      } else if (preset === 'paper') {
+        widgets += `> ### ${headerLabel}\n> ${state.aboutMe.replace(/\n/g, '\n> ')}\n\n`;
+      } else {
+        widgets += `### ${headerLabel}\n${state.aboutMe}\n\n`;
+      }
     }
 
     if (id === 'stats' && showStats) {

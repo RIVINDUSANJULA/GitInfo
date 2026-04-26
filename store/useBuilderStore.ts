@@ -101,6 +101,13 @@ export interface BuilderState {
     length: 'short' | 'medium' | 'long';
     showGlow: boolean;
     blockRadius: number;
+    borderOpacity: number;
+    borderStyle: 'solid' | 'dashed' | 'double';
+    glassBlur: number;
+    glassOpacity: number;
+    headerLabel: string;
+    glowSpread: number;
+    preset: 'none' | 'matrix' | 'paper';
   };
 
   analyticsConfig: AnalyticsConfig;
@@ -178,6 +185,13 @@ export const useBuilderStore = create<BuilderState>()(
         length: 'medium',
         showGlow: true,
         blockRadius: 20,
+        borderOpacity: 0.3,
+        borderStyle: 'solid',
+        glassBlur: 12,
+        glassOpacity: 0.4,
+        headerLabel: '// BIOGRAPHY',
+        glowSpread: 40,
+        preset: 'none',
       },
 
       analyticsConfig: {
