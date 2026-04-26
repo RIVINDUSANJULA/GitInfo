@@ -542,13 +542,18 @@ export function BuilderSidebar() {
                           )}
 
                           <div className="space-y-3">
-                            <span className="block text-[10px] uppercase font-black text-slate-400 tracking-tighter">Custom Library & Artistic Mapping</span>
+                            <span className="block text-[10px] uppercase font-black text-slate-400 tracking-tighter">Custom Library & Artistic Mapping (Drag to Reorder)</span>
                             {store.manualSkills.length > 0 ? (
-                              <div className="grid gap-2">
+                              <Reorder.Group axis="y" values={store.manualSkills} onReorder={store.setManualSkills} className="grid gap-2">
                                 {store.manualSkills.map(skill => (
-                                  <div key={skill.name} className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-white/10 rounded-xl p-2 flex flex-col gap-2 group shadow-sm hover:border-emerald-500/30 transition-all">
+                                  <Reorder.Item 
+                                    key={skill.name} 
+                                    value={skill}
+                                    className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-white/10 rounded-xl p-2 flex flex-col gap-2 group shadow-sm hover:border-emerald-500/30 transition-all cursor-grab active:cursor-grabbing"
+                                  >
                                     <div className="flex items-center justify-between">
                                       <div className="flex items-center gap-2">
+                                        <GripVertical className="w-3.5 h-3.5 text-slate-300 dark:text-zinc-700" />
                                         <div className="w-6 h-6 rounded bg-slate-100 dark:bg-zinc-800 flex items-center justify-center overflow-hidden">
                                           {skill.iconUrl ? (
                                             <img src={skill.iconUrl} alt="" className="w-4 h-4 object-contain" />
@@ -565,16 +570,16 @@ export function BuilderSidebar() {
                                       </div>
                                     </div>
                                     {skill.iconUrl && (
-                                      <div className="flex items-center gap-2 px-1">
+                                      <div className="flex items-center gap-2 px-1 pl-7">
                                          <div className="flex-1 h-1.5 bg-slate-100 dark:bg-zinc-800 rounded-full overflow-hidden">
                                             <div className="h-full bg-emerald-500 w-full"></div>
                                          </div>
                                          <span className="text-[8px] font-bold text-emerald-500 uppercase">Artistic Mapped</span>
                                       </div>
                                     )}
-                                  </div>
+                                  </Reorder.Item>
                                 ))}
-                              </div>
+                              </Reorder.Group>
                             ) : (
                               <p className="text-[10px] text-slate-400 italic text-center py-4">Your custom library is empty. Add some skills to begin!</p>
                             )}

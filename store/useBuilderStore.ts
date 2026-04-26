@@ -84,6 +84,7 @@ export interface BuilderState {
   toggleLanguageVisibility: (lang: string) => void;
   toggleSkillVisibility: (skill: string) => void;
   setAutoLanguages: (langs: { name: string, color: string, percentage: number }[]) => void;
+  setManualSkills: (skills: ManualSkill[]) => void;
   setActiveWidgetTab: (tab: string) => void;
 }
 
@@ -187,6 +188,7 @@ export const useBuilderStore = create<BuilderState>()(
           : [...state.hiddenSkills, skill]
       })),
       setAutoLanguages: (autoLanguages) => set({ autoLanguages }),
+      setManualSkills: (manualSkills) => set({ manualSkills }),
       setActiveWidgetTab: (activeWidgetTab) => set({ activeWidgetTab }),
     }),
     {
