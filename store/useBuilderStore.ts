@@ -22,6 +22,8 @@ export interface AnalyticsConfig {
   pieHideLegend: boolean;
   bgType: 'solid' | 'gradient';
   bgColor2: string;
+  glowIntensity: number;
+  blurStrength: number;
 }
 
 export interface BadgesConfig {
@@ -247,6 +249,8 @@ export const useBuilderStore = create<BuilderState>()(
         pieHideLegend: false,
         bgType: 'solid',
         bgColor2: 'f1f5f9',
+        glowIntensity: 0.5,
+        blurStrength: 20,
       },
 
       badgesConfig: {

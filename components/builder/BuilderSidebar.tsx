@@ -380,6 +380,40 @@ export function BuilderSidebar() {
                             </div>
 
                             <div className="space-y-4 pt-2">
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <label className="text-[10px] font-bold text-slate-400 uppercase block">Glow Intensity: {store.analyticsConfig.glowIntensity}</label>
+                                  <input
+                                    type="range"
+                                    min="0"
+                                    max="1"
+                                    step="0.05"
+                                    value={store.analyticsConfig.glowIntensity || 0.5}
+                                    onInput={(e) => {
+                                       const val = parseFloat(e.currentTarget.value);
+                                       document.documentElement.style.setProperty('--glow-intensity', val.toString());
+                                    }}
+                                    onChange={(e) => store.setAnalyticsOption('glowIntensity', parseFloat(e.target.value))}
+                                    className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] font-bold text-slate-400 uppercase block">Blur Strength: {store.analyticsConfig.blurStrength}px</label>
+                                  <input
+                                    type="range"
+                                    min="0"
+                                    max="60"
+                                    step="2"
+                                    value={store.analyticsConfig.blurStrength || 20}
+                                    onInput={(e) => {
+                                       const val = e.currentTarget.value;
+                                       document.documentElement.style.setProperty('--blur-amount', `${val}px`);
+                                    }}
+                                    onChange={(e) => store.setAnalyticsOption('blurStrength', parseInt(e.target.value))}
+                                    className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                                  />
+                                </div>
+                              </div>
                               {store.analyticsConfig.layout === 'pie' && (
                                 <div className="p-3 bg-slate-50 dark:bg-zinc-900 rounded-xl border border-slate-200 dark:border-white/5 space-y-4">
                                   <div className="space-y-1.5">
@@ -441,6 +475,16 @@ export function BuilderSidebar() {
                                   />
                                   <div className="w-9 h-5 bg-slate-200 dark:bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500"></div>
                                 </label>
+                              </div>
+
+                              <div className="pt-2">
+                                <button
+                                  onClick={() => store.setRefreshTrigger(store.refreshTrigger + 1)}
+                                  className="w-full py-3 bg-indigo-500 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] flex items-center justify-center gap-3 hover:bg-indigo-600 transition-all shadow-lg shadow-indigo-500/20 active:scale-[0.98]"
+                                >
+                                  <RefreshCw className={cn("w-3 h-3", store.isSyncing && "animate-spin")} />
+                                  {store.isSyncing ? "Syncing GraphQL..." : "Real-time Sync"}
+                                </button>
                               </div>
                             </div>
                           </div>

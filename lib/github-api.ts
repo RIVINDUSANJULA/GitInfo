@@ -23,7 +23,13 @@ export async function fetchUserLanguages(username: string, includeContribs: bool
   const query = `
     query ($username: String!) {
       user(login: $username) {
-        repositories(first: 100, ownerAffiliations: OWNER, isFork: false, orderBy: {field: PUSHED_AT, direction: DESC}) {
+        repositories(
+          first: 100, 
+          ownerAffiliations: [OWNER, COLLABORATOR, ORGANIZATION_MEMBER], 
+          privacy: PUBLIC, 
+          isFork: false, 
+          orderBy: {field: PUSHED_AT, direction: DESC}
+        ) {
           nodes {
             isPrivate
             stargazerCount
@@ -247,8 +253,9 @@ export function aggregateLanguages(userData: any) {
     }))
     .sort((a, b) => b.size - a.size);
 
-  const mainLangs = aggregated.filter(l => l.percentage >= 1);
-  const otherLangs = aggregated.filter(l => l.percentage < 1);
+  const DISPLAY_LIMIT = 6;
+  const mainLangs = aggregated.slice(0, DISPLAY_LIMIT);
+  const otherLangs = aggregated.slice(DISPLAY_LIMIT);
 
   if (otherLangs.length > 0) {
     const otherSize = otherLangs.reduce((acc, l) => acc + l.size, 0);
