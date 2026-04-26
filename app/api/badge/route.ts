@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import * as si from 'simple-icons';
 
 // Fallback terminal icon SVG path
-const FALLBACK_ICON_PATH = "M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM6 10h2v2H6zm0 4h8v2H6zm10 0h2v2h-2zm-6-4h8v2h-8z";
+const FALLBACK_ICON_PATH = "M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM6 10h2v2H6zm0 4h8v2H6zm10 0h2v2h-2zm-6-4h8v2-8z";
 
 function getSimpleIcon(name: string) {
   const slug = name
@@ -21,16 +21,26 @@ function getSimpleIcon(name: string) {
   return null;
 }
 
+function hexToRgbNormalized(hex: string) {
+  const cleanHex = hex.replace('#', '');
+  const r = parseInt(cleanHex.substring(0, 2), 16) / 255;
+  const g = parseInt(cleanHex.substring(2, 4), 16) / 255;
+  const b = parseInt(cleanHex.substring(4, 6), 16) / 255;
+  return { r, g, b };
+}
+
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
   const name = searchParams.get("name") || "Skill";
   const overrideColor = searchParams.get("color");
+  const textColor = searchParams.get("textColor") || "ffffff";
   const size = searchParams.get("size") || "md";
   const radiusParam = searchParams.get("radius");
   const useOfficialColor = searchParams.get("useOfficialColor") === "true";
   const showGlow = searchParams.get("showGlow") === "true";
   const iconUrl = searchParams.get("iconUrl");
   const iconSizeParam = searchParams.get("iconSize");
+  const recolorIcon = searchParams.get("recolorIcon") === "true" || !!textColor;
 
   const height = size === "sm" ? 26 : 32;
   const paddingX = size === "sm" ? 10 : 14;
@@ -41,16 +51,18 @@ export async function GET(req: NextRequest) {
   // Fetch Brand Icon or External Artistic Icon
   const brandIcon = getSimpleIcon(name);
   const brandColor = brandIcon ? brandIcon.hex : (overrideColor || "4f46e5");
-  const finalColor = (useOfficialColor && brandIcon) ? brandColor : (overrideColor || brandColor);
+  const finalBgColor = (useOfficialColor && brandIcon) ? brandColor : (overrideColor || brandColor);
   
+  // Icon Content logic
   let iconContent = "";
   if (iconUrl) {
     // Artistic Icon from External URL
-    iconContent = `<image href="${iconUrl}" width="${artisticIconSize}" height="${artisticIconSize}" />`;
+    // Apply recolor filter if requested (usually to match text color)
+    iconContent = `<image href="${iconUrl}" width="${artisticIconSize}" height="${artisticIconSize}" ${recolorIcon ? 'filter="url(#recolorIcon)"' : ''} />`;
   } else {
     const iconPath = brandIcon ? brandIcon.path : FALLBACK_ICON_PATH;
     iconContent = `
-      <g transform="scale(${artisticIconSize/24})" fill="white" ${showGlow ? 'filter="url(#iconGlow)"' : ''}>
+      <g transform="scale(${artisticIconSize/24})" fill="#${textColor}" ${showGlow ? 'filter="url(#iconGlow)"' : ''}>
         <path d="${iconPath}"/>
       </g>`;
   }
@@ -59,7 +71,10 @@ export async function GET(req: NextRequest) {
   const gap = 8;
   const width = paddingX * 2 + artisticIconSize + gap + textWidth;
 
-  const glowFilter = showGlow ? `
+  // Color normalization for filters
+  const rgb = hexToRgbNormalized(textColor);
+
+  const defs = `
     <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
       <feGaussianBlur stdDeviation="3" result="blur" />
       <feComposite in="SourceGraphic" in2="blur" operator="over" />
@@ -68,16 +83,22 @@ export async function GET(req: NextRequest) {
       <feGaussianBlur stdDeviation="1.5" result="blur" />
       <feComposite in="SourceGraphic" in2="blur" operator="over" />
     </filter>
-  ` : '';
+    <filter id="recolorIcon">
+      <feColorMatrix type="matrix" values="0 0 0 0 ${rgb.r}
+                                           0 0 0 0 ${rgb.g}
+                                           0 0 0 0 ${rgb.b}
+                                           0 0 0 1 0" />
+    </filter>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#${finalBgColor};stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#${finalBgColor};stop-opacity:0.8" />
+    </linearGradient>
+  `;
 
   const svg = `
     <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        ${glowFilter}
-        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#${finalColor};stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#${finalColor};stop-opacity:0.8" />
-        </linearGradient>
+        ${defs}
       </defs>
       
       <rect width="${width}" height="${height}" rx="${radius}" fill="url(#grad)" ${showGlow ? 'filter="url(#glow)"' : ''}/>
@@ -85,11 +106,11 @@ export async function GET(req: NextRequest) {
       
       <!-- Icon Wrapper with Uniform Scaling -->
       <g transform="translate(${paddingX}, ${(height - artisticIconSize) / 2})">
-        <rect width="${artisticIconSize}" height="${artisticIconSize}" rx="${radius/3}" fill="white" fill-opacity="0.1"/>
+        <rect width="${artisticIconSize}" height="${artisticIconSize}" rx="${radius/3}" fill="#${textColor}" fill-opacity="0.1"/>
         ${iconContent}
       </g>
       
-      <text x="${paddingX + artisticIconSize + gap}" y="${height / 2 + fontSize / 3 + 1}" fill="white" font-family="Arial, Helvetica, sans-serif" font-size="${fontSize}" font-weight="700" style="text-shadow: 0 1px 2px rgba(0,0,0,0.1)">${name}</text>
+      <text x="${paddingX + artisticIconSize + gap}" y="${height / 2 + fontSize / 3 + 1}" fill="#${textColor}" font-family="Arial, Helvetica, sans-serif" font-size="${fontSize}" font-weight="700" style="text-shadow: 0 1px 2px rgba(0,0,0,0.1)">${name}</text>
       
       <rect x="1" y="1" width="${width - 2}" height="${height / 2}" rx="${radius}" fill="white" fill-opacity="0.1"/>
     </svg>

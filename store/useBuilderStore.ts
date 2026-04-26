@@ -36,6 +36,8 @@ export interface BadgesConfig {
   artisticIconSize: number;
   shadowDepth: number;
   showGlow: boolean;
+  customBgColor: string;
+  customIconColor: string;
 }
 
 export interface ManualSkill {
@@ -88,8 +90,8 @@ export interface BuilderState {
   toggleSkillVisibility: (skill: string) => void;
   setAutoLanguages: (langs: { name: string, color: string, percentage: number }[]) => void;
   setManualSkills: (skills: ManualSkill[]) => void;
-  allSkillsOrder: string[];
   setAllSkillsOrder: (order: string[]) => void;
+  copyAnalyticsThemeToBadges: () => void;
   setActiveWidgetTab: (tab: string) => void;
 }
 
@@ -138,6 +140,8 @@ export const useBuilderStore = create<BuilderState>()(
         artisticIconSize: 24,
         shadowDepth: 5,
         showGlow: true,
+        customBgColor: '000000',
+        customIconColor: '79ff97',
       },
 
       manualSkills: [],
@@ -197,6 +201,13 @@ export const useBuilderStore = create<BuilderState>()(
       setAutoLanguages: (autoLanguages) => set({ autoLanguages }),
       setManualSkills: (manualSkills) => set({ manualSkills }),
       setAllSkillsOrder: (allSkillsOrder) => set({ allSkillsOrder }),
+      copyAnalyticsThemeToBadges: () => set((state) => ({
+        badgesConfig: {
+          ...state.badgesConfig,
+          customBgColor: state.customBgColor,
+          customIconColor: state.customIconColor,
+        }
+      })),
       setActiveWidgetTab: (activeWidgetTab) => set({ activeWidgetTab }),
     }),
     {

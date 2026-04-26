@@ -1,7 +1,7 @@
 "use client";
 
 import { useBuilderStore, StatTheme, ManualSkill } from "@/store/useBuilderStore";
-import { User, Palette, Settings, Layout, Check, ChevronDown, Code2, BarChart3, Tags, Zap, Trophy, PieChart, GripVertical, Eye, EyeOff, Boxes, Layers, Sparkles, Shield, Diamond, Brush, Search, Trash2 } from "lucide-react";
+import { User, Palette, Settings, Layout, Check, ChevronDown, Code2, BarChart3, Tags, Zap, Trophy, PieChart, GripVertical, Eye, EyeOff, Boxes, Layers, Sparkles, Shield, Diamond, Brush, Search, Trash2, Copy } from "lucide-react";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence, Reorder, LayoutGroup } from "framer-motion";
@@ -359,7 +359,7 @@ export function BuilderSidebar() {
 
                     <motion.div layout className="space-y-4">
                       {/* Context-Aware Settings */}
-                      {(store.badgesConfig.badgeStyle === 'premium' || store.badgesConfig.badgeStyle === 'artistic') && (
+                      {(store.badgesConfig.badgeStyle === 'artistic' || store.badgesConfig.badgeStyle === 'premium') && (
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
                           <div className="grid grid-cols-2 gap-3">
                             <div className="space-y-1.5">
@@ -498,16 +498,64 @@ export function BuilderSidebar() {
 
                       {/* Unified Library Manager */}
                       <div className="pt-4 border-t border-slate-200 dark:border-white/10 space-y-4">
-                        <div className="flex items-center justify-between">
-                           <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Master Skill Library</span>
-                           <label className="flex items-center gap-2 cursor-pointer">
-                              <span className="text-[9px] font-bold text-slate-400 uppercase">Official Colors</span>
-                              <div className="relative">
-                                <input type="checkbox" className="sr-only" checked={store.badgesConfig.useOfficialColors} onChange={(e) => store.setBadgesOption('useOfficialColors', e.target.checked)} />
-                                <div className={cn("w-7 h-4 rounded-full transition-colors", store.badgesConfig.useOfficialColors ? "bg-emerald-500" : "bg-slate-300 dark:bg-zinc-700")}></div>
-                                <div className={cn("absolute top-0.5 bg-white w-3 h-3 rounded-full transition-transform shadow-sm", store.badgesConfig.useOfficialColors ? "translate-x-3.5" : "translate-x-0.5")}></div>
-                              </div>
-                           </label>
+                        <div className="flex flex-col gap-4">
+                          <div className="flex items-center justify-between">
+                             <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Master Skill Library</span>
+                             <div className="flex items-center gap-4">
+                                <button 
+                                  onClick={() => store.copyAnalyticsThemeToBadges()}
+                                  className="flex items-center gap-1.5 px-2 py-1 bg-slate-100 dark:bg-zinc-800 text-[9px] font-black text-slate-500 rounded-lg hover:bg-indigo-500 hover:text-white transition-all border border-slate-200 dark:border-white/5 uppercase tracking-tighter"
+                                  title="Sync color with Analytics"
+                                >
+                                  <Copy className="w-3 h-3" />
+                                  Copy Palette
+                                </button>
+                                <label className="flex items-center gap-2 cursor-pointer">
+                                  <span className="text-[9px] font-bold text-slate-400 uppercase">Official Colors</span>
+                                  <div className="relative">
+                                    <input type="checkbox" className="sr-only" checked={store.badgesConfig.useOfficialColors} onChange={(e) => store.setBadgesOption('useOfficialColors', e.target.checked)} />
+                                    <div className={cn("w-7 h-4 rounded-full transition-colors", store.badgesConfig.useOfficialColors ? "bg-emerald-500" : "bg-slate-300 dark:bg-zinc-700")}></div>
+                                    <div className={cn("absolute top-0.5 bg-white w-3 h-3 rounded-full transition-transform shadow-sm", store.badgesConfig.useOfficialColors ? "translate-x-3.5" : "translate-x-0.5")}></div>
+                                  </div>
+                                </label>
+                             </div>
+                          </div>
+
+                          <AnimatePresence>
+                            {!store.badgesConfig.useOfficialColors && (
+                              <motion.div 
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                className="grid grid-cols-2 gap-3 p-3 bg-slate-50 dark:bg-zinc-900/50 rounded-2xl border border-slate-200 dark:border-white/5 overflow-hidden"
+                              >
+                                <div className="space-y-2">
+                                  <label className="block text-[10px] font-bold text-slate-400 uppercase">Global Theme color</label>
+                                  <div className="flex items-center gap-2">
+                                    <input
+                                      type="color"
+                                      value={`#${store.badgesConfig.customBgColor}`}
+                                      onChange={(e) => store.setBadgesOption('customBgColor', e.target.value.replace('#', ''))}
+                                      className="w-8 h-8 p-0 border-0 rounded-lg cursor-pointer bg-transparent"
+                                    />
+                                    <span className="text-[10px] font-mono text-slate-500 uppercase">#{store.badgesConfig.customBgColor}</span>
+                                  </div>
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="block text-[10px] font-bold text-slate-400 uppercase">Label/Icon color</label>
+                                  <div className="flex items-center gap-2">
+                                    <input
+                                      type="color"
+                                      value={`#${store.badgesConfig.customIconColor}`}
+                                      onChange={(e) => store.setBadgesOption('customIconColor', e.target.value.replace('#', ''))}
+                                      className="w-8 h-8 p-0 border-0 rounded-lg cursor-pointer bg-transparent"
+                                    />
+                                    <span className="text-[10px] font-mono text-slate-500 uppercase">#{store.badgesConfig.customIconColor}</span>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
                         </div>
 
                         <div>
@@ -566,10 +614,10 @@ export function BuilderSidebar() {
                                           <div className="flex items-center gap-1 bg-slate-100 dark:bg-zinc-800 rounded-lg p-0.5 border border-slate-200 dark:border-white/5">
                                             <input 
                                               type="color" 
-                                              value={store.manualSkills.find(s => s.name === skill.name)?.color ? `#${store.manualSkills.find(s => s.name === skill.name)?.color}` : `#${store.customIconColor}`}
+                                              value={store.manualSkills.find(s => s.name === skill.name)?.color ? `#${store.manualSkills.find(s => s.name === skill.name)?.color}` : `#${store.badgesConfig.customBgColor}`}
                                               onChange={(e) => store.updateManualSkill(skill.name, { color: e.target.value.replace('#', '') })}
                                               className="w-4 h-4 p-0 border-0 rounded cursor-pointer bg-transparent"
-                                              title="Custom Skill Color"
+                                              title="Individual Skill Override"
                                             />
                                           </div>
                                         )}

@@ -34,13 +34,21 @@ export function SkillBadgeGrid() {
     hiddenSkills, 
     badgesConfig,
     analyticsConfig,
-    customIconColor,
-    customTextColor,
     allSkillsOrder
   } = store;
 
-  const { badgeColorMode, badgeSize, elementRadius, useOfficialColors, badgeStyle, skillIconTheme, skillIconsPerRow, artisticIconSize } = badgesConfig;
-  const { showGlow } = analyticsConfig;
+  const { 
+    badgeSize, 
+    elementRadius, 
+    useOfficialColors, 
+    badgeStyle, 
+    skillIconTheme, 
+    skillIconsPerRow, 
+    artisticIconSize, 
+    showGlow,
+    customBgColor,
+    customIconColor
+  } = badgesConfig;
 
   const visibleAutoLangs = autoLanguages.filter(l => !hiddenLanguages.includes(l.name));
   const visibleManualSkills = manualSkills.filter(s => !hiddenSkills.includes(s.name));
@@ -92,25 +100,24 @@ export function SkillBadgeGrid() {
         {sortedSkills.map((skill) => {
           const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
           
-          // Determine color: Per-skill > Official (if toggled) > Global Custom
-          let color = customIconColor;
-          if (skill.color) {
-            color = skill.color;
-          } else if (useOfficialColors) {
-            color = '20232a'; // This is a fallback for shields logic, actual official is handled in shields URL logo param or omitted for API
-          }
-          
           let imgSrc = "";
           if (badgeStyle === 'shields') {
-            const logoColor = useOfficialColors ? 'white' : customTextColor;
-            // Shields.io color logic: if per-skill color exists, use it, else if official toggled use 20232a, else global custom
-            const shieldsColor = skill.color ? skill.color : (useOfficialColors ? '20232a' : customIconColor);
+            const logoColor = useOfficialColors ? 'white' : customIconColor;
+            const shieldsColor = skill.color ? skill.color : (useOfficialColors ? '20232a' : customBgColor);
             imgSrc = `https://img.shields.io/badge/${encodeURIComponent(skill.name)}-%23${shieldsColor}.svg?style=for-the-badge&logo=${getSlug(skill.name)}&logoColor=${logoColor}`;
           } else if (badgeStyle === 'artistic' || badgeStyle === 'premium') {
             const artisticParams = skill.iconUrl ? `&iconUrl=${encodeURIComponent(skill.iconUrl)}&iconSize=${artisticIconSize}` : "";
-            // Badge API logic: if per-skill color exists, use it, else global custom. useOfficialColor=true triggers server-side official lookup
-            const apiColorParam = skill.color ? `&color=${skill.color}` : (useOfficialColors ? '' : `&color=${customIconColor}`);
-            imgSrc = `${baseUrl}/api/badge?name=${encodeURIComponent(skill.name)}${apiColorParam}&size=${badgeSize}&radius=${elementRadius}&useOfficialColor=${useOfficialColors && !skill.color}&showGlow=${badgesConfig.showGlow}${artisticParams}`;
+            
+            // Logic: 
+            // 1. If individual skill color exists, use it as background, keep white text
+            // 2. If Official Colors ON, use official background, white text
+            // 3. If Official Colors OFF, use customBgColor and customIconColor (for text/icon)
+            
+            const bgColor = skill.color ? skill.color : (useOfficialColors ? '' : customBgColor);
+            const textColor = useOfficialColors ? 'ffffff' : customIconColor;
+            const useOfficialParam = useOfficialColors && !skill.color;
+            
+            imgSrc = `${baseUrl}/api/badge?name=${encodeURIComponent(skill.name)}&color=${bgColor}&textColor=${textColor}&size=${badgeSize}&radius=${elementRadius}&useOfficialColor=${useOfficialParam}&showGlow=${showGlow}${artisticParams}`;
           }
 
           return (

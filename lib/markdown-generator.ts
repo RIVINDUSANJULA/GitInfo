@@ -93,13 +93,15 @@ export function generateMarkdown(state: BuilderState): MarkdownResult {
           allSkills.forEach(skill => {
             if (badgesConfig.badgeStyle === 'shields') {
               const slug = getSlug(skill.name);
-              const shieldsColor = skill.color ? skill.color : (badgesConfig.useOfficialColors ? '20232a' : customIconColor);
-              const logoColor = badgesConfig.useOfficialColors ? 'white' : customTextColor;
+              const logoColor = badgesConfig.useOfficialColors ? 'white' : badgesConfig.customIconColor;
+              const shieldsColor = skill.color ? skill.color : (badgesConfig.useOfficialColors ? '20232a' : badgesConfig.customBgColor);
               widgets += `  <img src="https://img.shields.io/badge/${encodeURIComponent(skill.name)}-%23${shieldsColor}.svg?style=for-the-badge&logo=${slug}&logoColor=${logoColor}" alt="${skill.name}" loading="lazy" />\n`;
             } else {
               const artisticParams = skill.iconUrl ? `&iconUrl=${encodeURIComponent(skill.iconUrl)}&iconSize=${badgesConfig.artisticIconSize}` : "";
-              const apiColorParam = skill.color ? `&color=${skill.color}` : (badgesConfig.useOfficialColors ? '' : `&color=${customIconColor}`);
-              widgets += `  <img src="${baseUrl}/api/badge?name=${encodeURIComponent(skill.name)}${apiColorParam}&size=${badgesConfig.badgeSize}&radius=${badgesConfig.elementRadius}&useOfficialColor=${badgesConfig.useOfficialColors && !skill.color}&showGlow=${badgesConfig.showGlow}${artisticParams}" alt="${skill.name}" loading="lazy" />\n`;
+              const bgColor = skill.color ? skill.color : (badgesConfig.useOfficialColors ? '' : badgesConfig.customBgColor);
+              const textColor = badgesConfig.useOfficialColors ? 'ffffff' : badgesConfig.customIconColor;
+              const useOfficialParam = badgesConfig.useOfficialColors && !skill.color;
+              widgets += `  <img src="${baseUrl}/api/badge?name=${encodeURIComponent(skill.name)}&color=${bgColor}&textColor=${textColor}&size=${badgesConfig.badgeSize}&radius=${badgesConfig.elementRadius}&useOfficialColor=${useOfficialParam}&showGlow=${badgesConfig.showGlow}${artisticParams}" alt="${skill.name}" loading="lazy" />\n`;
             }
           });
         }
