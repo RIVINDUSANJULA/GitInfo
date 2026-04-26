@@ -187,41 +187,75 @@ export function SkillBadgeGrid() {
           if (badgeStyle === 'shields') {
             const logoColor = useOfficialColors ? 'white' : customIconColor;
             const shieldsColor = skill.color ? skill.color : (useOfficialColors ? '20232a' : customBgColor);
-            imgSrc = `https://img.shields.io/badge/${encodeURIComponent(skill.name)}-%23${shieldsColor}.svg?style=for-the-badge&logo=${getSlug(skill.name)}&logoColor=${logoColor}`;
+            const logoParam = showIcons ? `&logo=${getSlug(skill.name)}&logoColor=${logoColor}` : "";
+            imgSrc = `https://img.shields.io/badge/${encodeURIComponent(skill.name)}-%23${shieldsColor}.svg?style=for-the-badge${logoParam}`;
           } else if (badgeStyle === 'artistic' || badgeStyle === 'premium') {
-            const artisticParams = skill.iconUrl ? `&iconUrl=${encodeURIComponent(skill.iconUrl)}&iconSize=${artisticIconSize}` : "";
-            
-            // Logic: 
-            // 1. If individual skill color exists, use it as background, keep white text
-            // 2. If Official Colors ON, use official background, white text
-            // 3. If Official Colors OFF, use customBgColor and customIconColor (for text/icon)
-            
             const bgColor = skill.color ? skill.color : (useOfficialColors ? '' : customBgColor);
             const textColor = useOfficialColors ? 'ffffff' : customIconColor;
-            const useOfficialParam = useOfficialColors && !skill.color;
+            const iconParam = (showIcons && skill.iconUrl) ? `&iconUrl=${encodeURIComponent(skill.iconUrl)}` : "";
+            const useOfficialParam = useOfficialColors ? 'true' : 'false';
             
-            imgSrc = `${baseUrl}/api/badge?name=${encodeURIComponent(skill.name)}&color=${bgColor}&textColor=${textColor}&size=${badgeSize}&radius=${elementRadius}&useOfficialColor=${useOfficialParam}&showGlow=${showGlow}${artisticParams}`;
+            imgSrc = `${baseUrl}/api/badge?name=${encodeURIComponent(skill.name)}&color=${bgColor}&textColor=${textColor}&size=${badgeSize}&radius=${elementRadius}&useOfficialColor=${useOfficialParam}&showGlow=${showGlow}&artisticIconSize=${artisticIconSize}&showIcon=${showIcons}${iconParam}`;
+          }
+
+          if (badgeStyle === 'shields' || badgeStyle === 'premium' || (badgeStyle === 'artistic' && typeof window === 'undefined')) {
+            // For SVG export/Shields, use the image directly
+            return (
+              <motion.div
+                key={`${badgeStyle}-${skill.name}`}
+                layout
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              >
+                <img 
+                  src={imgSrc} 
+                  alt={skill.name}
+                  loading="lazy"
+                  className={cn(
+                    "shadow-sm hover:shadow-md transition-shadow duration-200 cursor-default",
+                    badgeStyle === 'shields' ? "h-7" : (badgeSize === 'sm' ? "h-[26px]" : "h-[32px]")
+                  )}
+                  style={{ borderRadius: badgeStyle === 'shields' ? '0px' : `${elementRadius}px` }}
+                />
+              </motion.div>
+            );
           }
 
           return (
             <motion.div
-              key={`${badgeStyle}-${skill.name}`}
-              layout
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
+              key={skill.name}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              className="relative group"
             >
-              <img 
-                src={imgSrc} 
-                alt={skill.name}
-                loading="lazy"
+              <div 
                 className={cn(
-                  "shadow-sm hover:shadow-md transition-shadow duration-200 cursor-default",
-                  badgeStyle === 'shields' ? "h-7" : (badgeSize === 'sm' ? "h-[26px]" : "h-[32px]")
+                  "flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all duration-300",
+                  badgeSize === 'sm' ? "px-2 py-1 text-[10px]" : "px-3 py-1.5 text-xs",
+                  showIcons ? "pl-1.5" : "px-3"
                 )}
-                style={{ borderRadius: badgeStyle === 'shields' ? '0px' : `${elementRadius}px` }}
-              />
+                style={{
+                  backgroundColor: useOfficialColors && skill.color ? `#${skill.color}15` : `${customBgColor}15`,
+                  borderColor: useOfficialColors && skill.color ? `#${skill.color}30` : `${customBgColor}30`,
+                  color: useOfficialColors && skill.color ? `#${skill.color}` : customIconColor,
+                  borderRadius: `${elementRadius}px`,
+                }}
+              >
+                {showIcons && (
+                  <img 
+                    src={skill.iconUrl} 
+                    alt="" 
+                    className={cn(
+                      "opacity-80 group-hover:opacity-100 transition-opacity",
+                      badgeSize === 'sm' ? "w-3 h-3" : "w-4 h-4"
+                    )}
+                  />
+                )}
+                <span className="font-bold tracking-tight">{skill.name}</span>
+              </div>
             </motion.div>
           );
         })}

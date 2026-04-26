@@ -27,6 +27,7 @@ export interface AnalyticsConfig {
 }
 
 export interface BadgesConfig {
+  showIcons: boolean;
   blockRadius: number;
   elementRadius: number;
   badgeSize: 'sm' | 'md';
@@ -254,6 +255,7 @@ export const useBuilderStore = create<BuilderState>()(
       },
 
       badgesConfig: {
+        showIcons: true,
         blockRadius: 12,
         elementRadius: 8,
         badgeSize: 'md',

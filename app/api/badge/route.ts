@@ -66,13 +66,14 @@ export async function GET(req: NextRequest) {
   const showGlow = searchParams.get("showGlow") === "true";
   const iconUrl = searchParams.get("iconUrl");
   const iconSizeParam = searchParams.get("iconSize");
+  const showIcon = searchParams.get("showIcon") !== "false";
   const recolorIcon = searchParams.get("recolorIcon") === "true" || !!textColor;
 
   const height = size === "sm" ? 26 : 32;
   const paddingX = size === "sm" ? 10 : 14;
   const fontSize = size === "sm" ? 11 : 13;
   const radius = radiusParam !== null ? parseInt(radiusParam) : height / 4;
-  const artisticIconSize = iconSizeParam ? parseInt(iconSizeParam) : height * 0.6;
+  const artisticIconSize = !showIcon ? 0 : (iconSizeParam ? parseInt(iconSizeParam) : height * 0.6);
 
   // Fetch Brand Icon or External Artistic Icon
   const brandIcon = getSimpleIcon(name);
@@ -81,20 +82,20 @@ export async function GET(req: NextRequest) {
   
   // Icon Content logic
   let iconContent = "";
-  if (iconUrl) {
-    // Artistic Icon from External URL
-    // Apply recolor filter if requested (usually to match text color)
-    iconContent = `<image href="${iconUrl}" width="${artisticIconSize}" height="${artisticIconSize}" ${recolorIcon ? 'filter="url(#recolorIcon)"' : ''} />`;
-  } else {
-    const iconPath = brandIcon ? brandIcon.path : FALLBACK_ICON_PATH;
-    iconContent = `
-      <g transform="scale(${artisticIconSize/24})" fill="#${textColor}" ${showGlow ? 'filter="url(#iconGlow)"' : ''}>
-        <path d="${iconPath}"/>
-      </g>`;
+  if (showIcon) {
+    if (iconUrl) {
+      iconContent = `<image href="${iconUrl}" width="${artisticIconSize}" height="${artisticIconSize}" ${recolorIcon ? 'filter="url(#recolorIcon)"' : ''} />`;
+    } else {
+      const iconPath = brandIcon ? brandIcon.path : FALLBACK_ICON_PATH;
+      iconContent = `
+        <g transform="scale(${artisticIconSize/24})" fill="#${textColor}" ${showGlow ? 'filter="url(#iconGlow)"' : ''}>
+          <path d="${iconPath}"/>
+        </g>`;
+    }
   }
   
   const textWidth = name.length * (fontSize * 0.65) + 4;
-  const gap = 8;
+  const gap = showIcon ? 8 : 0;
   const width = paddingX * 2 + artisticIconSize + gap + textWidth;
 
   // Color normalization for filters

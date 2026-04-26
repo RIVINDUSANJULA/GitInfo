@@ -634,18 +634,6 @@ export function BuilderSidebar() {
                                     />
                                   </div>
                                   <div className="flex flex-col gap-4">
-                                      <label className="flex flex-col gap-1.5">
-                                        <span className="text-[10px] font-bold text-slate-400 uppercase">Neon Glow</span>
-                                        <div className="relative pt-1">
-                                          <input 
-                                            type="checkbox" 
-                                            className="sr-only" 
-                                            checked={store.badgesConfig.showGlow || false} 
-                                            onChange={(e) => store.setBadgesOption('showGlow', e.target.checked)} 
-                                          />
-                                          <div className={cn("w-10 h-6 rounded-full transition-colors", store.badgesConfig.showGlow ? "bg-emerald-500" : "bg-slate-300 dark:bg-zinc-700")}></div>
-                                          <div className={cn("absolute top-1 bg-white w-4 h-4 rounded-full transition-transform shadow-sm", store.badgesConfig.showGlow ? "translate-x-5" : "translate-x-1")}></div>
-                                        </div>
                                       </label>
                                       <div className="space-y-1.5">
                                         <label className="text-[10px] font-bold text-slate-400 uppercase">Shadow Depth: {store.badgesConfig.shadowDepth || 0}px</label>
@@ -742,6 +730,15 @@ export function BuilderSidebar() {
                                         <Copy className="w-3 h-3" />
                                         Copy Palette
                                       </button>
+                                    <div className="flex items-center gap-4">
+                                      <label className="flex items-center gap-2 cursor-pointer">
+                                        <span className="text-[9px] font-bold text-slate-400 uppercase">Show Icons</span>
+                                        <div className="relative">
+                                          <input type="checkbox" className="sr-only" checked={store.badgesConfig.showIcons} onChange={(e) => store.setBadgesOption('showIcons', e.target.checked)} />
+                                          <div className={cn("w-7 h-4 rounded-full transition-colors", store.badgesConfig.showIcons ? "bg-emerald-500" : "bg-slate-300 dark:bg-zinc-700")}></div>
+                                          <div className={cn("absolute top-0.5 bg-white w-3 h-3 rounded-full transition-transform shadow-sm", store.badgesConfig.showIcons ? "translate-x-3.5" : "translate-x-0.5")}></div>
+                                        </div>
+                                      </label>
                                       <label className="flex items-center gap-2 cursor-pointer">
                                         <span className="text-[9px] font-bold text-slate-400 uppercase">Official Colors</span>
                                         <div className="relative">
