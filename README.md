@@ -2,24 +2,18 @@
 
 # GitInfo
 
-**The ultimate, zero-config architect for interactive developer portfolios.**<br>
+**Elevate your GitHub profile with high-fidelity analytics, premium skill badges, and dynamic aesthetic themes.**<br>
 [Not Live Yet](#)
 
-[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg?style=flat-square)](https://www.gnu.org/licenses/agpl-3.0)
-[![Next.js 16](https://img.shields.io/badge/Next.js_16-black?style=flat-square&logo=next.js)]()
-[![React 19](https://img.shields.io/badge/React_19-087ea4?style=flat-square&logo=react)]()
+[![License: AGPL](https://img.shields.io/badge/License-AGPL-blue.svg?style=flat-square)](LICENSE)
+[![Version 0.1.0](https://img.shields.io/badge/version-0.1.0-emerald.svg?style=flat-square)]()
+[![Next.js 16.2.4](https://img.shields.io/badge/Next.js_16.2.4-black?style=flat-square&logo=next.js)]()
 [![Tailwind v4](https://img.shields.io/badge/Tailwind_v4-38bdf8?style=flat-square&logo=tailwind-css)]()
-[![Zero Config](https://img.shields.io/badge/Setup-Zero_Config-brightgreen?style=flat-square)]()
+[![REST Fallback](https://img.shields.io/badge/Setup-GitHub_API_Key-brightgreen?style=flat-square)]()
 
 <br />
 
-<!--<img src="https://via.placeholder.com/1000x500/0a0a0a/00ffcc?text=Drop+a+Video/GIF+of+the+Glassmorphic+Builder+Here" alt="GitInfo Interface" width="100%" style="border-radius: 16px; box-shadow: 0 0 30px rgba(0, 255, 204, 0.15);" /> 
-
-<br />
-<br />
--->
-
-**GitInfo** transforms static, boring Markdown files into interactive, high-end web components. Explore a drag-and-drop builder that generates real-time, glassmorphic developer profiles. Bypassing GitHub's strict image caching, this tool ensures your online presence is always live, uniquely styled, and context-aware.
+**GitInfo** is an advanced GitHub profile enhancement suite designed for developers who want more than just a static bio. It leverages the **GitHub GraphQL API** to perform a "Titan-Class" deep-sync, aggregating repository data and language statistics across your entire portfolio—including contributions to public organizations and collaborative projects. Whether you're looking to showcase a neon-glow tech stack or a minimalist data-driven analytics chart, GitInfo provides a real-time, premium preview engine to build and export your ideal profile aesthetic.
 
 </div>
 
@@ -27,27 +21,23 @@
 
 ## ✨ Core Architecture
 
-We engineered this suite to bridge the gap between static Markdown and living web applications, all without requiring a single API key from the user.
+We engineered this suite to bridge the gap between static Markdown and living web applications, providing a seamless configuration engine with robust fallback methods.
 
 <table width="100%">
   <tr>
     <td width="50%" valign="top">
-      <h3>🪞 Elite Glassmorphism</h3>
-      <p>A fully customizable UI engine supporting deep background blurs, independent element radiuses, and synchronized neon-glow borders. Adapts instantly to your personal brand colors.</p>
+      <h3>📊 Titan-Class Analytics (Token Required)</h3>
+      <p>Move beyond owned repos. Aggregate language bytes from all public contributions, organizations, and collaborations using our GraphQL deep-sync technology.</p>
     </td>
     <td width="50%" valign="top">
-      <h3>🧠 Deterministic Narrative Engine</h3>
-      <p>Zero LLM APIs required. Our internal algorithmic engine parses your GitHub Repo Stack and rough notes to instantly generate a senior-level, professionally formatted biography locally.</p>
+      <h3>🛡️ Premium Skill Badges</h3>
+      <p>5+ distinct styles including <i>Artistic</i>, <i>Shields</i>, and <i>Modern Soft</i>. Features include custom glow intensity, official brand colors, and dynamic icon toggling.</p>
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <h3>🧩 Fluid Layout Manager</h3>
-      <p>A robust drag-and-drop system powered by Zustand. Move your tech stack, bio, and socials around; the output Markdown re-generates instantly to match your exact visual hierarchy.</p>
-    </td>
-    <td width="50%" valign="top">
-      <h3>🔗 Server-Side Identity Proxy</h3>
-      <p>Bypasses GitHub's aggressive Camo proxy caching. It fetches and displays real-time social media avatars and connection statistics seamlessly in the background.</p>
+      <h3>🎨 Aesthetic Live Preview</h3>
+      <p>A real-time sidebar configuration engine with instant visual feedback and "Matrix", "Frost", and "Magma" visual presets.</p>
     </td>
   </tr>
 </table>
@@ -56,14 +46,14 @@ We engineered this suite to bridge the gap between static Markdown and living we
 
 ## 🛠️ Under The Hood
 
-Standard GitHub READMEs cache images for weeks and rely on static text. GitInfo uses custom Next.js Edge routes and advanced SVG styling to force real-time, dynamic updates.
+GitInfo combines a modern frontend stack with a custom API layer to generate beautiful, README-ready snippets that mirror your web configuration.
 
 | Feature / Input | Engineering Mechanic | Visual Result |
 | :--- | :--- | :--- |
-| **Social Handle** | API proxy + Cache bust hash (`?v=timestamp`) | Live avatar appears instantly, bypassing Camo cache. |
-| **Profile Image** | Extracting image data to an SVG `<filter>` | Generates a perfectly synced "Aesthetic Blur" background. |
-| **Career Status** | Inline SVG CSS `@keyframes` | A smooth, pulsing neon dot indicating live availability. |
-| **Platform Default** | Scraper string detection | "Hijacks" ugly gray silhouettes and injects an Elite 3D User Icon. |
+| **Data Aggregation** | GraphQL API (v4) + REST Fallback | Deep-syncs repo data across your entire portfolio seamlessly. |
+| **Badge Generation** | Custom SVG Generator API | Renders pixel-perfect badges with dynamic recoloring and applied filters. |
+| **State & Config** | Zustand Persistent Config Store | Remembers your precise layout and aesthetic choices across sessions. |
+| **Code Export** | One-Click Export Engine | Instantly generates README-ready Markdown and SVG snippets. |
 
 ---
 
@@ -71,20 +61,81 @@ Standard GitHub READMEs cache images for weeks and rely on static text. GitInfo 
 
 Built on the absolute bleeding edge of the modern web ecosystem.
 
-* **Framework:** Next.js 16 (App Router, Turbopack)
-* **UI Library:** React 19
-* **Styling:** Tailwind CSS v4 + `next-themes`
-* **State Management:** Zustand v5
-* **Motion & Animation:** Framer Motion v12
-* **Narrative Synthesis:** Internal Deterministic Template Engine (Zero-API)
-* **Markdown Compilation:** `react-markdown`
+* **Framework:** Next.js 16.2 (App Router, Turbopack)
+* **State Management:** Zustand (Persistent Config Store)
+* **Animations:** Framer Motion (Smooth Transitions & Micro-interactions)
+* **Styling:** Tailwind CSS v4 (Modern Utility-first CSS)
+* **API & Data:** GitHub GraphQL API (v4) with REST Scraper Fallback
+* **Icons:** Simple Icons & Lucide React
+* **Badge Engine:** Custom SVG Generator API
 
 ---
 
-## 🚀 Quick Start (Zero-Config)
+## 🚀 Quick Start
 
-Because GitInfo uses internal proxying and an algorithmic narrative engine, there are **zero external API keys or environment variables required** to run the core application. It works beautifully right out of the box.
+GitInfo is designed to run instantly out-of-the-box using our REST fallback for basic data. However, to unlock the true **Titan-Class deep-sync analytics**, setting up a GitHub Personal Access Token is highly recommended.
 
 ```bash
 # 1. Clone the repository
-git clone [https://github.com/yourusername/identity-suite.git](https://github.com/yourusername/identity-suite.git)
+git clone https://github.com/RIVINDUSANJULA/GitHub-Customizer.git
+cd GitHub-Customizer
+
+# 2. Install Dependencies
+npm install
+
+# 3. Configure Environment (For Titan-Class Analytics)
+# Create a .env file in the root directory:
+GITHUB_TOKEN=your_personal_access_token_here
+
+# 4. Start the development server with Turbopack
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser to see the result.
+
+---
+
+## 📂 Project Structure
+
+```ascii
+GitHub-Customizer/
+├── app/                  # Next.js App Router (Pages & API)
+│   ├── api/              # GraphQL & Badge Generation Routes
+│   └── builder/          # Main Customizer Interface
+├── components/           # UI Components
+│   ├── builder/          # Sidebar, Preview, & Grid Logic
+│   └── ui/               # Atomic Design System
+├── lib/                  # Core Utilities & GitHub Engine
+├── public/               # Static Assets
+├── store/                # Zustand Store (State & Config)
+└── tailwind.config.ts    # Styling Configuration
+```
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! To get started:
+1.  **Fork** the repository.
+2.  Create a **feature branch** (`git checkout -b feature/AmazingFeature`).
+3.  **Commit** your changes (`git commit -m 'Add some AmazingFeature'`).
+4.  **Push** to the branch (`git push origin feature/AmazingFeature`).
+5.  Open a **Pull Request**.
+
+---
+
+## 👨‍💻 About the Developer
+
+Hi, I'm **Rivindu Sanjula**. I started this project as a small idea to upgrade my own GitHub profile, and it quickly grew into the Titan-Class tool you see today! As a Computer Science student currently seeking software engineering internships for 2026, I'm always building and learning. 
+
+Feel free to reach out: [LinkedIn](http://linkedin.com/in/rivindusanjula/) | [GitHub](https://github.com/RIVINDUSANJULA) | [Email](mailto:your.email@example.com)
+
+---
+
+## ⚖️ License
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+<br>
+<div align="center">
+<i>Built with passion by the Rivindu Sanjula.</i>
+</div>
