@@ -40,6 +40,18 @@ export async function fetchUserLanguages(username: string, includeContribs: bool
             }
           }
         }
+        ${includeContribs ? `
+        repositoriesContributedTo(first: 100, contributionTypes: [COMMIT, PULL_REQUEST], privacy: PUBLIC) {
+          nodes {
+            isPrivate
+            languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
+              edges {
+                size
+                node { name color }
+              }
+            }
+          }
+        }` : ''}
       }
     }
   `;
