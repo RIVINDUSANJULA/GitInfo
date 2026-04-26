@@ -12,7 +12,9 @@ interface LanguageData {
 
 export function LanguageStats() {
   const store = useBuilderStore();
-  const languages = Array.isArray(store.autoLanguages) ? store.autoLanguages : [];
+  const limit = store.analyticsConfig.languageLimit || 5;
+  const rawLanguages = Array.isArray(store.autoLanguages) ? store.autoLanguages : [];
+  const languages = rawLanguages.slice(0, limit);
   const layout = store.analyticsConfig.layout || 'modern-bar';
   
   // Determine loading/syncing state
@@ -33,8 +35,14 @@ export function LanguageStats() {
     );
   }
 
+  const blockRadius = store.analyticsConfig.blockRadius ?? 20;
+  const elementRadius = store.analyticsConfig.elementRadius ?? 10;
+
   return (
-    <div className="w-full space-y-6 p-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl relative overflow-hidden group">
+    <div 
+      className="w-full space-y-6 p-6 bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl relative overflow-hidden group"
+      style={{ borderRadius: `${blockRadius}px` }}
+    >
       {/* Glow background */}
       <div className="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500/10 blur-[100px] rounded-full group-hover:bg-indigo-500/20 transition-colors" />
       
@@ -49,11 +57,11 @@ export function LanguageStats() {
       </div>
 
       <div className="relative z-10">
-        {layout === 'compact' && <CompactList languages={languages} />}
+        {layout === 'compact' && <CompactList languages={languages} elementRadius={elementRadius} />}
         {layout === 'pie' && <PieChart languages={languages} />}
-        {layout === 'modern-bar' && <ModernBars languages={languages} />}
-        {layout === 'soft-cards' && <SoftCards languages={languages} />}
-        {layout === 'minimalist-line' && <MinimalistLine languages={languages} />}
+        {layout === 'modern-bar' && <ModernBars languages={languages} elementRadius={elementRadius} />}
+        {layout === 'soft-cards' && <SoftCards languages={languages} elementRadius={elementRadius} />}
+        {layout === 'minimalist-line' && <MinimalistLine languages={languages} elementRadius={elementRadius} />}
       </div>
 
       <div className="pt-4 border-t border-white/5 flex justify-between items-center relative z-10">
@@ -106,7 +114,7 @@ function SkeletonShimmer({ layout }: { layout: string }) {
   );
 }
 
-function CompactList({ languages }: { languages: LanguageData[] }) {
+function CompactList({ languages, elementRadius }: { languages: LanguageData[], elementRadius: number }) {
   if (!Array.isArray(languages)) return null;
   return (
     <div className="space-y-3">
@@ -120,8 +128,8 @@ function CompactList({ languages }: { languages: LanguageData[] }) {
         >
           <div className="flex items-center gap-3">
              <div 
-              className="w-1.5 h-1.5 rounded-full" 
-              style={{ backgroundColor: lang.color, boxShadow: `0 0 10px ${lang.color}66` }}
+              className="w-1.5 h-1.5" 
+              style={{ backgroundColor: lang.color, boxShadow: `0 0 10px ${lang.color}66`, borderRadius: `${elementRadius/4}px` }}
             />
             <span className="text-[11px] font-bold text-slate-300 group-hover/item:text-white transition-colors">{lang.name}</span>
           </div>
@@ -134,7 +142,7 @@ function CompactList({ languages }: { languages: LanguageData[] }) {
   );
 }
 
-function ModernBars({ languages }: { languages: LanguageData[] }) {
+function ModernBars({ languages, elementRadius }: { languages: LanguageData[], elementRadius: number }) {
   const store = useBuilderStore();
   const barHeight = store.analyticsConfig.barHeight || 18;
   if (!Array.isArray(languages)) return null;
@@ -152,14 +160,15 @@ function ModernBars({ languages }: { languages: LanguageData[] }) {
             <span className="text-[11px] font-bold text-slate-200 uppercase tracking-wider">{lang.name}</span>
             <span className="text-[10px] font-mono text-slate-400">{lang.percentage.toFixed(1)}%</span>
           </div>
-          <div className="relative w-full bg-white/5 rounded-full overflow-hidden border border-white/5" style={{ height: `${barHeight}px` }}>
+          <div className="relative w-full bg-white/5 overflow-hidden border border-white/5" style={{ height: `${barHeight}px`, borderRadius: `${elementRadius}px` }}>
             <motion.div 
               initial={{ width: 0 }}
               animate={{ width: `${lang.percentage}%` }}
               transition={{ duration: 1.5, ease: [0.19, 1, 0.22, 1], delay: index * 0.1 }}
-              className="absolute inset-y-0 left-0 rounded-full"
+              className="absolute inset-y-0 left-0"
               style={{ 
                 backgroundColor: lang.color,
+                borderRadius: `${elementRadius}px`,
                 boxShadow: store.analyticsConfig.showGlow ? `0 0 20px ${lang.color}44` : undefined
               }}
             >
@@ -226,7 +235,7 @@ function PieChart({ languages }: { languages: LanguageData[] }) {
   );
 }
 
-function SoftCards({ languages }: { languages: LanguageData[] }) {
+function SoftCards({ languages, elementRadius }: { languages: LanguageData[], elementRadius: number }) {
   if (!Array.isArray(languages)) return null;
   return (
     <div className="grid grid-cols-2 gap-3">
@@ -236,17 +245,18 @@ function SoftCards({ languages }: { languages: LanguageData[] }) {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: i * 0.05 }}
-          className="p-3 bg-white/5 border border-white/5 rounded-xl flex flex-col gap-2 hover:bg-white/10 transition-colors group"
+          className="p-3 bg-white/5 border border-white/5 flex flex-col gap-2 hover:bg-white/10 transition-colors group"
+          style={{ borderRadius: `${elementRadius}px` }}
         >
           <div className="flex items-center justify-between">
-            <div className="w-4 h-4 rounded bg-white/5 flex items-center justify-center">
-               <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: lang.color, boxShadow: `0 0 10px ${lang.color}` }} />
+            <div className="w-4 h-4 bg-white/5 flex items-center justify-center" style={{ borderRadius: `${elementRadius/2}px` }}>
+               <div className="w-1.5 h-1.5" style={{ backgroundColor: lang.color, boxShadow: `0 0 10px ${lang.color}`, borderRadius: `${elementRadius/4}px` }} />
             </div>
             <span className="text-[9px] font-mono text-slate-500">{lang.percentage.toFixed(1)}%</span>
           </div>
           <span className="text-[10px] font-black uppercase text-slate-300 tracking-wider truncate">{lang.name}</span>
-          <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-            <div className="h-full transition-all duration-1000" style={{ width: `${lang.percentage}%`, backgroundColor: lang.color }} />
+          <div className="h-1 w-full bg-white/5 overflow-hidden" style={{ borderRadius: `${elementRadius/2}px` }}>
+            <div className="h-full transition-all duration-1000" style={{ width: `${lang.percentage}%`, backgroundColor: lang.color, borderRadius: `${elementRadius/2}px` }} />
           </div>
         </motion.div>
       ))}
@@ -254,11 +264,14 @@ function SoftCards({ languages }: { languages: LanguageData[] }) {
   );
 }
 
-function MinimalistLine({ languages }: { languages: LanguageData[] }) {
+function MinimalistLine({ languages, elementRadius }: { languages: LanguageData[], elementRadius: number }) {
   if (!Array.isArray(languages)) return null;
   return (
     <div className="space-y-6 py-4">
-      <div className="h-4 w-full bg-white/5 rounded-full overflow-hidden flex border border-white/10 shadow-inner">
+      <div 
+        className="h-4 w-full bg-white/5 overflow-hidden flex border border-white/10 shadow-inner"
+        style={{ borderRadius: `${elementRadius}px` }}
+      >
         {languages.map((lang, i) => (
           <motion.div
             key={lang.name}
@@ -279,7 +292,7 @@ function MinimalistLine({ languages }: { languages: LanguageData[] }) {
       <div className="flex flex-wrap gap-x-4 gap-y-2 justify-center">
         {languages.map(lang => (
           <div key={lang.name} className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: lang.color }} />
+            <div className="w-1.5 h-1.5" style={{ backgroundColor: lang.color, borderRadius: `${elementRadius/4}px` }} />
             <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">{lang.name}</span>
             <span className="text-[9px] font-mono text-slate-700">{lang.percentage.toFixed(1)}%</span>
           </div>
