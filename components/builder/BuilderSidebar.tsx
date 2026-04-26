@@ -430,27 +430,39 @@ export function BuilderSidebar() {
                                 disabled={store.aboutMeConfig.isGenerating}
                                 onClick={async () => {
                                   store.setAboutMeOption('isGenerating', true);
+                                  
                                   try {
-                                    const res = await fetch('/api/generate-about', {
-                                      method: 'POST',
-                                      headers: { 'Content-Type': 'application/json' },
-                                      body: JSON.stringify({
-                                        username: store.username,
-                                        title: store.title || 'Developer',
-                                        skills: combinedSkills.map(s => s.name),
-                                        socials: store.socialProfiles.map(p => p.platform),
-                                        vibe: store.aboutMeConfig.vibe,
-                                        format: store.aboutMeConfig.format,
-                                        length: store.aboutMeConfig.length,
-                                        notes: store.aboutMeConfig.notes,
-                                        repoUrl: store.aboutMeConfig.repoUrl
-                                      })
-                                    });
-                                    const data = await res.json();
-                                    if (data.content) {
-                                      store.updateAboutMe(data.content);
-                                      store.setAboutMeOption('mode', 'manual');
+                                    // Local GH Context Fetch (simulated for speed)
+                                    let repoStack: string[] = [];
+                                    if (store.aboutMeConfig.repoUrl && store.aboutMeConfig.repoUrl.includes('github.com')) {
+                                      const parts = store.aboutMeConfig.repoUrl.replace('https://github.com/', '').split('/');
+                                      if (parts[0] && parts[1]) {
+                                        const res = await fetch(`https://api.github.com/repos/${parts[0]}/${parts[1]}/languages`);
+                                        if (res.ok) {
+                                          const data = await res.json();
+                                          repoStack = Object.keys(data);
+                                        }
+                                      }
                                     }
+
+                                    // Simulate "Thinking" for UX
+                                    await new Promise(resolve => setTimeout(resolve, 1500));
+
+                                    const { generateBio } = await import('@/lib/narrative-engine');
+                                    const content = generateBio({
+                                      username: store.username,
+                                      title: store.title || 'Developer',
+                                      skills: combinedSkills.map(s => s.name),
+                                      socials: store.socialProfiles.map(p => p.platform),
+                                      vibe: store.aboutMeConfig.vibe,
+                                      format: store.aboutMeConfig.format,
+                                      length: store.aboutMeConfig.length,
+                                      notes: store.aboutMeConfig.notes,
+                                      repoStack
+                                    });
+
+                                    store.updateAboutMe(content);
+                                    store.setAboutMeOption('mode', 'manual');
                                   } catch (e) {
                                     console.error(e);
                                   } finally {
