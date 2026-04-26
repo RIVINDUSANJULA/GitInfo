@@ -50,8 +50,12 @@ export function SkillBadgeGrid() {
     customIconColor
   } = badgesConfig;
 
-  const visibleAutoLangs = autoLanguages.filter(l => !hiddenLanguages.includes(l.name));
-  const visibleManualSkills = manualSkills.filter(s => !hiddenSkills.includes(s.name));
+  const safeAutoLangs = Array.isArray(autoLanguages) ? autoLanguages : [];
+  const safeManualSkills = Array.isArray(manualSkills) ? manualSkills : [];
+  const safeAllSkillsOrder = Array.isArray(allSkillsOrder) ? allSkillsOrder : [];
+
+  const visibleAutoLangs = safeAutoLangs.filter(l => !hiddenLanguages.includes(l.name));
+  const visibleManualSkills = safeManualSkills.filter(s => !hiddenSkills.includes(s.name));
 
   const allVisibleSkills = [
     ...visibleAutoLangs.map(l => ({ name: l.name, type: 'auto' as const, iconUrl: undefined, color: undefined })),
@@ -60,8 +64,8 @@ export function SkillBadgeGrid() {
 
   // Apply unified order
   const sortedSkills = [...allVisibleSkills].sort((a, b) => {
-    const idxA = allSkillsOrder.indexOf(a.name);
-    const idxB = allSkillsOrder.indexOf(b.name);
+    const idxA = safeAllSkillsOrder.indexOf(a.name);
+    const idxB = safeAllSkillsOrder.indexOf(b.name);
     if (idxA === -1 && idxB === -1) return 0;
     if (idxA === -1) return 1;
     if (idxB === -1) return -1;
