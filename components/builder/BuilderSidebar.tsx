@@ -408,17 +408,20 @@ export function BuilderSidebar() {
                         <div className="space-y-2">
                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Bio Vibe</label>
                           <div className="grid grid-cols-2 gap-2">
-                            {['professional', 'creative', 'minimalist', 'technical'].map((v) => (
+                            {['professional', 'creative', 'minimalist', 'technical', 'elite'].map((v) => (
                               <button
                                 key={v}
                                 onClick={() => store.setAboutMeOption('vibe', v as any)}
                                 className={cn(
-                                  "px-2 py-1.5 text-[9px] font-bold uppercase rounded-lg border transition-all",
+                                  "px-2 py-1.5 text-[9px] font-bold uppercase rounded-lg border transition-all flex items-center justify-center gap-1.5",
                                   store.aboutMeConfig.vibe === v
                                     ? "bg-rose-500 border-rose-500 text-white shadow-lg shadow-rose-500/20"
-                                    : "bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-white/5 text-slate-400 hover:border-rose-500/30"
+                                    : "bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-white/5 text-slate-400 hover:border-rose-500/30",
+                                  v === 'elite' && store.aboutMeConfig.vibe !== 'elite' && "border-rose-500/30 text-rose-500/70",
+                                  v === 'elite' && "col-span-1"
                                 )}
                               >
+                                {v === 'elite' && <Sparkles className="w-2.5 h-2.5" />}
                                 {v}
                               </button>
                             ))}

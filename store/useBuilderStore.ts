@@ -96,7 +96,7 @@ export interface BuilderState {
     repoUrl: string;
     mode: 'manual' | 'ai';
     isGenerating: boolean;
-    vibe: 'professional' | 'creative' | 'minimalist' | 'technical';
+    vibe: 'professional' | 'creative' | 'minimalist' | 'technical' | 'elite';
     format: 'paragraph' | 'bullets' | 'mixed';
     length: 'short' | 'medium' | 'long';
     showGlow: boolean;
