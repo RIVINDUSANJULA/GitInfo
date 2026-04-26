@@ -52,6 +52,11 @@ export function SkillBadgeGrid() {
 
   const skillMap = new Map<string, any>();
   
+  // Filter visibility
+  const visibleAutoLangs = autoLanguages.filter(l => !hiddenLanguages.includes(l.name));
+  const visibleAutoSkills = store.autoSkills.filter(s => !hiddenSkills.includes(s.name));
+  const visibleManualSkills = manualSkills.filter(s => !hiddenSkills.includes(s.name));
+
   // 1. Auto Languages
   visibleAutoLangs.forEach(l => {
     skillMap.set(l.name.toLowerCase(), { name: l.name, type: 'auto' as const });
