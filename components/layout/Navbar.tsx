@@ -8,7 +8,7 @@ export default function Navbar() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
           <Terminal className="h-6 w-6" />
-          <span className="font-semibold tracking-tight text-lg">GitCustomize</span>
+          <span className="font-semibold tracking-tight text-lg">GitInfo</span>
         </Link>
         <div className="flex items-center gap-4">
           <Link

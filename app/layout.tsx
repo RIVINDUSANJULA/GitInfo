@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "GitHub Profile Customizer",
-  description: "A visually stunning GitHub Profile README Generator",
+  title: "GitInfo | The Elite README Architect",
+  description: "Generate high-end, glassmorphic GitHub Profile READMEs instantly with zero config.",
 };
 
 export default function RootLayout({

@@ -314,7 +314,7 @@ export const useBuilderStore = create<BuilderState>()(
       setTitle: (title) => set({ title }),
     }),
     {
-      name: 'github-customizer-storage',
+      name: 'gitinfo-storage',
     }
   )
 );

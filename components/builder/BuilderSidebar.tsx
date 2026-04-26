@@ -63,7 +63,7 @@ export function BuilderSidebar() {
   const handleCopy = (e: React.MouseEvent, text: string, id: string) => {
     e.stopPropagation();
     
-    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://github-customizer.vercel.app';
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://gitinfo.vercel.app';
     const platform = normalizePlatform(id.split('-')[1]);
     const username = text || 'your-handle';
     
@@ -245,7 +245,7 @@ export function BuilderSidebar() {
     <div className="w-full h-full bg-white dark:bg-zinc-950/50 backdrop-blur-xl border-r border-slate-200 dark:border-white/10 flex flex-col overflow-y-auto custom-scrollbar">
       <div className="p-6">
         <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          GitCustomize
+          GitInfo
         </h2>
       </div>
 
