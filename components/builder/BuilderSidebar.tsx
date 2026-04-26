@@ -932,7 +932,8 @@ export function BuilderSidebar() {
                                        id === 'badges' ? 'Skill Badges' :
                                        id === 'stats' ? 'GitHub Stats' :
                                        id === 'streak' ? 'Streak Stats' :
-                                       id === 'trophies' ? 'GitHub Trophies' : id;
+                                       id === 'trophies' ? 'GitHub Trophies' :
+                                       id === 'socials' ? 'Social Connectivity' : id;
 
                           return (
                             <Reorder.Item
