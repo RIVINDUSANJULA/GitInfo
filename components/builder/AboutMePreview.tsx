@@ -143,10 +143,11 @@ export default function AboutMePreview() {
         {/* Header HUD Capsule */}
         <div className="absolute top-0 left-0 z-40">
            <div 
-            className="px-3 py-1 rounded-br-lg flex items-center gap-2 border-r border-b"
+            className="px-3 py-1 rounded-br-xl flex items-center gap-2 border-r border-b"
             style={{ 
-              backgroundColor: `${glowColor}15`, 
-              borderColor: `${glowColor}30`,
+              backgroundColor: `${glowColor}25`, 
+              borderColor: `${glowColor}40`,
+              backdropFilter: 'blur(8px)'
             }}
            >
              <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: glowColor, boxShadow: `0 0 8px ${glowColor}` }} />
@@ -161,9 +162,30 @@ export default function AboutMePreview() {
 
         {/* Content Area */}
         <div className={cn(
-          "p-8 pt-12 relative z-20",
+          "p-8 pt-16 relative z-20",
           aboutMeConfig.alignment === 'center' ? "text-center" : (aboutMeConfig.alignment === 'justify' ? "text-justify" : "text-left")
         )}>
+          {/* Unified Greeting Section */}
+          <div className="mb-8 space-y-2">
+             <motion.h1 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className={cn(
+                "text-4xl md:text-5xl font-black tracking-tighter leading-none",
+                isMatrix ? "text-[#00FF41] font-mono uppercase" : "text-white"
+              )}
+             >
+                {isMatrix ? `> HI_THERE, I'M ${store.username}` : `Hi there, I'm ${store.username} 👋`}
+             </motion.h1>
+             <div 
+              className={cn(
+                "h-1 rounded-full opacity-20",
+                aboutMeConfig.alignment === 'center' ? "mx-auto w-24" : "w-12"
+              )}
+              style={{ backgroundColor: glowColor }}
+             />
+          </div>
+
           <div className={cn(
             "prose prose-sm dark:prose-invert max-w-none transition-all duration-1000",
             isGenerating ? "opacity-20 blur-[4px]" : "opacity-100 blur-0",

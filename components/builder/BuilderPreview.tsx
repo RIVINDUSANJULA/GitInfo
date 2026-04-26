@@ -101,7 +101,6 @@ export function BuilderPreview() {
             <div className="p-8 prose dark:prose-invert max-w-none">
               {store.username ? (
                   <div className="flex flex-col gap-8">
-                    <motion.div layout dangerouslySetInnerHTML={{ __html: header.replace(/\n/g, '<br/>') }} />
                     
                     <div className="flex flex-col gap-8">
                       <AnimatePresence mode="popLayout">
