@@ -108,6 +108,9 @@ export function BuilderSidebar() {
     if (!store.widgetOrder.includes('socials')) {
       store.setWidgetOrder([...store.widgetOrder, 'socials']);
     }
+    if (!store.widgetOrder.includes('aboutme')) {
+      store.setWidgetOrder(['aboutme', ...store.widgetOrder]);
+    }
     
     // Repair socialsConfig if missing new fields
     if (store.socialsConfig.useAvatar === undefined) {

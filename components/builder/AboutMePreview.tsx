@@ -11,9 +11,14 @@ export default function AboutMePreview() {
   const { aboutMe, aboutMeConfig, showAboutMe, theme, customIconColor } = store;
   const isGenerating = aboutMeConfig.isGenerating;
 
-  if (!showAboutMe || (!aboutMe && !isGenerating)) return null;
+  // Always show if enabled, providing a placeholder if empty
+  if (!showAboutMe) return null;
 
   const glowColor = theme === 'custom' ? `#${customIconColor}` : '#f43f5e'; // Default rose-500
+
+  const content = isGenerating 
+    ? "Synthesizing your professional narrative... generating technical insights and career milestones based on your technical stack and manual notes."
+    : (aboutMe || "### Your Professional Story Starts Here\nUse the **AI Generator** or switch to **Manual Mode** in the sidebar to write your bio. It will appear here with beautiful glassmorphism and neon accents!");
 
   return (
     <motion.div
@@ -38,7 +43,8 @@ export default function AboutMePreview() {
         className={cn(
           "relative overflow-hidden border p-8 transition-all duration-500",
           "bg-white/80 dark:bg-zinc-950/40 backdrop-blur-xl",
-          "border-slate-200 dark:border-white/10 hover:border-rose-500/50 shadow-xl"
+          "border-slate-200 dark:border-white/10 hover:border-rose-500/50 shadow-xl",
+          !aboutMe && !isGenerating && "border-dashed opacity-60"
         )}
       >
         {/* Shimmer Overlay for Loading State */}
@@ -87,9 +93,7 @@ export default function AboutMePreview() {
           isGenerating ? "opacity-30 blur-[2px]" : "opacity-100 blur-0",
           "prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tighter prose-p:leading-relaxed prose-p:text-slate-600 dark:prose-p:text-slate-400 prose-strong:text-rose-500 prose-ul:list-disc prose-li:marker:text-rose-500"
         )}>
-          <ReactMarkdown>
-            {isGenerating ? "Synthesizing your professional narrative... generating technical insights and career milestones based on your technical stack and manual notes." : aboutMe}
-          </ReactMarkdown>
+          <ReactMarkdown>{content}</ReactMarkdown>
         </div>
 
         {/* Decorative Neon Accents */}
