@@ -103,11 +103,20 @@ export interface BuilderState {
     blockRadius: number;
     borderOpacity: number;
     borderStyle: 'solid' | 'dashed' | 'double';
+    strokeWeight: number;
+    useBorderGradient: boolean;
+    borderGradientColor2: string;
     glassBlur: number;
     glassOpacity: number;
+    showNoise: boolean;
+    showGrid: boolean;
     headerLabel: string;
     glowSpread: number;
-    preset: 'none' | 'matrix' | 'paper';
+    lineHeight: number;
+    letterSpacing: number;
+    alignment: 'left' | 'center' | 'justify';
+    useHoverTilt: boolean;
+    preset: 'none' | 'matrix' | 'frost' | 'ember';
   };
 
   analyticsConfig: AnalyticsConfig;
@@ -187,10 +196,19 @@ export const useBuilderStore = create<BuilderState>()(
         blockRadius: 20,
         borderOpacity: 0.3,
         borderStyle: 'solid',
+        strokeWeight: 1,
+        useBorderGradient: false,
+        borderGradientColor2: 'f43f5e',
         glassBlur: 12,
         glassOpacity: 0.4,
+        showNoise: false,
+        showGrid: false,
         headerLabel: '// BIOGRAPHY',
         glowSpread: 40,
+        lineHeight: 1.6,
+        letterSpacing: 0,
+        alignment: 'left',
+        useHoverTilt: true,
         preset: 'none',
       },
 

@@ -110,13 +110,18 @@ export function generateMarkdown(state: BuilderState): MarkdownResult {
       }
     }
     if (id === 'aboutme' && state.showAboutMe && state.aboutMe) {
-      const { preset, headerLabel } = state.aboutMeConfig;
+      const { preset, headerLabel, alignment } = state.aboutMeConfig;
+      const alignPrefix = alignment === 'center' ? '<div align="center">\n\n' : '';
+      const alignSuffix = alignment === 'center' ? '\n\n</div>' : '';
+
       if (preset === 'matrix') {
         widgets += `\`\`\`text\n[${headerLabel}]\n\n${state.aboutMe}\n\`\`\`\n\n`;
-      } else if (preset === 'paper') {
-        widgets += `> ### ${headerLabel}\n> ${state.aboutMe.replace(/\n/g, '\n> ')}\n\n`;
+      } else if (preset === 'frost') {
+        widgets += `${alignPrefix}> ## ${headerLabel}\n> ${state.aboutMe.replace(/\n/g, '\n> ')}${alignSuffix}\n\n`;
+      } else if (preset === 'ember') {
+        widgets += `${alignPrefix}### ${headerLabel}\n**${state.aboutMe}**${alignSuffix}\n\n`;
       } else {
-        widgets += `### ${headerLabel}\n${state.aboutMe}\n\n`;
+        widgets += `${alignPrefix}### ${headerLabel}\n${state.aboutMe}${alignSuffix}\n\n`;
       }
     }
 

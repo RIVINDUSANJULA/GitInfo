@@ -36,6 +36,8 @@ import {
   Bot,
   Monitor,
   Type,
+  Flame,
+  Maximize,
   Image as ImageIcon
 } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
@@ -118,10 +120,19 @@ export function BuilderSidebar() {
     if (store.aboutMeConfig) {
       if (store.aboutMeConfig.borderOpacity === undefined) store.setAboutMeOption('borderOpacity', 0.3);
       if (store.aboutMeConfig.borderStyle === undefined) store.setAboutMeOption('borderStyle', 'solid');
+      if (store.aboutMeConfig.strokeWeight === undefined) store.setAboutMeOption('strokeWeight', 1);
+      if (store.aboutMeConfig.useBorderGradient === undefined) store.setAboutMeOption('useBorderGradient', false);
+      if (store.aboutMeConfig.borderGradientColor2 === undefined) store.setAboutMeOption('borderGradientColor2', 'f43f5e');
       if (store.aboutMeConfig.glassBlur === undefined) store.setAboutMeOption('glassBlur', 12);
       if (store.aboutMeConfig.glassOpacity === undefined) store.setAboutMeOption('glassOpacity', 0.4);
+      if (store.aboutMeConfig.showNoise === undefined) store.setAboutMeOption('showNoise', false);
+      if (store.aboutMeConfig.showGrid === undefined) store.setAboutMeOption('showGrid', false);
       if (store.aboutMeConfig.headerLabel === undefined) store.setAboutMeOption('headerLabel', '// BIOGRAPHY');
       if (store.aboutMeConfig.glowSpread === undefined) store.setAboutMeOption('glowSpread', 40);
+      if (store.aboutMeConfig.lineHeight === undefined) store.setAboutMeOption('lineHeight', 1.6);
+      if (store.aboutMeConfig.letterSpacing === undefined) store.setAboutMeOption('letterSpacing', 0);
+      if (store.aboutMeConfig.alignment === undefined) store.setAboutMeOption('alignment', 'left');
+      if (store.aboutMeConfig.useHoverTilt === undefined) store.setAboutMeOption('useHoverTilt', true);
       if (store.aboutMeConfig.preset === undefined) store.setAboutMeOption('preset', 'none');
     }
   }, [store.widgetOrder, store.setWidgetOrder, store.socialsConfig, store.aboutMeConfig]);
@@ -548,37 +559,145 @@ export function BuilderSidebar() {
                                 exit={{ height: 0, opacity: 0 }}
                                 className="space-y-4 overflow-hidden pt-2"
                               >
-                                {/* Special Presets */}
+                                {/* Elite Preset Vault */}
                                 <div className="space-y-2">
                                   <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                                     <Zap className="w-2.5 h-2.5" />
-                                    Special Presets
+                                    Elite Preset Vault
                                   </label>
-                                  <div className="flex gap-2">
+                                  <div className="grid grid-cols-3 gap-2">
+                                    {[
+                                      { id: 'matrix', name: 'Matrix', icon: Monitor, color: '#00FF41' },
+                                      { id: 'frost', name: 'Frost', icon: Sparkles, color: '#ffffff' },
+                                      { id: 'ember', name: 'Ember', icon: Flame, color: '#f43f5e' }
+                                    ].map(p => (
+                                      <button 
+                                        key={p.id}
+                                        onClick={() => store.setAboutMeOption('preset', store.aboutMeConfig.preset === p.id ? 'none' : p.id as any)}
+                                        className={cn(
+                                          "py-2 text-[8px] font-black uppercase rounded-lg border transition-all flex flex-col items-center justify-center gap-1",
+                                          store.aboutMeConfig.preset === p.id 
+                                            ? "bg-white/10 border-current shadow-lg" 
+                                            : "bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-white/5 text-slate-400"
+                                        )}
+                                        style={{ color: store.aboutMeConfig.preset === p.id ? p.color : undefined }}
+                                      >
+                                        <p.icon className="w-3.5 h-3.5" />
+                                        {p.name}
+                                      </button>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                {/* Edge Architecture */}
+                                <div className="space-y-3 pt-2 border-t border-slate-200 dark:border-white/5">
+                                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                    <Maximize className="w-2.5 h-2.5" />
+                                    Edge Architecture
+                                  </label>
+                                  
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-[9px] text-slate-500 uppercase font-bold">Border Gradient</span>
                                     <button 
-                                      onClick={() => store.setAboutMeOption('preset', store.aboutMeConfig.preset === 'matrix' ? 'none' : 'matrix')}
+                                      onClick={() => store.setAboutMeOption('useBorderGradient', !store.aboutMeConfig.useBorderGradient)}
                                       className={cn(
-                                        "flex-1 py-2 text-[9px] font-black uppercase rounded-lg border transition-all flex items-center justify-center gap-2",
-                                        store.aboutMeConfig.preset === 'matrix' 
-                                          ? "bg-[#00FF41]/10 border-[#00FF41] text-[#00FF41] shadow-[0_0_15px_rgba(0,255,65,0.2)]" 
-                                          : "bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-white/5 text-slate-400"
+                                        "w-8 h-4 rounded-full relative transition-colors",
+                                        store.aboutMeConfig.useBorderGradient ? "bg-rose-500" : "bg-slate-200 dark:bg-zinc-800"
                                       )}
                                     >
-                                      <Monitor className="w-3 h-3" />
-                                      Matrix Mode
+                                      <div className={cn("absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all", store.aboutMeConfig.useBorderGradient ? "left-4.5" : "left-0.5")} />
                                     </button>
+                                  </div>
+
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-1.5">
+                                      <label className="text-[8px] text-slate-500 uppercase font-bold">Weight: {store.aboutMeConfig.strokeWeight}px</label>
+                                      <input 
+                                        type="range" min="0.5" max="4" step="0.5"
+                                        value={store.aboutMeConfig.strokeWeight}
+                                        onChange={(e) => store.setAboutMeOption('strokeWeight', parseFloat(e.target.value))}
+                                        className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
+                                      />
+                                    </div>
+                                    <div className="space-y-1.5">
+                                      <label className="text-[8px] text-slate-500 uppercase font-bold">Neon Spread: {store.aboutMeConfig.glowSpread}px</label>
+                                      <input 
+                                        type="range" min="0" max="100" step="5"
+                                        value={store.aboutMeConfig.glowSpread}
+                                        onChange={(e) => store.setAboutMeOption('glowSpread', parseInt(e.target.value))}
+                                        className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Surface Texture */}
+                                <div className="space-y-3 pt-2 border-t border-slate-200 dark:border-white/5">
+                                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                    <Layers className="w-2.5 h-2.5" />
+                                    Surface Texture
+                                  </label>
+                                  <div className="grid grid-cols-2 gap-2">
                                     <button 
-                                      onClick={() => store.setAboutMeOption('preset', store.aboutMeConfig.preset === 'paper' ? 'none' : 'paper')}
+                                      onClick={() => store.setAboutMeOption('showNoise', !store.aboutMeConfig.showNoise)}
                                       className={cn(
-                                        "flex-1 py-2 text-[9px] font-black uppercase rounded-lg border transition-all flex items-center justify-center gap-2",
-                                        store.aboutMeConfig.preset === 'paper' 
-                                          ? "bg-amber-500/10 border-amber-500 text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.2)]" 
-                                          : "bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-white/5 text-slate-400"
+                                        "py-1.5 text-[8px] font-bold uppercase rounded-lg border transition-all",
+                                        store.aboutMeConfig.showNoise ? "bg-rose-500/10 border-rose-500 text-rose-500" : "bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-white/5 text-slate-400"
                                       )}
                                     >
-                                      <Type className="w-3 h-3" />
-                                      Paper/Ink
+                                      Noise Overlay
                                     </button>
+                                    <button 
+                                      onClick={() => store.setAboutMeOption('showGrid', !store.aboutMeConfig.showGrid)}
+                                      className={cn(
+                                        "py-1.5 text-[8px] font-bold uppercase rounded-lg border transition-all",
+                                        store.aboutMeConfig.showGrid ? "bg-rose-500/10 border-rose-500 text-rose-500" : "bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-white/5 text-slate-400"
+                                      )}
+                                    >
+                                      Dot Matrix
+                                    </button>
+                                  </div>
+                                </div>
+
+                                {/* Typography Sculpting */}
+                                <div className="space-y-3 pt-2 border-t border-slate-200 dark:border-white/5">
+                                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                    <Type className="w-2.5 h-2.5" />
+                                    Typography Sculpting
+                                  </label>
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-1.5">
+                                      <label className="text-[8px] text-slate-500 uppercase font-bold">Line Scaling: {store.aboutMeConfig.lineHeight}</label>
+                                      <input 
+                                        type="range" min="1.2" max="2.4" step="0.1"
+                                        value={store.aboutMeConfig.lineHeight}
+                                        onChange={(e) => store.setAboutMeOption('lineHeight', parseFloat(e.target.value))}
+                                        className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
+                                      />
+                                    </div>
+                                    <div className="space-y-1.5">
+                                      <label className="text-[8px] text-slate-500 uppercase font-bold">Tracking: {store.aboutMeConfig.letterSpacing}px</label>
+                                      <input 
+                                        type="range" min="-1" max="5" step="0.5"
+                                        value={store.aboutMeConfig.letterSpacing}
+                                        onChange={(e) => store.setAboutMeOption('letterSpacing', parseFloat(e.target.value))}
+                                        className="w-full h-1 bg-slate-200 dark:bg-zinc-800 rounded-full appearance-none accent-rose-500"
+                                      />
+                                    </div>
+                                  </div>
+                                  <div className="flex bg-slate-100 dark:bg-zinc-900 p-0.5 rounded-xl">
+                                    {(['left', 'center', 'justify'] as const).map(a => (
+                                      <button 
+                                        key={a}
+                                        onClick={() => store.setAboutMeOption('alignment', a)}
+                                        className={cn(
+                                          "flex-1 py-1 text-[8px] font-black uppercase rounded-lg transition-all",
+                                          store.aboutMeConfig.alignment === a ? "bg-white dark:bg-zinc-700 text-rose-500 shadow-sm" : "text-slate-400"
+                                        )}
+                                      >
+                                        {a}
+                                      </button>
+                                    ))}
                                   </div>
                                 </div>
 
