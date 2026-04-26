@@ -1,4 +1,5 @@
 import { BuilderState } from '@/store/useBuilderStore';
+import { normalizePlatform, getProfileUrl } from './social-utils';
 
 export interface MarkdownResult {
   header: string;
@@ -123,41 +124,32 @@ export function generateMarkdown(state: BuilderState): MarkdownResult {
 
     if (id === 'socials' && state.showSocials && state.socialProfiles.length > 0) {
       const visibleProfiles = state.socialProfiles.filter(p => p.isVisible);
-      if (visibleProfiles.length > 0) {
-        widgets += `<p align="center">\n`;
-        const getProfileUrl = (platform: string, username: string) => {
-          const mapping: Record<string, string> = {
-            youtube: `https://youtube.com/@${username}`,
-            twitter: `https://x.com/${username}`,
-            linkedin: `https://linkedin.com/in/${username}`,
-            discord: `https://discord.com/users/${username}`,
-            instagram: `https://instagram.com/${username}`,
-            github: `https://github.com/${username}`,
-            tiktok: `https://tiktok.com/@${username}`,
-            gmail: `mailto:${username}`,
-          };
-          return mapping[platform] || '#';
-        };
-
         visibleProfiles.forEach((profile) => {
+          const platform = normalizePlatform(profile.platform);
+          const username = profile.username || 'username';
+          
+          // AGGRESSIVE CACHE BUSTING: Hash the handle + style + timestamp
+          const cacheKey = Buffer.from(`${platform}-${username}-${profile.style || 'badge'}-${Date.now()}`).toString('base64').substring(0, 12);
+          
           const query = new URLSearchParams({
-            username: profile.username || 'username',
+            username,
             style: profile.style || 'badge',
             blockRadius: state.socialsConfig.blockRadius.toString(),
             elementRadius: state.socialsConfig.elementRadius.toString(),
             showGlow: state.socialsConfig.showGlow.toString(),
             useAvatar: state.socialsConfig.useAvatar ? 'true' : 'false',
+            v: cacheKey, // Content-based versioning
             t: Date.now().toString()
           });
+          
           if (profile.customColor) query.set('color', profile.customColor);
           
-          const imageUrl = `${baseUrl}/api/social-card?platform=${profile.platform}&${query.toString()}`;
-          const profileUrl = getProfileUrl(profile.platform, profile.username);
+          const imageUrl = `${baseUrl}/api/social-card?platform=${platform}&${query.toString()}`;
+          const profileUrl = getProfileUrl(platform, username);
           
-          widgets += `  <a href="${profileUrl}"><img src="${imageUrl}" alt="${profile.platform}" /></a>\n`;
+          widgets += `  <a href="${profileUrl}"><img src="${imageUrl}" alt="${platform}" /></a>\n`;
         });
         widgets += `</p>\n\n`;
-      }
     }
   });
 

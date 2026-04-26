@@ -6,6 +6,7 @@ import { useState, useMemo, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence, Reorder, LayoutGroup } from "framer-motion";
 import { fetchSocialIdentity } from "@/lib/identity-fetcher";
+import { normalizePlatform, getProfileUrl } from "@/lib/social-utils";
 
 const THEMES: { id: StatTheme; name: string }[] = [
   { id: "default", name: "Default" },
@@ -29,9 +30,12 @@ export function BuilderSidebar() {
     e.stopPropagation();
     
     const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://github-customizer.vercel.app';
-    const platform = id.split('-')[1];
+    const platform = normalizePlatform(id.split('-')[1]);
     const username = text || 'your-handle';
     
+    // CONTENT-BASED CACHE BUSTING
+    const cacheKey = Buffer.from(`${platform}-${username}-${Date.now()}`).toString('base64').substring(0, 8);
+
     const query = new URLSearchParams({
       platform,
       username,
@@ -40,24 +44,11 @@ export function BuilderSidebar() {
       elementRadius: (store.socialsConfig.elementRadius ?? 10).toString(),
       showGlow: (store.socialsConfig.showGlow ?? true).toString(),
       useAvatar: (store.socialsConfig.useAvatar ?? true).toString(),
+      v: cacheKey
     });
     
     const profile = store.socialProfiles.find(p => p.platform === platform);
     if (profile?.customColor) query.set('color', profile.customColor);
-
-    const getProfileUrl = (platform: string, username: string) => {
-      const mapping: Record<string, string> = {
-        youtube: `https://youtube.com/@${username}`,
-        twitter: `https://x.com/${username}`,
-        linkedin: `https://linkedin.com/in/${username}`,
-        discord: `https://discord.com/users/${username}`,
-        instagram: `https://instagram.com/${username}`,
-        github: `https://github.com/${username}`,
-        tiktok: `https://tiktok.com/@${username}`,
-        gmail: `mailto:${username}`,
-      };
-      return mapping[platform] || '#';
-    };
 
     const imageUrl = `${baseUrl}/api/social-card?${query.toString()}`;
     const profileUrl = getProfileUrl(platform, username);
