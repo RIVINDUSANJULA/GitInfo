@@ -115,6 +115,8 @@ export async function fetchUserLanguages(username: string, includeContribs: bool
 
 async function fetchPublicData(username: string) {
   try {
+    // Fetch all public repos in one call (max 100)
+    // This only uses 1 request from the 60-request hourly limit for unauthenticated users
     const reposRes = await fetch(`https://api.github.com/users/${username}/repos?per_page=100&sort=pushed`, {
       next: { revalidate: 3600 }
     });
@@ -125,29 +127,28 @@ async function fetchPublicData(username: string) {
     }
 
     const repos = await reposRes.json();
-    const nodes = await Promise.all(repos.map(async (repo: any) => {
-      const langRes = await fetch(repo.languages_url, {
-        next: { revalidate: 3600 }
-      });
-      const langs = langRes.ok ? await langRes.json() : {};
-      
-      return {
+    
+    // Map repos to a simplified language structure using the primary language and repo size
+    const nodes = repos
+      .filter((repo: any) => repo.language) // Only count repos that have a primary language
+      .map((repo: any) => ({
         isPrivate: false,
         languages: {
-          edges: Object.entries(langs).map(([name, size]) => ({
-            size,
-            node: { name, color: null } // REST API doesn't provide colors easily without extra steps
-          }))
+          edges: [
+            {
+              size: repo.size || 1000, // Use repo size as a weight for its primary language
+              node: { name: repo.language, color: null }
+            }
+          ]
         }
-      };
-    }));
+      }));
 
     return {
       repositories: { nodes }
     };
   } catch (error) {
     console.error("Public Fetch Error:", error);
-    return getMockData();
+    return { repositories: { nodes: [] } };
   }
 }
 
