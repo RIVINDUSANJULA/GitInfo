@@ -17,8 +17,9 @@ export async function GET(req: NextRequest) {
     const userData = await fetchUserLanguages(username, includeContribs, forceRefresh);
     const languages = aggregateLanguages(userData, false); 
     const skills = aggregateSkills(userData);
+    const trophies = await fetchTrophyData(username);
 
-    return NextResponse.json({ languages, skills });
+    return NextResponse.json({ languages, skills, trophies });
   } catch (error: any) {
     console.error("API Route Error:", error);
     return new NextResponse(error.message, { status: 500 });

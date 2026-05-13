@@ -104,6 +104,87 @@ export async function fetchUserLanguages(username: string, includeContribs: bool
   }
 }
 
+export async function fetchTrophyData(username: string) {
+  const token = process.env.GITHUB_TOKEN;
+  if (!token) throw new Error("GITHUB_TOKEN_MISSING");
+
+  const query = `
+    query ($username: String!) {
+      user(login: $username) {
+        followers { totalCount }
+        pullRequests(first: 1) { totalCount }
+        issues(first: 1) { totalCount }
+        repositories(first: 100, ownerAffiliations: OWNER, isFork: false) {
+          totalCount
+          nodes {
+            stargazerCount
+          }
+        }
+        contributionsCollection {
+          totalCommitContributions
+          totalRepositoryContributions
+          totalPullRequestContributions
+          totalIssueContributions
+        }
+      }
+    }
+  `;
+
+  try {
+    const response = await fetch(GITHUB_GRAPHQL_API, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ query, variables: { username } }),
+    });
+
+    const json = await response.json();
+    if (json.errors) throw new Error(json.errors[0].message);
+
+    const user = json.data.user;
+    const totalStars = user.repositories.nodes.reduce((acc: number, node: any) => acc + node.stargazerCount, 0);
+    
+    const stats = {
+      stars: totalStars,
+      commits: user.contributionsCollection.totalCommitContributions,
+      followers: user.followers.totalCount,
+      prs: user.pullRequests.totalCount,
+      issues: user.issues.totalCount,
+      repos: user.repositories.totalCount
+    };
+
+    return [
+      { label: 'Stars', value: stats.stars, rank: calculateRank('stars', stats.stars) },
+      { label: 'Commits', value: stats.commits, rank: calculateRank('commits', stats.commits) },
+      { label: 'Followers', value: stats.followers, rank: calculateRank('followers', stats.followers) },
+      { label: 'PRs', value: stats.prs, rank: calculateRank('prs', stats.prs) },
+      { label: 'Issues', value: stats.issues, rank: calculateRank('issues', stats.issues) },
+    ];
+  } catch (error) {
+    console.error("Trophy Data Error:", error);
+    return [];
+  }
+}
+
+function calculateRank(type: string, count: number): string {
+  const thresholds: Record<string, number[]> = {
+    stars: [1000, 500, 100, 50, 10], // SSS, SS, A, B, C
+    commits: [10000, 5000, 1000, 500, 100],
+    followers: [1000, 500, 100, 50, 10],
+    prs: [500, 200, 100, 50, 10],
+    issues: [500, 200, 100, 50, 10],
+  };
+
+  const t = thresholds[type] || [100, 50, 20, 10, 5];
+  if (count >= t[0]) return 'SSS';
+  if (count >= t[1]) return 'SS';
+  if (count >= t[2]) return 'A';
+  if (count >= t[3]) return 'B';
+  return 'C';
+}
+
 /**
  * Resilient Aggregator (Nuclear Mode)
  * Implements Module G: Failure-Proof fetching & deep byte-precise analysis.

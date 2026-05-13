@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 
 import { SkillBadgeGrid } from "./SkillBadgeGrid";
 import { SocialHubPreview } from "./SocialHubPreview";
+import { TrophyArchitect } from "./TrophyArchitect";
 
 export function BuilderPreview() {
   const store = useBuilderStore();
@@ -29,9 +30,11 @@ export function BuilderPreview() {
           const data = await res.json();
           const languages = Array.isArray(data.languages) ? data.languages : [];
           const skills = Array.isArray(data.skills) ? data.skills : [];
+          const trophies = Array.isArray(data.trophies) ? data.trophies : [];
           
           store.setAutoLanguages(languages);
           store.setAutoSkills(skills);
+          store.setAutoTrophies(trophies);
           
           // RECONCILE ORDER
           const rawAutoNames = [...languages.map((l: any) => l.name), ...skills.map((s: any) => s.name)];
@@ -176,7 +179,7 @@ export function BuilderPreview() {
                                 <div dangerouslySetInnerHTML={{ __html: `<img src="https://github-readme-streak-stats.herokuapp.com/?user=${store.username}${themeParams.replace('bg_color', 'background').replace('title_color', 'stroke').replace('text_color', 'currStreakNum').replace('icon_color', 'fire')}" alt="Streak" />` }} />
                               )}
                               {id === 'trophies' && (
-                                <div dangerouslySetInnerHTML={{ __html: `<img src="https://github-profile-trophy.vercel.app/?username=${store.username}&theme=${store.theme === 'custom' ? 'flat' : store.theme}&no-frame=false&no-bg=true&margin-w=15" alt="Trophies" />` }} />
+                                <TrophyArchitect />
                               )}
                             </motion.div>
                           );
