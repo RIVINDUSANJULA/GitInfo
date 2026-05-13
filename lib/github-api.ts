@@ -107,14 +107,7 @@ export async function fetchUserLanguages(username: string, includeContribs: bool
 export async function fetchTrophyData(username: string) {
   const token = process.env.GITHUB_TOKEN;
   if (!token) {
-    console.warn("GITHUB_TOKEN missing, serving elite mock trophies.");
-    return [
-      { label: 'Stars', value: 1240, rank: 'SSS' },
-      { label: 'Commits', value: 8500, rank: 'SS' },
-      { label: 'Followers', value: 420, rank: 'A' },
-      { label: 'PRs', value: 150, rank: 'A' },
-      { label: 'Issues', value: 45, rank: 'B' },
-    ];
+    return fetchPublicTrophyData(username);
   }
 
   const query = `
@@ -153,6 +146,8 @@ export async function fetchTrophyData(username: string) {
     if (json.errors) throw new Error(json.errors[0].message);
 
     const user = json.data.user;
+    if (!user) return [];
+
     const totalStars = user.repositories.nodes.reduce((acc: number, node: any) => acc + node.stargazerCount, 0);
     
     const stats = {
@@ -161,7 +156,6 @@ export async function fetchTrophyData(username: string) {
       followers: user.followers.totalCount,
       prs: user.pullRequests.totalCount,
       issues: user.issues.totalCount,
-      repos: user.repositories.totalCount
     };
 
     return [
@@ -172,7 +166,31 @@ export async function fetchTrophyData(username: string) {
       { label: 'Issues', value: stats.issues, rank: calculateRank('issues', stats.issues) },
     ];
   } catch (error) {
-    console.error("Trophy Data Error:", error);
+    console.error("GraphQL Trophy Error, falling back to public:", error);
+    return fetchPublicTrophyData(username);
+  }
+}
+
+async function fetchPublicTrophyData(username: string) {
+  try {
+    // 1. Fetch user profile
+    const userRes = await fetch(`https://api.github.com/users/${username}`);
+    if (!userRes.ok) return [];
+    const user = await userRes.json();
+
+    // 2. Fetch repos to sum stars (first 100)
+    const reposRes = await fetch(`https://api.github.com/users/${username}/repos?per_page=100&sort=stargazers`);
+    const repos = reposRes.ok ? await reposRes.json() : [];
+    const totalStars = Array.isArray(repos) ? repos.reduce((acc: number, r: any) => acc + (r.stargazers_count || 0), 0) : 0;
+
+    return [
+      { label: 'Stars', value: totalStars, rank: calculateRank('stars', totalStars) },
+      { label: 'Followers', value: user.followers, rank: calculateRank('followers', user.followers) },
+      // Commits, PRs, Issues are not easily available via public REST API without many requests
+      // We'll hide them or set them to 0 if we can't get them accurately
+    ];
+  } catch (error) {
+    console.error("Public Trophy Error:", error);
     return [];
   }
 }
