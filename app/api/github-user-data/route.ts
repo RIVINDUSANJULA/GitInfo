@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchUserLanguages, aggregateLanguages, aggregateSkills } from "@/lib/github-api";
+import { fetchUserLanguages, aggregateLanguages, aggregateSkills, fetchTrophyData } from "@/lib/github-api";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;

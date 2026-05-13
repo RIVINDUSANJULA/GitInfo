@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 
 import { SkillBadgeGrid } from "./SkillBadgeGrid";
 import { SocialHubPreview } from "./SocialHubPreview";
-import { TrophyArchitect } from "./TrophyArchitect";
+import { TrophyArchitect } from "@/components/builder/TrophyArchitect";
 
 export function BuilderPreview() {
   const store = useBuilderStore();
