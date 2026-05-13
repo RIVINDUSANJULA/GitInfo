@@ -55,18 +55,6 @@ export interface SocialsConfig {
   syncAvatarColor: boolean;
 }
 
-export interface Trophy {
-  label: string;
-  value: number;
-  rank: string;
-}
-
-export interface TrophiesConfig {
-  layout: 'vault' | 'citadel' | 'minimalist';
-  rankFloor: 'SSS' | 'SS' | 'A' | 'B' | 'C';
-  hiddenTrophies: string[];
-  showGlow: boolean;
-}
 
 export interface SocialProfile {
   platform: 'youtube' | 'discord' | 'twitter' | 'instagram' | 'linkedin' | 'github' | 'tiktok' | 'career' | 'gmail' | 'email';
@@ -142,8 +130,6 @@ export interface BuilderState {
 
   analyticsConfig: AnalyticsConfig;
   badgesConfig: BadgesConfig;
-  trophiesConfig: TrophiesConfig;
-  autoTrophies: Trophy[];
 
   isSyncing: boolean;
   setIsSyncing: (val: boolean) => void;
@@ -291,14 +277,6 @@ export const useBuilderStore = create<BuilderState>()(
         customIconColor: "ffffff",
       },
 
-      trophiesConfig: {
-        layout: 'vault',
-        rankFloor: 'C',
-        hiddenTrophies: [],
-        showGlow: true,
-      },
-      autoTrophies: [],
-
       isSyncing: false,
       setIsSyncing: (val) => set({ isSyncing: val }),
       refreshTrigger: 0,
@@ -358,20 +336,10 @@ export const useBuilderStore = create<BuilderState>()(
         set((state) => ({
           socialsConfig: { ...state.socialsConfig, [key]: value }
         })),
-      setTrophiesOption: (key, value) =>
+      setSocialsOption: (key, value) =>
         set((state) => ({
-          trophiesConfig: { ...state.trophiesConfig, [key]: value }
+          socialsConfig: { ...state.socialsConfig, [key]: value }
         })),
-      toggleTrophyVisibility: (label) =>
-        set((state) => ({
-          trophiesConfig: {
-            ...state.trophiesConfig,
-            hiddenTrophies: state.trophiesConfig.hiddenTrophies.includes(label)
-              ? state.trophiesConfig.hiddenTrophies.filter(l => l !== label)
-              : [...state.trophiesConfig.hiddenTrophies, label]
-          }
-        })),
-      setAutoTrophies: (autoTrophies) => set({ autoTrophies }),
       setAboutMeOption: (key, value) =>
         set((state) => ({
           aboutMeConfig: { ...state.aboutMeConfig, [key]: value }

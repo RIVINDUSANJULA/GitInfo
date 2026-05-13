@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchUserLanguages, aggregateLanguages, aggregateSkills, fetchTrophyData } from "@/lib/github-api";
+import { fetchUserLanguages, aggregateLanguages, aggregateSkills } from "@/lib/github-api";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
@@ -17,9 +17,8 @@ export async function GET(req: NextRequest) {
     const userData = await fetchUserLanguages(username, includeContribs, forceRefresh);
     const languages = aggregateLanguages(userData, false); 
     const skills = aggregateSkills(userData);
-    const trophies = await fetchTrophyData(username);
 
-    return NextResponse.json({ languages, skills, trophies });
+    return NextResponse.json({ languages, skills });
   } catch (error: any) {
     console.error("API Route Error:", error);
     return new NextResponse(error.message, { status: 500 });

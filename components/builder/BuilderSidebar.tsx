@@ -34,8 +34,7 @@ import {
   Plus,
   ExternalLink,
   RefreshCw,
-  Image as ImageIcon,
-  Minus
+  Image as ImageIcon
 } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 import { cn } from "@/lib/utils";
@@ -896,118 +895,6 @@ export function BuilderSidebar() {
           </AnimatePresence>
         </div>
 
-        {/* 🏆 Relic-Armor Trophy Architect */}
-        <div className={cn("rounded-2xl border overflow-hidden transition-all", store.showTrophies ? "border-amber-200 dark:border-amber-500/30 bg-amber-50/20 dark:bg-amber-500/5" : "border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-zinc-900/20")}>
-          <button onClick={() => toggleSection('trophies')} className="w-full flex items-center justify-between p-4 bg-white dark:bg-zinc-900/50 hover:bg-slate-50 dark:hover:bg-zinc-900 transition-colors">
-            <div className="flex items-center gap-3">
-              <Trophy className={cn("w-5 h-5", store.showTrophies ? "text-amber-500" : "text-slate-400")} />
-              <span className="font-semibold text-slate-900 dark:text-white">Relic-Armor Trophies</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <input
-                type="checkbox"
-                checked={store.showTrophies}
-                onChange={() => store.toggleModule('showTrophies')}
-                onClick={(e) => e.stopPropagation()}
-                className="w-4 h-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500"
-              />
-              <ChevronDown className={cn("w-5 h-5 text-slate-500 transition-transform", isSectionOpen('trophies') && "rotate-180")} />
-            </div>
-          </button>
-
-          <AnimatePresence>
-            {isSectionOpen('trophies') && (
-              <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="overflow-hidden border-t border-slate-200 dark:border-white/10">
-                <div className="p-4 space-y-6 bg-white dark:bg-zinc-950/20">
-                  {/* Layout Selector */}
-                  <div className="space-y-2.5">
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Layout Architecture</label>
-                    <div className="grid grid-cols-3 gap-1 p-1 bg-slate-100 dark:bg-zinc-900 rounded-xl">
-                      {[
-                        { id: 'vault', label: '🛡️ Vault' },
-                        { id: 'citadel', label: '🏰 Citadel' },
-                        { id: 'minimalist', label: '➖ Minimal' },
-                      ].map((layout) => (
-                        <button
-                          key={layout.id}
-                          onClick={() => store.setTrophiesOption('layout', layout.id as any)}
-                          className={cn(
-                            "flex flex-col items-center justify-center gap-1 py-2 text-[7px] font-black rounded-lg transition-all uppercase tracking-tighter border",
-                            store.trophiesConfig.layout === layout.id
-                              ? "bg-white dark:bg-zinc-800 text-amber-600 dark:text-amber-400 border-amber-500/20 shadow-sm"
-                              : "text-slate-500 border-transparent hover:text-slate-700 dark:hover:text-slate-300"
-                          )}
-                        >
-                          {layout.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Rank Floor Selector */}
-                  <div className="space-y-2.5">
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Rank Floor Filter</label>
-                    <div className="flex gap-1 p-1 bg-slate-100 dark:bg-zinc-900 rounded-xl">
-                      {['SSS', 'SS', 'A', 'B', 'C'].map((rank) => (
-                        <button
-                          key={rank}
-                          onClick={() => store.setTrophiesOption('rankFloor', rank as any)}
-                          className={cn(
-                            "flex-1 py-1.5 text-[9px] font-black rounded-md transition-all uppercase",
-                            store.trophiesConfig.rankFloor === rank
-                              ? "bg-white dark:bg-zinc-800 shadow-sm text-amber-500"
-                              : "text-slate-500"
-                          )}
-                        >
-                          {rank}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Trophy Toggles */}
-                  <div className="space-y-3">
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Trophy Visibility</label>
-                    <div className="grid grid-cols-2 gap-2">
-                      {store.autoTrophies.map((trophy) => (
-                        <button
-                          key={trophy.label}
-                          onClick={() => store.toggleTrophyVisibility(trophy.label)}
-                          className={cn(
-                            "flex items-center justify-between px-3 py-2 rounded-xl border text-[10px] font-bold transition-all",
-                            !store.trophiesConfig.hiddenTrophies.includes(trophy.label)
-                              ? "bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/30 text-amber-700 dark:text-amber-400"
-                              : "bg-white dark:bg-zinc-900 border-slate-200 dark:border-white/10 text-slate-500"
-                          )}
-                        >
-                          {trophy.label}
-                          {!store.trophiesConfig.hiddenTrophies.includes(trophy.label) ? <Check className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Glow Toggle */}
-                  <div className="flex items-center justify-between pt-2">
-                    <div className="flex items-center gap-2">
-                      <Zap className="w-4 h-4 text-amber-500" />
-                      <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Neon Glow Engine</span>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="sr-only peer"
-                        checked={store.trophiesConfig.showGlow}
-                        onChange={(e) => store.setTrophiesOption('showGlow', e.target.checked)}
-                      />
-                      <div className="w-9 h-5 bg-slate-200 dark:bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
-                    </label>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
 
         {/* 🔗 Social Connectivity Section */}
         <div className={cn("rounded-2xl border overflow-hidden transition-all", store.showSocials ? "border-rose-200 dark:border-rose-500/30 bg-rose-50/20 dark:bg-rose-500/5" : "border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-zinc-900/20")}>

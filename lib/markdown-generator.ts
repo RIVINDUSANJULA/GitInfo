@@ -170,8 +170,7 @@ export function generateMarkdown(state: BuilderState): MarkdownResult {
     }
 
     if (id === 'trophies' && showTrophies) {
-      const trophyParams = `&layout=${state.trophiesConfig.layout}&rankFloor=${state.trophiesConfig.rankFloor}&showGlow=${state.trophiesConfig.showGlow}&hidden=${state.trophiesConfig.hiddenTrophies.join(',')}`;
-      widgets += `<div align="center">\n  <img src="${baseUrl}/api/generate/trophies?username=${username}${themeParams}${trophyParams}" alt="Relic-Armor Trophies" />\n</div>\n\n`;
+      widgets += `<div align="center">\n  <img src="https://github-profile-trophy.vercel.app/?username=${username}&theme=${theme === 'custom' ? 'flat' : theme}&no-frame=false&no-bg=true&margin-w=15" alt="trophies" />\n</div>\n\n`;
     }
 
     if (id === 'socials' && state.showSocials && state.socialProfiles.length > 0) {
